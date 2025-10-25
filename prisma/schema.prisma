@@ -1,0 +1,31 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma/client"
+  previewFeatures = ["strictUndefinedChecks"]
+  engineType      = "client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = "mysql://root:@localhost:3306/db"
+}
+
+model journey {
+  journeyId String   @id @default("journey")
+  name      String
+  color     String   @default("bg-white")
+  marker    marker[]
+}
+
+model marker {
+  id        Int     @id @default(autoincrement())
+  name      String
+  lng       Float
+  lat       Float
+  color     String  @default("bg-white")
+  journeyId String
+  nextId    String  @default("default")
+  journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
+
+  @@index([journeyId], map: "Marker_journeyId_fkey")
+}

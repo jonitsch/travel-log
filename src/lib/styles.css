@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Daydream';
+  src: url('static/fonts/Daydream DEMO.otf') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CODELight';
+  src: url('static/fonts/CODELight.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CODEBold';
+  src: url('static/fonts/CODEBold.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.outfit-oxygen {
+  font-family: "Oxygen";
+  font-optical-sizing: auto;
+  font-weight: 350;
+  font-style: normal;
+}
+
+.oxygen-light {
+  font-family: "Oxygen";
+  font-weight: 300;
+  font-style: normal;
+}
+
+.oxygen-regular {
+  font-family: "Oxygen";
+  font-weight: 400;
+  font-style: normal;
+}
+
+.oxygen-bold {
+  font-family: "Oxygen", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.emoji {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}
+
+
+
+/* h1{
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 82px;
+    font-family: Arial;
+    text-align: left;
+    font-style: bold;
+    padding: 1%;
+    color: rgb(63, 63, 63);
+}
+
+img {
+    height: 20%;
+    width: 20%;
+    display: inline;
+}
+img:hover {
+    transform: scale(1.1);
+}
+
+.picture-roll {
+    gap: 15px;
+    width: fit-content;
+    max-width: 75%;
+    align-items: center;
+    display: inline-flex;
+} */
