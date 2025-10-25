@@ -15,25 +15,20 @@
 	}
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
-	let currentJourneyId = $state('default');
+	let currentJourney = $state('default');
 	onMount(() => {
 		loadData();
 	});
+
+	let zoom: number = $state(1.5);
 </script>
 
-<div class="absolute z-5 mt-5">
-	<div class="min-w-[fit-content] flex-row justify-start *:h-fit *:whitespace-nowrap">
-		<div class="flex-1">
-			<div
-				id="navWrapper"
-				class="absolute top-[5rem] ml-1 h-full flex-row transition *:filter first:my-0 [&>*:not(:first-child)]:mt-4"
-			></div>
-		</div>
-	</div>
+<div id="zoomDisplay" class="absolute right-[15px] top-[15px]">
+{zoom.toPrecision(3)}
 </div>
 
 <div class="absolute">
 	<div id="map" class="h-[100vh] w-[100vw] overflow-hidden" bind:this={mapContainer}>
-		<Map bind:map={map!} bind:mapContainer bind:data onload={loadData} {currentJourneyId} />
+		<Map bind:map={map!} bind:mapContainer bind:data onload={loadData} {currentJourney} />
 	</div>
 </div>
