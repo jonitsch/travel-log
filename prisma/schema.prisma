@@ -15,6 +15,7 @@ model journey {
   name      String
   color     String   @default("bg-white")
   marker    marker[]
+  image     image[]
 }
 
 model marker {
@@ -28,4 +29,17 @@ model marker {
   journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
 
   @@index([journeyId], map: "Marker_journeyId_fkey")
+}
+
+model image {
+  path      String  @id
+  fileName  String
+  width     Int
+  heigt     Int
+  lng       Float?
+  lat       Float?
+  color     String?
+  journeyId String
+  nextId    String  @default("default")
+  journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
 }

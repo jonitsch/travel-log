@@ -4,10 +4,13 @@ import { json } from '@sveltejs/kit';
 export async function GET(journeyId) {
   let journeyIdString = journeyId.url.search.split('=')[1]
   console.log(journeyIdString)
-  const journeys = await prisma.journey.findMany({
+  const journey = await prisma.journey.findUnique({
     include: {
       marker: true
+    },
+    where: {
+      journeyId: journeyIdString
     }
   })
-  return json(journeys);
+  return json(journey);
 }
