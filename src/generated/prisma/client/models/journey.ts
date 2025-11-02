@@ -44,53 +44,53 @@ export type JourneyCountAggregateOutputType = {
 
 
 export type JourneyMinAggregateInputType = {
-  journeyId?: true | runtime.Types.Skip
-  name?: true | runtime.Types.Skip
-  color?: true | runtime.Types.Skip
+  journeyId?: true
+  name?: true
+  color?: true
 }
 
 export type JourneyMaxAggregateInputType = {
-  journeyId?: true | runtime.Types.Skip
-  name?: true | runtime.Types.Skip
-  color?: true | runtime.Types.Skip
+  journeyId?: true
+  name?: true
+  color?: true
 }
 
 export type JourneyCountAggregateInputType = {
-  journeyId?: true | runtime.Types.Skip
-  name?: true | runtime.Types.Skip
-  color?: true | runtime.Types.Skip
-  _all?: true | runtime.Types.Skip
+  journeyId?: true
+  name?: true
+  color?: true
+  _all?: true
 }
 
 export type JourneyAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Filter which journey to aggregate.
    */
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of journeys to fetch.
    */
-  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the start position
    */
-  cursor?: Prisma.journeyWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.journeyWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` journeys from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` journeys.
    */
-  skip?: number | runtime.Types.Skip
+  skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
@@ -123,12 +123,12 @@ export type GetJourneyAggregateType<T extends JourneyAggregateArgs> = {
 
 
 export type journeyGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
-  orderBy?: Prisma.journeyOrderByWithAggregationInput | Prisma.journeyOrderByWithAggregationInput[] | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
+  orderBy?: Prisma.journeyOrderByWithAggregationInput | Prisma.journeyOrderByWithAggregationInput[]
   by: Prisma.JourneyScalarFieldEnum[] | Prisma.JourneyScalarFieldEnum
-  having?: Prisma.journeyScalarWhereWithAggregatesInput | runtime.Types.Skip
-  take?: number | runtime.Types.Skip
-  skip?: number | runtime.Types.Skip
+  having?: Prisma.journeyScalarWhereWithAggregatesInput
+  take?: number
+  skip?: number
   _count?: JourneyCountAggregateInputType | true
   _min?: JourneyMinAggregateInputType
   _max?: JourneyMaxAggregateInputType
@@ -159,95 +159,102 @@ type GetJourneyGroupByPayload<T extends journeyGroupByArgs> = Prisma.PrismaPromi
 
 
 export type journeyWhereInput = {
-  AND?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[] | runtime.Types.Skip
-  OR?: Prisma.journeyWhereInput[] | runtime.Types.Skip
-  NOT?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[] | runtime.Types.Skip
-  journeyId?: Prisma.StringFilter<"journey"> | string | runtime.Types.Skip
-  name?: Prisma.StringFilter<"journey"> | string | runtime.Types.Skip
-  color?: Prisma.StringFilter<"journey"> | string | runtime.Types.Skip
-  marker?: Prisma.MarkerListRelationFilter | runtime.Types.Skip
+  AND?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[]
+  OR?: Prisma.journeyWhereInput[]
+  NOT?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[]
+  journeyId?: Prisma.StringFilter<"journey"> | string
+  name?: Prisma.StringFilter<"journey"> | string
+  color?: Prisma.StringFilter<"journey"> | string
+  marker?: Prisma.MarkerListRelationFilter
+  image?: Prisma.ImageListRelationFilter
 }
 
 export type journeyOrderByWithRelationInput = {
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  marker?: Prisma.markerOrderByRelationAggregateInput | runtime.Types.Skip
-  _relevance?: Prisma.journeyOrderByRelevanceInput | runtime.Types.Skip
+  journeyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  marker?: Prisma.markerOrderByRelationAggregateInput
+  image?: Prisma.imageOrderByRelationAggregateInput
+  _relevance?: Prisma.journeyOrderByRelevanceInput
 }
 
 export type journeyWhereUniqueInput = Prisma.AtLeast<{
-  journeyId?: string | runtime.Types.Skip
-  AND?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[] | runtime.Types.Skip
-  OR?: Prisma.journeyWhereInput[] | runtime.Types.Skip
-  NOT?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[] | runtime.Types.Skip
-  name?: Prisma.StringFilter<"journey"> | string | runtime.Types.Skip
-  color?: Prisma.StringFilter<"journey"> | string | runtime.Types.Skip
-  marker?: Prisma.MarkerListRelationFilter | runtime.Types.Skip
+  journeyId?: string
+  AND?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[]
+  OR?: Prisma.journeyWhereInput[]
+  NOT?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[]
+  name?: Prisma.StringFilter<"journey"> | string
+  color?: Prisma.StringFilter<"journey"> | string
+  marker?: Prisma.MarkerListRelationFilter
+  image?: Prisma.ImageListRelationFilter
 }, "journeyId">
 
 export type journeyOrderByWithAggregationInput = {
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  _count?: Prisma.journeyCountOrderByAggregateInput | runtime.Types.Skip
-  _max?: Prisma.journeyMaxOrderByAggregateInput | runtime.Types.Skip
-  _min?: Prisma.journeyMinOrderByAggregateInput | runtime.Types.Skip
+  journeyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  _count?: Prisma.journeyCountOrderByAggregateInput
+  _max?: Prisma.journeyMaxOrderByAggregateInput
+  _min?: Prisma.journeyMinOrderByAggregateInput
 }
 
 export type journeyScalarWhereWithAggregatesInput = {
-  AND?: Prisma.journeyScalarWhereWithAggregatesInput | Prisma.journeyScalarWhereWithAggregatesInput[] | runtime.Types.Skip
-  OR?: Prisma.journeyScalarWhereWithAggregatesInput[] | runtime.Types.Skip
-  NOT?: Prisma.journeyScalarWhereWithAggregatesInput | Prisma.journeyScalarWhereWithAggregatesInput[] | runtime.Types.Skip
-  journeyId?: Prisma.StringWithAggregatesFilter<"journey"> | string | runtime.Types.Skip
-  name?: Prisma.StringWithAggregatesFilter<"journey"> | string | runtime.Types.Skip
-  color?: Prisma.StringWithAggregatesFilter<"journey"> | string | runtime.Types.Skip
+  AND?: Prisma.journeyScalarWhereWithAggregatesInput | Prisma.journeyScalarWhereWithAggregatesInput[]
+  OR?: Prisma.journeyScalarWhereWithAggregatesInput[]
+  NOT?: Prisma.journeyScalarWhereWithAggregatesInput | Prisma.journeyScalarWhereWithAggregatesInput[]
+  journeyId?: Prisma.StringWithAggregatesFilter<"journey"> | string
+  name?: Prisma.StringWithAggregatesFilter<"journey"> | string
+  color?: Prisma.StringWithAggregatesFilter<"journey"> | string
 }
 
 export type journeyCreateInput = {
-  journeyId?: string | runtime.Types.Skip
+  journeyId?: string
   name: string
-  color?: string | runtime.Types.Skip
-  marker?: Prisma.markerCreateNestedManyWithoutJourneyInput | runtime.Types.Skip
+  color?: string
+  marker?: Prisma.markerCreateNestedManyWithoutJourneyInput
+  image?: Prisma.imageCreateNestedManyWithoutJourneyInput
 }
 
 export type journeyUncheckedCreateInput = {
-  journeyId?: string | runtime.Types.Skip
+  journeyId?: string
   name: string
-  color?: string | runtime.Types.Skip
-  marker?: Prisma.markerUncheckedCreateNestedManyWithoutJourneyInput | runtime.Types.Skip
+  color?: string
+  marker?: Prisma.markerUncheckedCreateNestedManyWithoutJourneyInput
+  image?: Prisma.imageUncheckedCreateNestedManyWithoutJourneyInput
 }
 
 export type journeyUpdateInput = {
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  marker?: Prisma.markerUpdateManyWithoutJourneyNestedInput | runtime.Types.Skip
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  marker?: Prisma.markerUpdateManyWithoutJourneyNestedInput
+  image?: Prisma.imageUpdateManyWithoutJourneyNestedInput
 }
 
 export type journeyUncheckedUpdateInput = {
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  marker?: Prisma.markerUncheckedUpdateManyWithoutJourneyNestedInput | runtime.Types.Skip
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  marker?: Prisma.markerUncheckedUpdateManyWithoutJourneyNestedInput
+  image?: Prisma.imageUncheckedUpdateManyWithoutJourneyNestedInput
 }
 
 export type journeyCreateManyInput = {
-  journeyId?: string | runtime.Types.Skip
+  journeyId?: string
   name: string
-  color?: string | runtime.Types.Skip
+  color?: string
 }
 
 export type journeyUpdateManyMutationInput = {
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type journeyUncheckedUpdateManyInput = {
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type journeyOrderByRelevanceInput = {
@@ -257,56 +264,72 @@ export type journeyOrderByRelevanceInput = {
 }
 
 export type journeyCountOrderByAggregateInput = {
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
+  journeyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  color?: Prisma.SortOrder
 }
 
 export type journeyMaxOrderByAggregateInput = {
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
+  journeyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  color?: Prisma.SortOrder
 }
 
 export type journeyMinOrderByAggregateInput = {
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
+  journeyId?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  color?: Prisma.SortOrder
 }
 
 export type JourneyScalarRelationFilter = {
-  is?: Prisma.journeyWhereInput | runtime.Types.Skip
-  isNot?: Prisma.journeyWhereInput | runtime.Types.Skip
+  is?: Prisma.journeyWhereInput
+  isNot?: Prisma.journeyWhereInput
 }
 
 export type StringFieldUpdateOperationsInput = {
-  set?: string | runtime.Types.Skip
+  set?: string
 }
 
 export type journeyCreateNestedOneWithoutMarkerInput = {
-  create?: Prisma.XOR<Prisma.journeyCreateWithoutMarkerInput, Prisma.journeyUncheckedCreateWithoutMarkerInput> | runtime.Types.Skip
-  connectOrCreate?: Prisma.journeyCreateOrConnectWithoutMarkerInput | runtime.Types.Skip
-  connect?: Prisma.journeyWhereUniqueInput | runtime.Types.Skip
+  create?: Prisma.XOR<Prisma.journeyCreateWithoutMarkerInput, Prisma.journeyUncheckedCreateWithoutMarkerInput>
+  connectOrCreate?: Prisma.journeyCreateOrConnectWithoutMarkerInput
+  connect?: Prisma.journeyWhereUniqueInput
 }
 
 export type journeyUpdateOneRequiredWithoutMarkerNestedInput = {
-  create?: Prisma.XOR<Prisma.journeyCreateWithoutMarkerInput, Prisma.journeyUncheckedCreateWithoutMarkerInput> | runtime.Types.Skip
-  connectOrCreate?: Prisma.journeyCreateOrConnectWithoutMarkerInput | runtime.Types.Skip
-  upsert?: Prisma.journeyUpsertWithoutMarkerInput | runtime.Types.Skip
-  connect?: Prisma.journeyWhereUniqueInput | runtime.Types.Skip
-  update?: Prisma.XOR<Prisma.XOR<Prisma.journeyUpdateToOneWithWhereWithoutMarkerInput, Prisma.journeyUpdateWithoutMarkerInput>, Prisma.journeyUncheckedUpdateWithoutMarkerInput> | runtime.Types.Skip
+  create?: Prisma.XOR<Prisma.journeyCreateWithoutMarkerInput, Prisma.journeyUncheckedCreateWithoutMarkerInput>
+  connectOrCreate?: Prisma.journeyCreateOrConnectWithoutMarkerInput
+  upsert?: Prisma.journeyUpsertWithoutMarkerInput
+  connect?: Prisma.journeyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.journeyUpdateToOneWithWhereWithoutMarkerInput, Prisma.journeyUpdateWithoutMarkerInput>, Prisma.journeyUncheckedUpdateWithoutMarkerInput>
+}
+
+export type journeyCreateNestedOneWithoutImageInput = {
+  create?: Prisma.XOR<Prisma.journeyCreateWithoutImageInput, Prisma.journeyUncheckedCreateWithoutImageInput>
+  connectOrCreate?: Prisma.journeyCreateOrConnectWithoutImageInput
+  connect?: Prisma.journeyWhereUniqueInput
+}
+
+export type journeyUpdateOneRequiredWithoutImageNestedInput = {
+  create?: Prisma.XOR<Prisma.journeyCreateWithoutImageInput, Prisma.journeyUncheckedCreateWithoutImageInput>
+  connectOrCreate?: Prisma.journeyCreateOrConnectWithoutImageInput
+  upsert?: Prisma.journeyUpsertWithoutImageInput
+  connect?: Prisma.journeyWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.journeyUpdateToOneWithWhereWithoutImageInput, Prisma.journeyUpdateWithoutImageInput>, Prisma.journeyUncheckedUpdateWithoutImageInput>
 }
 
 export type journeyCreateWithoutMarkerInput = {
-  journeyId?: string | runtime.Types.Skip
+  journeyId?: string
   name: string
-  color?: string | runtime.Types.Skip
+  color?: string
+  image?: Prisma.imageCreateNestedManyWithoutJourneyInput
 }
 
 export type journeyUncheckedCreateWithoutMarkerInput = {
-  journeyId?: string | runtime.Types.Skip
+  journeyId?: string
   name: string
-  color?: string | runtime.Types.Skip
+  color?: string
+  image?: Prisma.imageUncheckedCreateNestedManyWithoutJourneyInput
 }
 
 export type journeyCreateOrConnectWithoutMarkerInput = {
@@ -317,24 +340,70 @@ export type journeyCreateOrConnectWithoutMarkerInput = {
 export type journeyUpsertWithoutMarkerInput = {
   update: Prisma.XOR<Prisma.journeyUpdateWithoutMarkerInput, Prisma.journeyUncheckedUpdateWithoutMarkerInput>
   create: Prisma.XOR<Prisma.journeyCreateWithoutMarkerInput, Prisma.journeyUncheckedCreateWithoutMarkerInput>
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
 }
 
 export type journeyUpdateToOneWithWhereWithoutMarkerInput = {
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   data: Prisma.XOR<Prisma.journeyUpdateWithoutMarkerInput, Prisma.journeyUncheckedUpdateWithoutMarkerInput>
 }
 
 export type journeyUpdateWithoutMarkerInput = {
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.imageUpdateManyWithoutJourneyNestedInput
 }
 
 export type journeyUncheckedUpdateWithoutMarkerInput = {
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  image?: Prisma.imageUncheckedUpdateManyWithoutJourneyNestedInput
+}
+
+export type journeyCreateWithoutImageInput = {
+  journeyId?: string
+  name: string
+  color?: string
+  marker?: Prisma.markerCreateNestedManyWithoutJourneyInput
+}
+
+export type journeyUncheckedCreateWithoutImageInput = {
+  journeyId?: string
+  name: string
+  color?: string
+  marker?: Prisma.markerUncheckedCreateNestedManyWithoutJourneyInput
+}
+
+export type journeyCreateOrConnectWithoutImageInput = {
+  where: Prisma.journeyWhereUniqueInput
+  create: Prisma.XOR<Prisma.journeyCreateWithoutImageInput, Prisma.journeyUncheckedCreateWithoutImageInput>
+}
+
+export type journeyUpsertWithoutImageInput = {
+  update: Prisma.XOR<Prisma.journeyUpdateWithoutImageInput, Prisma.journeyUncheckedUpdateWithoutImageInput>
+  create: Prisma.XOR<Prisma.journeyCreateWithoutImageInput, Prisma.journeyUncheckedCreateWithoutImageInput>
+  where?: Prisma.journeyWhereInput
+}
+
+export type journeyUpdateToOneWithWhereWithoutImageInput = {
+  where?: Prisma.journeyWhereInput
+  data: Prisma.XOR<Prisma.journeyUpdateWithoutImageInput, Prisma.journeyUncheckedUpdateWithoutImageInput>
+}
+
+export type journeyUpdateWithoutImageInput = {
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  marker?: Prisma.markerUpdateManyWithoutJourneyNestedInput
+}
+
+export type journeyUncheckedUpdateWithoutImageInput = {
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  marker?: Prisma.markerUncheckedUpdateManyWithoutJourneyNestedInput
 }
 
 
@@ -344,10 +413,12 @@ export type journeyUncheckedUpdateWithoutMarkerInput = {
 
 export type JourneyCountOutputType = {
   marker: number
+  image: number
 }
 
 export type JourneyCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   marker?: boolean | JourneyCountOutputTypeCountMarkerArgs
+  image?: boolean | JourneyCountOutputTypeCountImageArgs
 }
 
 /**
@@ -364,36 +435,46 @@ export type JourneyCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exte
  * JourneyCountOutputType without action
  */
 export type JourneyCountOutputTypeCountMarkerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
+}
+
+/**
+ * JourneyCountOutputType without action
+ */
+export type JourneyCountOutputTypeCountImageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.imageWhereInput
 }
 
 
 export type journeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  journeyId?: boolean | runtime.Types.Skip
-  name?: boolean | runtime.Types.Skip
-  color?: boolean | runtime.Types.Skip
-  marker?: boolean | Prisma.journey$markerArgs<ExtArgs> | runtime.Types.Skip
-  _count?: boolean | Prisma.JourneyCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
+  journeyId?: boolean
+  name?: boolean
+  color?: boolean
+  marker?: boolean | Prisma.journey$markerArgs<ExtArgs>
+  image?: boolean | Prisma.journey$imageArgs<ExtArgs>
+  _count?: boolean | Prisma.JourneyCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["journey"]>
 
 
 
 export type journeySelectScalar = {
-  journeyId?: boolean | runtime.Types.Skip
-  name?: boolean | runtime.Types.Skip
-  color?: boolean | runtime.Types.Skip
+  journeyId?: boolean
+  name?: boolean
+  color?: boolean
 }
 
-export type journeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"journeyId" | "name" | "color", ExtArgs["result"]["journey"], runtime.Types.Skip>
+export type journeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"journeyId" | "name" | "color", ExtArgs["result"]["journey"]>
 export type journeyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  marker?: boolean | Prisma.journey$markerArgs<ExtArgs> | runtime.Types.Skip
-  _count?: boolean | Prisma.JourneyCountOutputTypeDefaultArgs<ExtArgs> | runtime.Types.Skip
+  marker?: boolean | Prisma.journey$markerArgs<ExtArgs>
+  image?: boolean | Prisma.journey$imageArgs<ExtArgs>
+  _count?: boolean | Prisma.JourneyCountOutputTypeDefaultArgs<ExtArgs>
 }
 
 export type $journeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "journey"
   objects: {
     marker: Prisma.$markerPayload<ExtArgs>[]
+    image: Prisma.$imagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     journeyId: string
@@ -740,6 +821,7 @@ readonly fields: journeyFieldRefs;
 export interface Prisma__journeyClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   marker<T extends Prisma.journey$markerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.journey$markerArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$markerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  image<T extends Prisma.journey$imageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.journey$imageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$imagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -839,37 +921,37 @@ export type journeyFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * Filter, which journey to fetch.
    */
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of journeys to fetch.
    */
-  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the position for searching for journeys.
    */
-  cursor?: Prisma.journeyWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.journeyWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` journeys from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` journeys.
    */
-  skip?: number | runtime.Types.Skip
+  skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
    * 
    * Filter by unique combinations of journeys.
    */
-  distinct?: Prisma.JourneyScalarFieldEnum | Prisma.JourneyScalarFieldEnum[] | runtime.Types.Skip
+  distinct?: Prisma.JourneyScalarFieldEnum | Prisma.JourneyScalarFieldEnum[]
 }
 
 /**
@@ -891,37 +973,37 @@ export type journeyFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions
   /**
    * Filter, which journey to fetch.
    */
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of journeys to fetch.
    */
-  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the position for searching for journeys.
    */
-  cursor?: Prisma.journeyWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.journeyWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` journeys from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` journeys.
    */
-  skip?: number | runtime.Types.Skip
+  skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
    * 
    * Filter by unique combinations of journeys.
    */
-  distinct?: Prisma.JourneyScalarFieldEnum | Prisma.JourneyScalarFieldEnum[] | runtime.Types.Skip
+  distinct?: Prisma.JourneyScalarFieldEnum | Prisma.JourneyScalarFieldEnum[]
 }
 
 /**
@@ -943,32 +1025,32 @@ export type journeyFindManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * Filter, which journeys to fetch.
    */
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of journeys to fetch.
    */
-  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.journeyOrderByWithRelationInput | Prisma.journeyOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the position for listing journeys.
    */
-  cursor?: Prisma.journeyWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.journeyWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` journeys from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` journeys.
    */
-  skip?: number | runtime.Types.Skip
-  distinct?: Prisma.JourneyScalarFieldEnum | Prisma.JourneyScalarFieldEnum[] | runtime.Types.Skip
+  skip?: number
+  distinct?: Prisma.JourneyScalarFieldEnum | Prisma.JourneyScalarFieldEnum[]
 }
 
 /**
@@ -1001,7 +1083,7 @@ export type journeyCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * The data used to create many journeys.
    */
   data: Prisma.journeyCreateManyInput | Prisma.journeyCreateManyInput[]
-  skipDuplicates?: boolean | runtime.Types.Skip
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1041,11 +1123,11 @@ export type journeyUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * Filter which journeys to update
    */
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   /**
    * Limit how many journeys to update.
    */
-  limit?: number | runtime.Types.Skip
+  limit?: number
 }
 
 /**
@@ -1107,11 +1189,11 @@ export type journeyDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
   /**
    * Filter which journeys to delete
    */
-  where?: Prisma.journeyWhereInput | runtime.Types.Skip
+  where?: Prisma.journeyWhereInput
   /**
    * Limit how many journeys to delete.
    */
-  limit?: number | runtime.Types.Skip
+  limit?: number
 }
 
 /**
@@ -1130,12 +1212,36 @@ export type journey$markerArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Choose, which related nodes to fetch as well
    */
   include?: Prisma.markerInclude<ExtArgs> | null
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
-  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[] | runtime.Types.Skip
-  cursor?: Prisma.markerWhereUniqueInput | runtime.Types.Skip
-  take?: number | runtime.Types.Skip
-  skip?: number | runtime.Types.Skip
-  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[] | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
+  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[]
+  cursor?: Prisma.markerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[]
+}
+
+/**
+ * journey.image
+ */
+export type journey$imageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the image
+   */
+  select?: Prisma.imageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the image
+   */
+  omit?: Prisma.imageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.imageInclude<ExtArgs> | null
+  where?: Prisma.imageWhereInput
+  orderBy?: Prisma.imageOrderByWithRelationInput | Prisma.imageOrderByWithRelationInput[]
+  cursor?: Prisma.imageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ImageScalarFieldEnum | Prisma.ImageScalarFieldEnum[]
 }
 
 /**

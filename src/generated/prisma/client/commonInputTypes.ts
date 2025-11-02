@@ -14,177 +14,247 @@ import type * as Prisma from "./internal/prismaNamespace"
 
 
 export type StringFilter<$PrismaModel = never> = {
-  equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: string[] | runtime.Types.Skip
-  notIn?: string[] | runtime.Types.Skip
-  lt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  contains?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  search?: string | runtime.Types.Skip
-  not?: Prisma.NestedStringFilter<$PrismaModel> | string | runtime.Types.Skip
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[]
+  notIn?: string[]
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  contains?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  search?: string
+  not?: Prisma.NestedStringFilter<$PrismaModel> | string
 }
 
 export type StringWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: string[] | runtime.Types.Skip
-  notIn?: string[] | runtime.Types.Skip
-  lt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  contains?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  search?: string | runtime.Types.Skip
-  not?: Prisma.NestedStringWithAggregatesFilter<$PrismaModel> | string | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedStringFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedStringFilter<$PrismaModel> | runtime.Types.Skip
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[]
+  notIn?: string[]
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  contains?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  search?: string
+  not?: Prisma.NestedStringWithAggregatesFilter<$PrismaModel> | string
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedStringFilter<$PrismaModel>
+  _max?: Prisma.NestedStringFilter<$PrismaModel>
 }
 
 export type IntFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedIntFilter<$PrismaModel> | number | runtime.Types.Skip
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntFilter<$PrismaModel> | number
 }
 
 export type FloatFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedFloatFilter<$PrismaModel> | number | runtime.Types.Skip
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatFilter<$PrismaModel> | number
 }
 
 export type IntWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _avg?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _sum?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedIntFilter<$PrismaModel>
+  _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
 export type FloatWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedFloatWithAggregatesFilter<$PrismaModel> | number | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _avg?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _sum?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type FloatNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | null
+  notIn?: number[] | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
+}
+
+export type SortOrderInput = {
+  sort: Prisma.SortOrder
+  nulls?: Prisma.NullsOrder
+}
+
+export type FloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | null
+  notIn?: number[] | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
 }
 
 export type NestedStringFilter<$PrismaModel = never> = {
-  equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: string[] | runtime.Types.Skip
-  notIn?: string[] | runtime.Types.Skip
-  lt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  contains?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  search?: string | runtime.Types.Skip
-  not?: Prisma.NestedStringFilter<$PrismaModel> | string | runtime.Types.Skip
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[]
+  notIn?: string[]
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  contains?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  search?: string
+  not?: Prisma.NestedStringFilter<$PrismaModel> | string
 }
 
 export type NestedStringWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: string[] | runtime.Types.Skip
-  notIn?: string[] | runtime.Types.Skip
-  lt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  contains?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  search?: string | runtime.Types.Skip
-  not?: Prisma.NestedStringWithAggregatesFilter<$PrismaModel> | string | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedStringFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedStringFilter<$PrismaModel> | runtime.Types.Skip
+  equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  in?: string[]
+  notIn?: string[]
+  lt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  lte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gt?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  gte?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  contains?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  startsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  endsWith?: string | Prisma.StringFieldRefInput<$PrismaModel>
+  search?: string
+  not?: Prisma.NestedStringWithAggregatesFilter<$PrismaModel> | string
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedStringFilter<$PrismaModel>
+  _max?: Prisma.NestedStringFilter<$PrismaModel>
 }
 
 export type NestedIntFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedIntFilter<$PrismaModel> | number | runtime.Types.Skip
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntFilter<$PrismaModel> | number
 }
 
 export type NestedFloatFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedFloatFilter<$PrismaModel> | number | runtime.Types.Skip
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatFilter<$PrismaModel> | number
 }
 
 export type NestedIntWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.IntFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _avg?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _sum?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedIntFilter<$PrismaModel>
+  _max?: Prisma.NestedIntFilter<$PrismaModel>
 }
 
 export type NestedFloatWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  in?: number[] | runtime.Types.Skip
-  notIn?: number[] | runtime.Types.Skip
-  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel> | runtime.Types.Skip
-  not?: Prisma.NestedFloatWithAggregatesFilter<$PrismaModel> | number | runtime.Types.Skip
-  _count?: Prisma.NestedIntFilter<$PrismaModel> | runtime.Types.Skip
-  _avg?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _sum?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _min?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
-  _max?: Prisma.NestedFloatFilter<$PrismaModel> | runtime.Types.Skip
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  in?: number[]
+  notIn?: number[]
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatWithAggregatesFilter<$PrismaModel> | number
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatFilter<$PrismaModel>
+}
+
+export type NestedFloatNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | null
+  notIn?: number[] | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableFilter<$PrismaModel> | number | null
+}
+
+export type NestedFloatNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.FloatFieldRefInput<$PrismaModel> | null
+  in?: number[] | null
+  notIn?: number[] | null
+  lt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.FloatFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedFloatNullableWithAggregatesFilter<$PrismaModel> | number | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _avg?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _sum?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedFloatNullableFilter<$PrismaModel>
+}
+
+export type NestedIntNullableFilter<$PrismaModel = never> = {
+  equals?: number | Prisma.IntFieldRefInput<$PrismaModel> | null
+  in?: number[] | null
+  notIn?: number[] | null
+  lt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  lte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gt?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  gte?: number | Prisma.IntFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedIntNullableFilter<$PrismaModel> | number | null
 }
 
 

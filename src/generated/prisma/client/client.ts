@@ -53,3 +53,8 @@ export type journey = Prisma.journeyModel
  * 
  */
 export type marker = Prisma.markerModel
+/**
+ * Model image
+ * 
+ */
+export type image = Prisma.imageModel

@@ -54,11 +54,6 @@ export const Sql = runtime.Sql
 export type Sql = runtime.Sql
 
 
-/**
- * Prisma.skip
- */
-export const skip = runtime.skip
-
 
 /**
  * Decimal.js
@@ -395,7 +390,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   journey: 'journey',
-  marker: 'marker'
+  marker: 'marker',
+  image: 'image'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -411,7 +407,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "journey" | "marker"
+    modelProps: "journey" | "marker" | "image"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -547,6 +543,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    image: {
+      payload: Prisma.$imagePayload<ExtArgs>
+      fields: Prisma.imageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.imageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.imageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>
+        }
+        findFirst: {
+          args: Prisma.imageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.imageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>
+        }
+        findMany: {
+          args: Prisma.imageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>[]
+        }
+        create: {
+          args: Prisma.imageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>
+        }
+        createMany: {
+          args: Prisma.imageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.imageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>
+        }
+        update: {
+          args: Prisma.imageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>
+        }
+        deleteMany: {
+          args: Prisma.imageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.imageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.imageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$imagePayload>
+        }
+        aggregate: {
+          args: Prisma.ImageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateImage>
+        }
+        groupBy: {
+          args: Prisma.imageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ImageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.imageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ImageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -608,6 +670,19 @@ export const MarkerScalarFieldEnum = {
 export type MarkerScalarFieldEnum = (typeof MarkerScalarFieldEnum)[keyof typeof MarkerScalarFieldEnum]
 
 
+export const ImageScalarFieldEnum = {
+  path: 'path',
+  fileName: 'fileName',
+  width: 'width',
+  heigt: 'heigt',
+  lng: 'lng',
+  lat: 'lat',
+  journeyId: 'journeyId'
+} as const
+
+export type ImageScalarFieldEnum = (typeof ImageScalarFieldEnum)[keyof typeof ImageScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -633,6 +708,23 @@ export const markerOrderByRelevanceFieldEnum = {
 } as const
 
 export type markerOrderByRelevanceFieldEnum = (typeof markerOrderByRelevanceFieldEnum)[keyof typeof markerOrderByRelevanceFieldEnum]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const imageOrderByRelevanceFieldEnum = {
+  path: 'path',
+  fileName: 'fileName',
+  journeyId: 'journeyId'
+} as const
+
+export type imageOrderByRelevanceFieldEnum = (typeof imageOrderByRelevanceFieldEnum)[keyof typeof imageOrderByRelevanceFieldEnum]
 
 
 
@@ -750,6 +842,7 @@ export interface PrismaClientOptions {
 export type GlobalOmitConfig = {
   journey?: Prisma.journeyOmit
   marker?: Prisma.markerOmit
+  image?: Prisma.imageOmit
 }
 
 /* Types for Logging */

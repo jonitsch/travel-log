@@ -26,7 +26,7 @@
 <div id="main" class="absolute h-full w-full overflow-hidden p-5">
 	<div class="absolute group text-[11px] m-1 ml-1 top-[65px] w-fit text-transparent z-999999999 cursor-grab">
 			Für Tamina und Joni
-			<text id="heart" class="invisible ml-1 text-red-400 group-hover:visible cursor-pointer">♥</text>
+			<text id="heart" class="invisible ml-0.5 text-red-400 group-hover:visible cursor-pointer">♥</text>
 		</div>
 	<div id="content" class="absolute inset-0 z-0 h-full w-full">
 		{@render children?.()}
@@ -37,7 +37,6 @@
 			</button>
 		<div class="group text-[11px] m-1 ml-1 w-fit text-gray-500">
 			Für Tamina und Joni
-			<text id="heart" class="invisible ml-1 text-red-400 group-hover:visible">♥</text>
 		</div>
 	</div>
 </div>

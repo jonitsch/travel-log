@@ -1,7 +1,6 @@
 generator client {
   provider        = "prisma-client"
   output          = "../src/generated/prisma/client"
-  previewFeatures = ["strictUndefinedChecks"]
   engineType      = "client"
 }
 
@@ -38,8 +37,6 @@ model image {
   heigt     Int
   lng       Float?
   lat       Float?
-  color     String?
   journeyId String
-  nextId    String  @default("default")
   journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
 }

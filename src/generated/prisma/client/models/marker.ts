@@ -70,77 +70,77 @@ export type MarkerCountAggregateOutputType = {
 
 
 export type MarkerAvgAggregateInputType = {
-  id?: true | runtime.Types.Skip
-  lng?: true | runtime.Types.Skip
-  lat?: true | runtime.Types.Skip
+  id?: true
+  lng?: true
+  lat?: true
 }
 
 export type MarkerSumAggregateInputType = {
-  id?: true | runtime.Types.Skip
-  lng?: true | runtime.Types.Skip
-  lat?: true | runtime.Types.Skip
+  id?: true
+  lng?: true
+  lat?: true
 }
 
 export type MarkerMinAggregateInputType = {
-  id?: true | runtime.Types.Skip
-  name?: true | runtime.Types.Skip
-  lng?: true | runtime.Types.Skip
-  lat?: true | runtime.Types.Skip
-  color?: true | runtime.Types.Skip
-  journeyId?: true | runtime.Types.Skip
-  nextId?: true | runtime.Types.Skip
+  id?: true
+  name?: true
+  lng?: true
+  lat?: true
+  color?: true
+  journeyId?: true
+  nextId?: true
 }
 
 export type MarkerMaxAggregateInputType = {
-  id?: true | runtime.Types.Skip
-  name?: true | runtime.Types.Skip
-  lng?: true | runtime.Types.Skip
-  lat?: true | runtime.Types.Skip
-  color?: true | runtime.Types.Skip
-  journeyId?: true | runtime.Types.Skip
-  nextId?: true | runtime.Types.Skip
+  id?: true
+  name?: true
+  lng?: true
+  lat?: true
+  color?: true
+  journeyId?: true
+  nextId?: true
 }
 
 export type MarkerCountAggregateInputType = {
-  id?: true | runtime.Types.Skip
-  name?: true | runtime.Types.Skip
-  lng?: true | runtime.Types.Skip
-  lat?: true | runtime.Types.Skip
-  color?: true | runtime.Types.Skip
-  journeyId?: true | runtime.Types.Skip
-  nextId?: true | runtime.Types.Skip
-  _all?: true | runtime.Types.Skip
+  id?: true
+  name?: true
+  lng?: true
+  lat?: true
+  color?: true
+  journeyId?: true
+  nextId?: true
+  _all?: true
 }
 
 export type MarkerAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Filter which marker to aggregate.
    */
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of markers to fetch.
    */
-  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the start position
    */
-  cursor?: Prisma.markerWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.markerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` markers from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` markers.
    */
-  skip?: number | runtime.Types.Skip
+  skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
@@ -185,12 +185,12 @@ export type GetMarkerAggregateType<T extends MarkerAggregateArgs> = {
 
 
 export type markerGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
-  orderBy?: Prisma.markerOrderByWithAggregationInput | Prisma.markerOrderByWithAggregationInput[] | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
+  orderBy?: Prisma.markerOrderByWithAggregationInput | Prisma.markerOrderByWithAggregationInput[]
   by: Prisma.MarkerScalarFieldEnum[] | Prisma.MarkerScalarFieldEnum
-  having?: Prisma.markerScalarWhereWithAggregatesInput | runtime.Types.Skip
-  take?: number | runtime.Types.Skip
-  skip?: number | runtime.Types.Skip
+  having?: Prisma.markerScalarWhereWithAggregatesInput
+  take?: number
+  skip?: number
   _count?: MarkerCountAggregateInputType | true
   _avg?: MarkerAvgAggregateInputType
   _sum?: MarkerSumAggregateInputType
@@ -229,147 +229,147 @@ type GetMarkerGroupByPayload<T extends markerGroupByArgs> = Prisma.PrismaPromise
 
 
 export type markerWhereInput = {
-  AND?: Prisma.markerWhereInput | Prisma.markerWhereInput[] | runtime.Types.Skip
-  OR?: Prisma.markerWhereInput[] | runtime.Types.Skip
-  NOT?: Prisma.markerWhereInput | Prisma.markerWhereInput[] | runtime.Types.Skip
-  id?: Prisma.IntFilter<"marker"> | number | runtime.Types.Skip
-  name?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  lng?: Prisma.FloatFilter<"marker"> | number | runtime.Types.Skip
-  lat?: Prisma.FloatFilter<"marker"> | number | runtime.Types.Skip
-  color?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  journeyId?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  nextId?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  journey?: Prisma.XOR<Prisma.JourneyScalarRelationFilter, Prisma.journeyWhereInput> | runtime.Types.Skip
+  AND?: Prisma.markerWhereInput | Prisma.markerWhereInput[]
+  OR?: Prisma.markerWhereInput[]
+  NOT?: Prisma.markerWhereInput | Prisma.markerWhereInput[]
+  id?: Prisma.IntFilter<"marker"> | number
+  name?: Prisma.StringFilter<"marker"> | string
+  lng?: Prisma.FloatFilter<"marker"> | number
+  lat?: Prisma.FloatFilter<"marker"> | number
+  color?: Prisma.StringFilter<"marker"> | string
+  journeyId?: Prisma.StringFilter<"marker"> | string
+  nextId?: Prisma.StringFilter<"marker"> | string
+  journey?: Prisma.XOR<Prisma.JourneyScalarRelationFilter, Prisma.journeyWhereInput>
 }
 
 export type markerOrderByWithRelationInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  nextId?: Prisma.SortOrder | runtime.Types.Skip
-  journey?: Prisma.journeyOrderByWithRelationInput | runtime.Types.Skip
-  _relevance?: Prisma.markerOrderByRelevanceInput | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  journeyId?: Prisma.SortOrder
+  nextId?: Prisma.SortOrder
+  journey?: Prisma.journeyOrderByWithRelationInput
+  _relevance?: Prisma.markerOrderByRelevanceInput
 }
 
 export type markerWhereUniqueInput = Prisma.AtLeast<{
-  id?: number | runtime.Types.Skip
-  AND?: Prisma.markerWhereInput | Prisma.markerWhereInput[] | runtime.Types.Skip
-  OR?: Prisma.markerWhereInput[] | runtime.Types.Skip
-  NOT?: Prisma.markerWhereInput | Prisma.markerWhereInput[] | runtime.Types.Skip
-  name?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  lng?: Prisma.FloatFilter<"marker"> | number | runtime.Types.Skip
-  lat?: Prisma.FloatFilter<"marker"> | number | runtime.Types.Skip
-  color?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  journeyId?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  nextId?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  journey?: Prisma.XOR<Prisma.JourneyScalarRelationFilter, Prisma.journeyWhereInput> | runtime.Types.Skip
+  id?: number
+  AND?: Prisma.markerWhereInput | Prisma.markerWhereInput[]
+  OR?: Prisma.markerWhereInput[]
+  NOT?: Prisma.markerWhereInput | Prisma.markerWhereInput[]
+  name?: Prisma.StringFilter<"marker"> | string
+  lng?: Prisma.FloatFilter<"marker"> | number
+  lat?: Prisma.FloatFilter<"marker"> | number
+  color?: Prisma.StringFilter<"marker"> | string
+  journeyId?: Prisma.StringFilter<"marker"> | string
+  nextId?: Prisma.StringFilter<"marker"> | string
+  journey?: Prisma.XOR<Prisma.JourneyScalarRelationFilter, Prisma.journeyWhereInput>
 }, "id">
 
 export type markerOrderByWithAggregationInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  nextId?: Prisma.SortOrder | runtime.Types.Skip
-  _count?: Prisma.markerCountOrderByAggregateInput | runtime.Types.Skip
-  _avg?: Prisma.markerAvgOrderByAggregateInput | runtime.Types.Skip
-  _max?: Prisma.markerMaxOrderByAggregateInput | runtime.Types.Skip
-  _min?: Prisma.markerMinOrderByAggregateInput | runtime.Types.Skip
-  _sum?: Prisma.markerSumOrderByAggregateInput | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  journeyId?: Prisma.SortOrder
+  nextId?: Prisma.SortOrder
+  _count?: Prisma.markerCountOrderByAggregateInput
+  _avg?: Prisma.markerAvgOrderByAggregateInput
+  _max?: Prisma.markerMaxOrderByAggregateInput
+  _min?: Prisma.markerMinOrderByAggregateInput
+  _sum?: Prisma.markerSumOrderByAggregateInput
 }
 
 export type markerScalarWhereWithAggregatesInput = {
-  AND?: Prisma.markerScalarWhereWithAggregatesInput | Prisma.markerScalarWhereWithAggregatesInput[] | runtime.Types.Skip
-  OR?: Prisma.markerScalarWhereWithAggregatesInput[] | runtime.Types.Skip
-  NOT?: Prisma.markerScalarWhereWithAggregatesInput | Prisma.markerScalarWhereWithAggregatesInput[] | runtime.Types.Skip
-  id?: Prisma.IntWithAggregatesFilter<"marker"> | number | runtime.Types.Skip
-  name?: Prisma.StringWithAggregatesFilter<"marker"> | string | runtime.Types.Skip
-  lng?: Prisma.FloatWithAggregatesFilter<"marker"> | number | runtime.Types.Skip
-  lat?: Prisma.FloatWithAggregatesFilter<"marker"> | number | runtime.Types.Skip
-  color?: Prisma.StringWithAggregatesFilter<"marker"> | string | runtime.Types.Skip
-  journeyId?: Prisma.StringWithAggregatesFilter<"marker"> | string | runtime.Types.Skip
-  nextId?: Prisma.StringWithAggregatesFilter<"marker"> | string | runtime.Types.Skip
+  AND?: Prisma.markerScalarWhereWithAggregatesInput | Prisma.markerScalarWhereWithAggregatesInput[]
+  OR?: Prisma.markerScalarWhereWithAggregatesInput[]
+  NOT?: Prisma.markerScalarWhereWithAggregatesInput | Prisma.markerScalarWhereWithAggregatesInput[]
+  id?: Prisma.IntWithAggregatesFilter<"marker"> | number
+  name?: Prisma.StringWithAggregatesFilter<"marker"> | string
+  lng?: Prisma.FloatWithAggregatesFilter<"marker"> | number
+  lat?: Prisma.FloatWithAggregatesFilter<"marker"> | number
+  color?: Prisma.StringWithAggregatesFilter<"marker"> | string
+  journeyId?: Prisma.StringWithAggregatesFilter<"marker"> | string
+  nextId?: Prisma.StringWithAggregatesFilter<"marker"> | string
 }
 
 export type markerCreateInput = {
   name: string
   lng: number
   lat: number
-  color?: string | runtime.Types.Skip
-  nextId?: string | runtime.Types.Skip
+  color?: string
+  nextId?: string
   journey: Prisma.journeyCreateNestedOneWithoutMarkerInput
 }
 
 export type markerUncheckedCreateInput = {
-  id?: number | runtime.Types.Skip
+  id?: number
   name: string
   lng: number
   lat: number
-  color?: string | runtime.Types.Skip
+  color?: string
   journeyId: string
-  nextId?: string | runtime.Types.Skip
+  nextId?: string
 }
 
 export type markerUpdateInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  journey?: Prisma.journeyUpdateOneRequiredWithoutMarkerNestedInput | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
+  journey?: Prisma.journeyUpdateOneRequiredWithoutMarkerNestedInput
 }
 
 export type markerUncheckedUpdateInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerCreateManyInput = {
-  id?: number | runtime.Types.Skip
+  id?: number
   name: string
   lng: number
   lat: number
-  color?: string | runtime.Types.Skip
+  color?: string
   journeyId: string
-  nextId?: string | runtime.Types.Skip
+  nextId?: string
 }
 
 export type markerUpdateManyMutationInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerUncheckedUpdateManyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  journeyId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  journeyId?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type MarkerListRelationFilter = {
-  every?: Prisma.markerWhereInput | runtime.Types.Skip
-  some?: Prisma.markerWhereInput | runtime.Types.Skip
-  none?: Prisma.markerWhereInput | runtime.Types.Skip
+  every?: Prisma.markerWhereInput
+  some?: Prisma.markerWhereInput
+  none?: Prisma.markerWhereInput
 }
 
 export type markerOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder | runtime.Types.Skip
+  _count?: Prisma.SortOrder
 }
 
 export type markerOrderByRelevanceInput = {
@@ -379,120 +379,120 @@ export type markerOrderByRelevanceInput = {
 }
 
 export type markerCountOrderByAggregateInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  nextId?: Prisma.SortOrder | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  journeyId?: Prisma.SortOrder
+  nextId?: Prisma.SortOrder
 }
 
 export type markerAvgOrderByAggregateInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
 }
 
 export type markerMaxOrderByAggregateInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  nextId?: Prisma.SortOrder | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  journeyId?: Prisma.SortOrder
+  nextId?: Prisma.SortOrder
 }
 
 export type markerMinOrderByAggregateInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  name?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
-  color?: Prisma.SortOrder | runtime.Types.Skip
-  journeyId?: Prisma.SortOrder | runtime.Types.Skip
-  nextId?: Prisma.SortOrder | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+  color?: Prisma.SortOrder
+  journeyId?: Prisma.SortOrder
+  nextId?: Prisma.SortOrder
 }
 
 export type markerSumOrderByAggregateInput = {
-  id?: Prisma.SortOrder | runtime.Types.Skip
-  lng?: Prisma.SortOrder | runtime.Types.Skip
-  lat?: Prisma.SortOrder | runtime.Types.Skip
+  id?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
 }
 
 export type markerCreateNestedManyWithoutJourneyInput = {
-  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[] | runtime.Types.Skip
-  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[] | runtime.Types.Skip
-  createMany?: Prisma.markerCreateManyJourneyInputEnvelope | runtime.Types.Skip
-  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
+  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[]
+  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[]
+  createMany?: Prisma.markerCreateManyJourneyInputEnvelope
+  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
 }
 
 export type markerUncheckedCreateNestedManyWithoutJourneyInput = {
-  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[] | runtime.Types.Skip
-  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[] | runtime.Types.Skip
-  createMany?: Prisma.markerCreateManyJourneyInputEnvelope | runtime.Types.Skip
-  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
+  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[]
+  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[]
+  createMany?: Prisma.markerCreateManyJourneyInputEnvelope
+  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
 }
 
 export type markerUpdateManyWithoutJourneyNestedInput = {
-  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[] | runtime.Types.Skip
-  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[] | runtime.Types.Skip
-  upsert?: Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput | Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput[] | runtime.Types.Skip
-  createMany?: Prisma.markerCreateManyJourneyInputEnvelope | runtime.Types.Skip
-  set?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  disconnect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  delete?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  update?: Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput | Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput[] | runtime.Types.Skip
-  updateMany?: Prisma.markerUpdateManyWithWhereWithoutJourneyInput | Prisma.markerUpdateManyWithWhereWithoutJourneyInput[] | runtime.Types.Skip
-  deleteMany?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[] | runtime.Types.Skip
+  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[]
+  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[]
+  upsert?: Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput | Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput[]
+  createMany?: Prisma.markerCreateManyJourneyInputEnvelope
+  set?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  disconnect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  delete?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  update?: Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput | Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput[]
+  updateMany?: Prisma.markerUpdateManyWithWhereWithoutJourneyInput | Prisma.markerUpdateManyWithWhereWithoutJourneyInput[]
+  deleteMany?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[]
 }
 
 export type markerUncheckedUpdateManyWithoutJourneyNestedInput = {
-  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[] | runtime.Types.Skip
-  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[] | runtime.Types.Skip
-  upsert?: Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput | Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput[] | runtime.Types.Skip
-  createMany?: Prisma.markerCreateManyJourneyInputEnvelope | runtime.Types.Skip
-  set?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  disconnect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  delete?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[] | runtime.Types.Skip
-  update?: Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput | Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput[] | runtime.Types.Skip
-  updateMany?: Prisma.markerUpdateManyWithWhereWithoutJourneyInput | Prisma.markerUpdateManyWithWhereWithoutJourneyInput[] | runtime.Types.Skip
-  deleteMany?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[] | runtime.Types.Skip
+  create?: Prisma.XOR<Prisma.markerCreateWithoutJourneyInput, Prisma.markerUncheckedCreateWithoutJourneyInput> | Prisma.markerCreateWithoutJourneyInput[] | Prisma.markerUncheckedCreateWithoutJourneyInput[]
+  connectOrCreate?: Prisma.markerCreateOrConnectWithoutJourneyInput | Prisma.markerCreateOrConnectWithoutJourneyInput[]
+  upsert?: Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput | Prisma.markerUpsertWithWhereUniqueWithoutJourneyInput[]
+  createMany?: Prisma.markerCreateManyJourneyInputEnvelope
+  set?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  disconnect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  delete?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  connect?: Prisma.markerWhereUniqueInput | Prisma.markerWhereUniqueInput[]
+  update?: Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput | Prisma.markerUpdateWithWhereUniqueWithoutJourneyInput[]
+  updateMany?: Prisma.markerUpdateManyWithWhereWithoutJourneyInput | Prisma.markerUpdateManyWithWhereWithoutJourneyInput[]
+  deleteMany?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[]
 }
 
 export type FloatFieldUpdateOperationsInput = {
-  set?: number | runtime.Types.Skip
-  increment?: number | runtime.Types.Skip
-  decrement?: number | runtime.Types.Skip
-  multiply?: number | runtime.Types.Skip
-  divide?: number | runtime.Types.Skip
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type IntFieldUpdateOperationsInput = {
-  set?: number | runtime.Types.Skip
-  increment?: number | runtime.Types.Skip
-  decrement?: number | runtime.Types.Skip
-  multiply?: number | runtime.Types.Skip
-  divide?: number | runtime.Types.Skip
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type markerCreateWithoutJourneyInput = {
   name: string
   lng: number
   lat: number
-  color?: string | runtime.Types.Skip
-  nextId?: string | runtime.Types.Skip
+  color?: string
+  nextId?: string
 }
 
 export type markerUncheckedCreateWithoutJourneyInput = {
-  id?: number | runtime.Types.Skip
+  id?: number
   name: string
   lng: number
   lat: number
-  color?: string | runtime.Types.Skip
-  nextId?: string | runtime.Types.Skip
+  color?: string
+  nextId?: string
 }
 
 export type markerCreateOrConnectWithoutJourneyInput = {
@@ -502,7 +502,7 @@ export type markerCreateOrConnectWithoutJourneyInput = {
 
 export type markerCreateManyJourneyInputEnvelope = {
   data: Prisma.markerCreateManyJourneyInput | Prisma.markerCreateManyJourneyInput[]
-  skipDuplicates?: boolean | runtime.Types.Skip
+  skipDuplicates?: boolean
 }
 
 export type markerUpsertWithWhereUniqueWithoutJourneyInput = {
@@ -522,81 +522,81 @@ export type markerUpdateManyWithWhereWithoutJourneyInput = {
 }
 
 export type markerScalarWhereInput = {
-  AND?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[] | runtime.Types.Skip
-  OR?: Prisma.markerScalarWhereInput[] | runtime.Types.Skip
-  NOT?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[] | runtime.Types.Skip
-  id?: Prisma.IntFilter<"marker"> | number | runtime.Types.Skip
-  name?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  lng?: Prisma.FloatFilter<"marker"> | number | runtime.Types.Skip
-  lat?: Prisma.FloatFilter<"marker"> | number | runtime.Types.Skip
-  color?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  journeyId?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
-  nextId?: Prisma.StringFilter<"marker"> | string | runtime.Types.Skip
+  AND?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[]
+  OR?: Prisma.markerScalarWhereInput[]
+  NOT?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[]
+  id?: Prisma.IntFilter<"marker"> | number
+  name?: Prisma.StringFilter<"marker"> | string
+  lng?: Prisma.FloatFilter<"marker"> | number
+  lat?: Prisma.FloatFilter<"marker"> | number
+  color?: Prisma.StringFilter<"marker"> | string
+  journeyId?: Prisma.StringFilter<"marker"> | string
+  nextId?: Prisma.StringFilter<"marker"> | string
 }
 
 export type markerCreateManyJourneyInput = {
-  id?: number | runtime.Types.Skip
+  id?: number
   name: string
   lng: number
   lat: number
-  color?: string | runtime.Types.Skip
-  nextId?: string | runtime.Types.Skip
+  color?: string
+  nextId?: string
 }
 
 export type markerUpdateWithoutJourneyInput = {
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerUncheckedUpdateWithoutJourneyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerUncheckedUpdateManyWithoutJourneyInput = {
-  id?: Prisma.IntFieldUpdateOperationsInput | number | runtime.Types.Skip
-  name?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  lng?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  lat?: Prisma.FloatFieldUpdateOperationsInput | number | runtime.Types.Skip
-  color?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string | runtime.Types.Skip
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
+  color?: Prisma.StringFieldUpdateOperationsInput | string
+  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
 
 export type markerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean | runtime.Types.Skip
-  name?: boolean | runtime.Types.Skip
-  lng?: boolean | runtime.Types.Skip
-  lat?: boolean | runtime.Types.Skip
-  color?: boolean | runtime.Types.Skip
-  journeyId?: boolean | runtime.Types.Skip
-  nextId?: boolean | runtime.Types.Skip
-  journey?: boolean | Prisma.journeyDefaultArgs<ExtArgs> | runtime.Types.Skip
+  id?: boolean
+  name?: boolean
+  lng?: boolean
+  lat?: boolean
+  color?: boolean
+  journeyId?: boolean
+  nextId?: boolean
+  journey?: boolean | Prisma.journeyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["marker"]>
 
 
 
 export type markerSelectScalar = {
-  id?: boolean | runtime.Types.Skip
-  name?: boolean | runtime.Types.Skip
-  lng?: boolean | runtime.Types.Skip
-  lat?: boolean | runtime.Types.Skip
-  color?: boolean | runtime.Types.Skip
-  journeyId?: boolean | runtime.Types.Skip
-  nextId?: boolean | runtime.Types.Skip
+  id?: boolean
+  name?: boolean
+  lng?: boolean
+  lat?: boolean
+  color?: boolean
+  journeyId?: boolean
+  nextId?: boolean
 }
 
-export type markerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lng" | "lat" | "color" | "journeyId" | "nextId", ExtArgs["result"]["marker"], runtime.Types.Skip>
+export type markerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lng" | "lat" | "color" | "journeyId" | "nextId", ExtArgs["result"]["marker"]>
 export type markerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  journey?: boolean | Prisma.journeyDefaultArgs<ExtArgs> | runtime.Types.Skip
+  journey?: boolean | Prisma.journeyDefaultArgs<ExtArgs>
 }
 
 export type $markerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1056,37 +1056,37 @@ export type markerFindFirstArgs<ExtArgs extends runtime.Types.Extensions.Interna
   /**
    * Filter, which marker to fetch.
    */
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of markers to fetch.
    */
-  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the position for searching for markers.
    */
-  cursor?: Prisma.markerWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.markerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` markers from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` markers.
    */
-  skip?: number | runtime.Types.Skip
+  skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
    * 
    * Filter by unique combinations of markers.
    */
-  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[] | runtime.Types.Skip
+  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[]
 }
 
 /**
@@ -1108,37 +1108,37 @@ export type markerFindFirstOrThrowArgs<ExtArgs extends runtime.Types.Extensions.
   /**
    * Filter, which marker to fetch.
    */
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of markers to fetch.
    */
-  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the position for searching for markers.
    */
-  cursor?: Prisma.markerWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.markerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` markers from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` markers.
    */
-  skip?: number | runtime.Types.Skip
+  skip?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
    * 
    * Filter by unique combinations of markers.
    */
-  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[] | runtime.Types.Skip
+  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[]
 }
 
 /**
@@ -1160,32 +1160,32 @@ export type markerFindManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
   /**
    * Filter, which markers to fetch.
    */
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
    * 
    * Determine the order of markers to fetch.
    */
-  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[] | runtime.Types.Skip
+  orderBy?: Prisma.markerOrderByWithRelationInput | Prisma.markerOrderByWithRelationInput[]
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
    * 
    * Sets the position for listing markers.
    */
-  cursor?: Prisma.markerWhereUniqueInput | runtime.Types.Skip
+  cursor?: Prisma.markerWhereUniqueInput
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Take `±n` markers from the position of the cursor.
    */
-  take?: number | runtime.Types.Skip
+  take?: number
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
    * 
    * Skip the first `n` markers.
    */
-  skip?: number | runtime.Types.Skip
-  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[] | runtime.Types.Skip
+  skip?: number
+  distinct?: Prisma.MarkerScalarFieldEnum | Prisma.MarkerScalarFieldEnum[]
 }
 
 /**
@@ -1218,7 +1218,7 @@ export type markerCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
    * The data used to create many markers.
    */
   data: Prisma.markerCreateManyInput | Prisma.markerCreateManyInput[]
-  skipDuplicates?: boolean | runtime.Types.Skip
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1258,11 +1258,11 @@ export type markerUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * Filter which markers to update
    */
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
   /**
    * Limit how many markers to update.
    */
-  limit?: number | runtime.Types.Skip
+  limit?: number
 }
 
 /**
@@ -1324,11 +1324,11 @@ export type markerDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * Filter which markers to delete
    */
-  where?: Prisma.markerWhereInput | runtime.Types.Skip
+  where?: Prisma.markerWhereInput
   /**
    * Limit how many markers to delete.
    */
-  limit?: number | runtime.Types.Skip
+  limit?: number
 }
 
 /**

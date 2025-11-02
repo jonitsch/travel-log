@@ -49,7 +49,8 @@ export const AnyNull = runtime.objectEnumValues.instances.AnyNull
 
 export const ModelName = {
   journey: 'journey',
-  marker: 'marker'
+  marker: 'marker',
+  image: 'image'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -90,6 +91,19 @@ export const MarkerScalarFieldEnum = {
 export type MarkerScalarFieldEnum = (typeof MarkerScalarFieldEnum)[keyof typeof MarkerScalarFieldEnum]
 
 
+export const ImageScalarFieldEnum = {
+  path: 'path',
+  fileName: 'fileName',
+  width: 'width',
+  heigt: 'heigt',
+  lng: 'lng',
+  lat: 'lat',
+  journeyId: 'journeyId'
+} as const
+
+export type ImageScalarFieldEnum = (typeof ImageScalarFieldEnum)[keyof typeof ImageScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -115,4 +129,21 @@ export const markerOrderByRelevanceFieldEnum = {
 } as const
 
 export type markerOrderByRelevanceFieldEnum = (typeof markerOrderByRelevanceFieldEnum)[keyof typeof markerOrderByRelevanceFieldEnum]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const imageOrderByRelevanceFieldEnum = {
+  path: 'path',
+  fileName: 'fileName',
+  journeyId: 'journeyId'
+} as const
+
+export type imageOrderByRelevanceFieldEnum = (typeof imageOrderByRelevanceFieldEnum)[keyof typeof imageOrderByRelevanceFieldEnum]
 

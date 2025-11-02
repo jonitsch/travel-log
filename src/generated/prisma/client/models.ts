@@ -9,4 +9,5 @@
  */
 export type * from './models/journey'
 export type * from './models/marker'
+export type * from './models/image'
 export type * from './commonInputTypes'

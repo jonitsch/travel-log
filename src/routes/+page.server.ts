@@ -1,13 +1,16 @@
 import type { PageServerLoad, Actions } from './$types';
-import fs from "fs";
-import path from "path";
 import { createRequire } from 'module';
 import { prisma } from '$lib/server/database';
-import { getMarkers } from '$lib/server/database';
-import { fileTypeFromFile } from 'file-type';
 const require = createRequire(import.meta.url);
 
 export const load = (async () => {
+    const journeys = await prisma.journey.findMany({
+        select: {
+            marker: true,
+            image: true
+        }
+    })
+    return { journeys };
 }) satisfies PageServerLoad;
 
 async function filterAndConvertHEIC(files: string[]) {
