@@ -5,7 +5,6 @@ import path from "path";
 import { fileTypeFromFile } from 'file-type';
 import exifr from 'exifr';
 import convert from 'heic-convert';
-import { promisify } from 'util';
 
 export async function GET(dir) {
     let dirString = dir.url.search.split('=')[1]
@@ -24,6 +23,7 @@ export async function GET(dir) {
             let fullPath = path.join(entry.parentPath, entry.name);
             let fileType = await fileTypeFromFile(fullPath);
             if (fileType) {
+                let fullPathExt = path.join(fullPath, fileType.ext)
                 if (fileType.mime.includes('image') && fileType.ext != 'heic') {
                     if (await exifr.gps(fullPath)) {
                         let { latitude, longitude } = await exifr.gps(fullPath)
