@@ -19,46 +19,80 @@ export type journeyModel = runtime.Types.Result.DefaultSelection<Prisma.$journey
 
 export type AggregateJourney = {
   _count: JourneyCountAggregateOutputType | null
+  _avg: JourneyAvgAggregateOutputType | null
+  _sum: JourneySumAggregateOutputType | null
   _min: JourneyMinAggregateOutputType | null
   _max: JourneyMaxAggregateOutputType | null
+}
+
+export type JourneyAvgAggregateOutputType = {
+  lng: number | null
+  lat: number | null
+}
+
+export type JourneySumAggregateOutputType = {
+  lng: number | null
+  lat: number | null
 }
 
 export type JourneyMinAggregateOutputType = {
   journeyId: string | null
   name: string | null
   color: string | null
+  lng: number | null
+  lat: number | null
 }
 
 export type JourneyMaxAggregateOutputType = {
   journeyId: string | null
   name: string | null
   color: string | null
+  lng: number | null
+  lat: number | null
 }
 
 export type JourneyCountAggregateOutputType = {
   journeyId: number
   name: number
   color: number
+  lng: number
+  lat: number
   _all: number
 }
 
+
+export type JourneyAvgAggregateInputType = {
+  lng?: true
+  lat?: true
+}
+
+export type JourneySumAggregateInputType = {
+  lng?: true
+  lat?: true
+}
 
 export type JourneyMinAggregateInputType = {
   journeyId?: true
   name?: true
   color?: true
+  lng?: true
+  lat?: true
 }
 
 export type JourneyMaxAggregateInputType = {
   journeyId?: true
   name?: true
   color?: true
+  lng?: true
+  lat?: true
 }
 
 export type JourneyCountAggregateInputType = {
   journeyId?: true
   name?: true
   color?: true
+  lng?: true
+  lat?: true
   _all?: true
 }
 
@@ -100,6 +134,18 @@ export type JourneyAggregateArgs<ExtArgs extends runtime.Types.Extensions.Intern
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: JourneyAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: JourneySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: JourneyMinAggregateInputType
@@ -130,6 +176,8 @@ export type journeyGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   _count?: JourneyCountAggregateInputType | true
+  _avg?: JourneyAvgAggregateInputType
+  _sum?: JourneySumAggregateInputType
   _min?: JourneyMinAggregateInputType
   _max?: JourneyMaxAggregateInputType
 }
@@ -138,7 +186,11 @@ export type JourneyGroupByOutputType = {
   journeyId: string
   name: string
   color: string
+  lng: number
+  lat: number
   _count: JourneyCountAggregateOutputType | null
+  _avg: JourneyAvgAggregateOutputType | null
+  _sum: JourneySumAggregateOutputType | null
   _min: JourneyMinAggregateOutputType | null
   _max: JourneyMaxAggregateOutputType | null
 }
@@ -165,6 +217,8 @@ export type journeyWhereInput = {
   journeyId?: Prisma.StringFilter<"journey"> | string
   name?: Prisma.StringFilter<"journey"> | string
   color?: Prisma.StringFilter<"journey"> | string
+  lng?: Prisma.FloatFilter<"journey"> | number
+  lat?: Prisma.FloatFilter<"journey"> | number
   marker?: Prisma.MarkerListRelationFilter
   image?: Prisma.ImageListRelationFilter
 }
@@ -173,6 +227,8 @@ export type journeyOrderByWithRelationInput = {
   journeyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
   marker?: Prisma.markerOrderByRelationAggregateInput
   image?: Prisma.imageOrderByRelationAggregateInput
   _relevance?: Prisma.journeyOrderByRelevanceInput
@@ -185,6 +241,8 @@ export type journeyWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.journeyWhereInput | Prisma.journeyWhereInput[]
   name?: Prisma.StringFilter<"journey"> | string
   color?: Prisma.StringFilter<"journey"> | string
+  lng?: Prisma.FloatFilter<"journey"> | number
+  lat?: Prisma.FloatFilter<"journey"> | number
   marker?: Prisma.MarkerListRelationFilter
   image?: Prisma.ImageListRelationFilter
 }, "journeyId">
@@ -193,9 +251,13 @@ export type journeyOrderByWithAggregationInput = {
   journeyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
   _count?: Prisma.journeyCountOrderByAggregateInput
+  _avg?: Prisma.journeyAvgOrderByAggregateInput
   _max?: Prisma.journeyMaxOrderByAggregateInput
   _min?: Prisma.journeyMinOrderByAggregateInput
+  _sum?: Prisma.journeySumOrderByAggregateInput
 }
 
 export type journeyScalarWhereWithAggregatesInput = {
@@ -205,12 +267,16 @@ export type journeyScalarWhereWithAggregatesInput = {
   journeyId?: Prisma.StringWithAggregatesFilter<"journey"> | string
   name?: Prisma.StringWithAggregatesFilter<"journey"> | string
   color?: Prisma.StringWithAggregatesFilter<"journey"> | string
+  lng?: Prisma.FloatWithAggregatesFilter<"journey"> | number
+  lat?: Prisma.FloatWithAggregatesFilter<"journey"> | number
 }
 
 export type journeyCreateInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
   marker?: Prisma.markerCreateNestedManyWithoutJourneyInput
   image?: Prisma.imageCreateNestedManyWithoutJourneyInput
 }
@@ -219,6 +285,8 @@ export type journeyUncheckedCreateInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
   marker?: Prisma.markerUncheckedCreateNestedManyWithoutJourneyInput
   image?: Prisma.imageUncheckedCreateNestedManyWithoutJourneyInput
 }
@@ -227,6 +295,8 @@ export type journeyUpdateInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
   marker?: Prisma.markerUpdateManyWithoutJourneyNestedInput
   image?: Prisma.imageUpdateManyWithoutJourneyNestedInput
 }
@@ -235,6 +305,8 @@ export type journeyUncheckedUpdateInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
   marker?: Prisma.markerUncheckedUpdateManyWithoutJourneyNestedInput
   image?: Prisma.imageUncheckedUpdateManyWithoutJourneyNestedInput
 }
@@ -243,18 +315,24 @@ export type journeyCreateManyInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
 }
 
 export type journeyUpdateManyMutationInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type journeyUncheckedUpdateManyInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type journeyOrderByRelevanceInput = {
@@ -267,18 +345,34 @@ export type journeyCountOrderByAggregateInput = {
   journeyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+}
+
+export type journeyAvgOrderByAggregateInput = {
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
 }
 
 export type journeyMaxOrderByAggregateInput = {
   journeyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
 }
 
 export type journeyMinOrderByAggregateInput = {
   journeyId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   color?: Prisma.SortOrder
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
+}
+
+export type journeySumOrderByAggregateInput = {
+  lng?: Prisma.SortOrder
+  lat?: Prisma.SortOrder
 }
 
 export type JourneyScalarRelationFilter = {
@@ -288,6 +382,14 @@ export type JourneyScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type journeyCreateNestedOneWithoutMarkerInput = {
@@ -322,6 +424,8 @@ export type journeyCreateWithoutMarkerInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
   image?: Prisma.imageCreateNestedManyWithoutJourneyInput
 }
 
@@ -329,6 +433,8 @@ export type journeyUncheckedCreateWithoutMarkerInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
   image?: Prisma.imageUncheckedCreateNestedManyWithoutJourneyInput
 }
 
@@ -352,6 +458,8 @@ export type journeyUpdateWithoutMarkerInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
   image?: Prisma.imageUpdateManyWithoutJourneyNestedInput
 }
 
@@ -359,6 +467,8 @@ export type journeyUncheckedUpdateWithoutMarkerInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
   image?: Prisma.imageUncheckedUpdateManyWithoutJourneyNestedInput
 }
 
@@ -366,6 +476,8 @@ export type journeyCreateWithoutImageInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
   marker?: Prisma.markerCreateNestedManyWithoutJourneyInput
 }
 
@@ -373,6 +485,8 @@ export type journeyUncheckedCreateWithoutImageInput = {
   journeyId?: string
   name: string
   color?: string
+  lng?: number
+  lat?: number
   marker?: Prisma.markerUncheckedCreateNestedManyWithoutJourneyInput
 }
 
@@ -396,6 +510,8 @@ export type journeyUpdateWithoutImageInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
   marker?: Prisma.markerUpdateManyWithoutJourneyNestedInput
 }
 
@@ -403,6 +519,8 @@ export type journeyUncheckedUpdateWithoutImageInput = {
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   color?: Prisma.StringFieldUpdateOperationsInput | string
+  lng?: Prisma.FloatFieldUpdateOperationsInput | number
+  lat?: Prisma.FloatFieldUpdateOperationsInput | number
   marker?: Prisma.markerUncheckedUpdateManyWithoutJourneyNestedInput
 }
 
@@ -450,6 +568,8 @@ export type journeySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   journeyId?: boolean
   name?: boolean
   color?: boolean
+  lng?: boolean
+  lat?: boolean
   marker?: boolean | Prisma.journey$markerArgs<ExtArgs>
   image?: boolean | Prisma.journey$imageArgs<ExtArgs>
   _count?: boolean | Prisma.JourneyCountOutputTypeDefaultArgs<ExtArgs>
@@ -461,9 +581,11 @@ export type journeySelectScalar = {
   journeyId?: boolean
   name?: boolean
   color?: boolean
+  lng?: boolean
+  lat?: boolean
 }
 
-export type journeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"journeyId" | "name" | "color", ExtArgs["result"]["journey"]>
+export type journeyOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"journeyId" | "name" | "color" | "lng" | "lat", ExtArgs["result"]["journey"]>
 export type journeyInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   marker?: boolean | Prisma.journey$markerArgs<ExtArgs>
   image?: boolean | Prisma.journey$imageArgs<ExtArgs>
@@ -480,6 +602,8 @@ export type $journeyPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     journeyId: string
     name: string
     color: string
+    lng: number
+    lat: number
   }, ExtArgs["result"]["journey"]>
   composites: {}
 }
@@ -854,6 +978,8 @@ export interface journeyFieldRefs {
   readonly journeyId: Prisma.FieldRef<"journey", 'String'>
   readonly name: Prisma.FieldRef<"journey", 'String'>
   readonly color: Prisma.FieldRef<"journey", 'String'>
+  readonly lng: Prisma.FieldRef<"journey", 'Float'>
+  readonly lat: Prisma.FieldRef<"journey", 'Float'>
 }
     
 

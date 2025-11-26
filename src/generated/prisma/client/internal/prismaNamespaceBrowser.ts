@@ -72,7 +72,9 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const JourneyScalarFieldEnum = {
   journeyId: 'journeyId',
   name: 'name',
-  color: 'color'
+  color: 'color',
+  lng: 'lng',
+  lat: 'lat'
 } as const
 
 export type JourneyScalarFieldEnum = (typeof JourneyScalarFieldEnum)[keyof typeof JourneyScalarFieldEnum]
@@ -84,8 +86,7 @@ export const MarkerScalarFieldEnum = {
   lng: 'lng',
   lat: 'lat',
   color: 'color',
-  journeyId: 'journeyId',
-  nextId: 'nextId'
+  journeyId: 'journeyId'
 } as const
 
 export type MarkerScalarFieldEnum = (typeof MarkerScalarFieldEnum)[keyof typeof MarkerScalarFieldEnum]
@@ -124,8 +125,7 @@ export type journeyOrderByRelevanceFieldEnum = (typeof journeyOrderByRelevanceFi
 export const markerOrderByRelevanceFieldEnum = {
   name: 'name',
   color: 'color',
-  journeyId: 'journeyId',
-  nextId: 'nextId'
+  journeyId: 'journeyId'
 } as const
 
 export type markerOrderByRelevanceFieldEnum = (typeof markerOrderByRelevanceFieldEnum)[keyof typeof markerOrderByRelevanceFieldEnum]

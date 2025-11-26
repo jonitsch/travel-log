@@ -1,9 +1,6 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import CreateJourneyModal from '$lib/components/CreateJourneyModal.svelte';
-	import { type Markers } from '$lib/server/database';
 	import type { PageProps } from './$types';
-	import { onMount } from 'svelte';
 
 	let { data }: PageProps = $props();
 	let mapContainer = $state<HTMLDivElement>();

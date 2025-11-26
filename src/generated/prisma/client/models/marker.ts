@@ -44,7 +44,6 @@ export type MarkerMinAggregateOutputType = {
   lat: number | null
   color: string | null
   journeyId: string | null
-  nextId: string | null
 }
 
 export type MarkerMaxAggregateOutputType = {
@@ -54,7 +53,6 @@ export type MarkerMaxAggregateOutputType = {
   lat: number | null
   color: string | null
   journeyId: string | null
-  nextId: string | null
 }
 
 export type MarkerCountAggregateOutputType = {
@@ -64,7 +62,6 @@ export type MarkerCountAggregateOutputType = {
   lat: number
   color: number
   journeyId: number
-  nextId: number
   _all: number
 }
 
@@ -88,7 +85,6 @@ export type MarkerMinAggregateInputType = {
   lat?: true
   color?: true
   journeyId?: true
-  nextId?: true
 }
 
 export type MarkerMaxAggregateInputType = {
@@ -98,7 +94,6 @@ export type MarkerMaxAggregateInputType = {
   lat?: true
   color?: true
   journeyId?: true
-  nextId?: true
 }
 
 export type MarkerCountAggregateInputType = {
@@ -108,7 +103,6 @@ export type MarkerCountAggregateInputType = {
   lat?: true
   color?: true
   journeyId?: true
-  nextId?: true
   _all?: true
 }
 
@@ -205,7 +199,6 @@ export type MarkerGroupByOutputType = {
   lat: number
   color: string
   journeyId: string
-  nextId: string
   _count: MarkerCountAggregateOutputType | null
   _avg: MarkerAvgAggregateOutputType | null
   _sum: MarkerSumAggregateOutputType | null
@@ -238,7 +231,6 @@ export type markerWhereInput = {
   lat?: Prisma.FloatFilter<"marker"> | number
   color?: Prisma.StringFilter<"marker"> | string
   journeyId?: Prisma.StringFilter<"marker"> | string
-  nextId?: Prisma.StringFilter<"marker"> | string
   journey?: Prisma.XOR<Prisma.JourneyScalarRelationFilter, Prisma.journeyWhereInput>
 }
 
@@ -249,7 +241,6 @@ export type markerOrderByWithRelationInput = {
   lat?: Prisma.SortOrder
   color?: Prisma.SortOrder
   journeyId?: Prisma.SortOrder
-  nextId?: Prisma.SortOrder
   journey?: Prisma.journeyOrderByWithRelationInput
   _relevance?: Prisma.markerOrderByRelevanceInput
 }
@@ -264,7 +255,6 @@ export type markerWhereUniqueInput = Prisma.AtLeast<{
   lat?: Prisma.FloatFilter<"marker"> | number
   color?: Prisma.StringFilter<"marker"> | string
   journeyId?: Prisma.StringFilter<"marker"> | string
-  nextId?: Prisma.StringFilter<"marker"> | string
   journey?: Prisma.XOR<Prisma.JourneyScalarRelationFilter, Prisma.journeyWhereInput>
 }, "id">
 
@@ -275,7 +265,6 @@ export type markerOrderByWithAggregationInput = {
   lat?: Prisma.SortOrder
   color?: Prisma.SortOrder
   journeyId?: Prisma.SortOrder
-  nextId?: Prisma.SortOrder
   _count?: Prisma.markerCountOrderByAggregateInput
   _avg?: Prisma.markerAvgOrderByAggregateInput
   _max?: Prisma.markerMaxOrderByAggregateInput
@@ -293,7 +282,6 @@ export type markerScalarWhereWithAggregatesInput = {
   lat?: Prisma.FloatWithAggregatesFilter<"marker"> | number
   color?: Prisma.StringWithAggregatesFilter<"marker"> | string
   journeyId?: Prisma.StringWithAggregatesFilter<"marker"> | string
-  nextId?: Prisma.StringWithAggregatesFilter<"marker"> | string
 }
 
 export type markerCreateInput = {
@@ -301,7 +289,6 @@ export type markerCreateInput = {
   lng: number
   lat: number
   color?: string
-  nextId?: string
   journey: Prisma.journeyCreateNestedOneWithoutMarkerInput
 }
 
@@ -312,7 +299,6 @@ export type markerUncheckedCreateInput = {
   lat: number
   color?: string
   journeyId: string
-  nextId?: string
 }
 
 export type markerUpdateInput = {
@@ -320,7 +306,6 @@ export type markerUpdateInput = {
   lng?: Prisma.FloatFieldUpdateOperationsInput | number
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
   journey?: Prisma.journeyUpdateOneRequiredWithoutMarkerNestedInput
 }
 
@@ -331,7 +316,6 @@ export type markerUncheckedUpdateInput = {
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerCreateManyInput = {
@@ -341,7 +325,6 @@ export type markerCreateManyInput = {
   lat: number
   color?: string
   journeyId: string
-  nextId?: string
 }
 
 export type markerUpdateManyMutationInput = {
@@ -349,7 +332,6 @@ export type markerUpdateManyMutationInput = {
   lng?: Prisma.FloatFieldUpdateOperationsInput | number
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerUncheckedUpdateManyInput = {
@@ -359,7 +341,6 @@ export type markerUncheckedUpdateManyInput = {
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
   journeyId?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type MarkerListRelationFilter = {
@@ -385,7 +366,6 @@ export type markerCountOrderByAggregateInput = {
   lat?: Prisma.SortOrder
   color?: Prisma.SortOrder
   journeyId?: Prisma.SortOrder
-  nextId?: Prisma.SortOrder
 }
 
 export type markerAvgOrderByAggregateInput = {
@@ -401,7 +381,6 @@ export type markerMaxOrderByAggregateInput = {
   lat?: Prisma.SortOrder
   color?: Prisma.SortOrder
   journeyId?: Prisma.SortOrder
-  nextId?: Prisma.SortOrder
 }
 
 export type markerMinOrderByAggregateInput = {
@@ -411,7 +390,6 @@ export type markerMinOrderByAggregateInput = {
   lat?: Prisma.SortOrder
   color?: Prisma.SortOrder
   journeyId?: Prisma.SortOrder
-  nextId?: Prisma.SortOrder
 }
 
 export type markerSumOrderByAggregateInput = {
@@ -462,14 +440,6 @@ export type markerUncheckedUpdateManyWithoutJourneyNestedInput = {
   deleteMany?: Prisma.markerScalarWhereInput | Prisma.markerScalarWhereInput[]
 }
 
-export type FloatFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
 export type IntFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -483,7 +453,6 @@ export type markerCreateWithoutJourneyInput = {
   lng: number
   lat: number
   color?: string
-  nextId?: string
 }
 
 export type markerUncheckedCreateWithoutJourneyInput = {
@@ -492,7 +461,6 @@ export type markerUncheckedCreateWithoutJourneyInput = {
   lng: number
   lat: number
   color?: string
-  nextId?: string
 }
 
 export type markerCreateOrConnectWithoutJourneyInput = {
@@ -531,7 +499,6 @@ export type markerScalarWhereInput = {
   lat?: Prisma.FloatFilter<"marker"> | number
   color?: Prisma.StringFilter<"marker"> | string
   journeyId?: Prisma.StringFilter<"marker"> | string
-  nextId?: Prisma.StringFilter<"marker"> | string
 }
 
 export type markerCreateManyJourneyInput = {
@@ -540,7 +507,6 @@ export type markerCreateManyJourneyInput = {
   lng: number
   lat: number
   color?: string
-  nextId?: string
 }
 
 export type markerUpdateWithoutJourneyInput = {
@@ -548,7 +514,6 @@ export type markerUpdateWithoutJourneyInput = {
   lng?: Prisma.FloatFieldUpdateOperationsInput | number
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerUncheckedUpdateWithoutJourneyInput = {
@@ -557,7 +522,6 @@ export type markerUncheckedUpdateWithoutJourneyInput = {
   lng?: Prisma.FloatFieldUpdateOperationsInput | number
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type markerUncheckedUpdateManyWithoutJourneyInput = {
@@ -566,7 +530,6 @@ export type markerUncheckedUpdateManyWithoutJourneyInput = {
   lng?: Prisma.FloatFieldUpdateOperationsInput | number
   lat?: Prisma.FloatFieldUpdateOperationsInput | number
   color?: Prisma.StringFieldUpdateOperationsInput | string
-  nextId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
@@ -578,7 +541,6 @@ export type markerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   lat?: boolean
   color?: boolean
   journeyId?: boolean
-  nextId?: boolean
   journey?: boolean | Prisma.journeyDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["marker"]>
 
@@ -591,10 +553,9 @@ export type markerSelectScalar = {
   lat?: boolean
   color?: boolean
   journeyId?: boolean
-  nextId?: boolean
 }
 
-export type markerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lng" | "lat" | "color" | "journeyId" | "nextId", ExtArgs["result"]["marker"]>
+export type markerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "lng" | "lat" | "color" | "journeyId", ExtArgs["result"]["marker"]>
 export type markerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   journey?: boolean | Prisma.journeyDefaultArgs<ExtArgs>
 }
@@ -611,7 +572,6 @@ export type $markerPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     lat: number
     color: string
     journeyId: string
-    nextId: string
   }, ExtArgs["result"]["marker"]>
   composites: {}
 }
@@ -988,7 +948,6 @@ export interface markerFieldRefs {
   readonly lat: Prisma.FieldRef<"marker", 'Float'>
   readonly color: Prisma.FieldRef<"marker", 'String'>
   readonly journeyId: Prisma.FieldRef<"marker", 'String'>
-  readonly nextId: Prisma.FieldRef<"marker", 'String'>
 }
     
 

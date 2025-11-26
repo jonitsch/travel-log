@@ -651,7 +651,9 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 export const JourneyScalarFieldEnum = {
   journeyId: 'journeyId',
   name: 'name',
-  color: 'color'
+  color: 'color',
+  lng: 'lng',
+  lat: 'lat'
 } as const
 
 export type JourneyScalarFieldEnum = (typeof JourneyScalarFieldEnum)[keyof typeof JourneyScalarFieldEnum]
@@ -663,8 +665,7 @@ export const MarkerScalarFieldEnum = {
   lng: 'lng',
   lat: 'lat',
   color: 'color',
-  journeyId: 'journeyId',
-  nextId: 'nextId'
+  journeyId: 'journeyId'
 } as const
 
 export type MarkerScalarFieldEnum = (typeof MarkerScalarFieldEnum)[keyof typeof MarkerScalarFieldEnum]
@@ -703,8 +704,7 @@ export type journeyOrderByRelevanceFieldEnum = (typeof journeyOrderByRelevanceFi
 export const markerOrderByRelevanceFieldEnum = {
   name: 'name',
   color: 'color',
-  journeyId: 'journeyId',
-  nextId: 'nextId'
+  journeyId: 'journeyId'
 } as const
 
 export type markerOrderByRelevanceFieldEnum = (typeof markerOrderByRelevanceFieldEnum)[keyof typeof markerOrderByRelevanceFieldEnum]
@@ -741,16 +741,16 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
 
 
 /**
- * Reference to a field of type 'Int'
+ * Reference to a field of type 'Float'
  */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
     
 
 
 /**
- * Reference to a field of type 'Float'
+ * Reference to a field of type 'Int'
  */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 /**

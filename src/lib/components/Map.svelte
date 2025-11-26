@@ -38,10 +38,8 @@
 	let error = $state();
 	let currentJourney: any = $state();
 	let showImages = $state<boolean>(true);
-	let progressBar = $state(0);
 
 	export async function updateMarkers(journeyId: string) {
-		setInterval(() => progressBar++, 10);
 		try {
 			const res = await fetch(`/api/journeys?journeyId=${journeyId}`, {
 				method: 'GET'
