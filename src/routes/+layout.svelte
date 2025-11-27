@@ -1,6 +1,6 @@
 <script lang="ts">
+	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import '$lib/styles.css';
 	import { browser } from '$app/environment';
 
 	let { children } = $props();
@@ -24,19 +24,24 @@
 </svelte:head>
 
 <div id="main" class="absolute h-full w-full overflow-hidden p-5">
-	<div class="absolute group text-[11px] m-1 ml-1 top-[65px] w-fit text-transparent z-999999999 cursor-grab">
-			Für Tamina und Joni
-			<text id="heart" class="invisible ml-0.5 text-red-400 group-hover:visible cursor-pointer">♥</text>
-		</div>
+	<div
+		class="z-999999999 group absolute top-[65px] m-1 ml-1 w-fit cursor-grab text-[11px] text-transparent"
+	>
+		Für Tamina und Joni
+		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible"
+			>♥</text
+		>
+	</div>
 	<div id="content" class="absolute inset-0 z-0 h-full w-full">
 		{@render children?.()}
 	</div>
-	<div id="header" class="absolute bg-transparent w-fit items-center">
-			<button id="headerText" class="oxygen-bold shadow-xl w-fit rounded-md bg-gray-900 p-3 text-gray-50 leading-tight text-1xl">
-				Travel Log
-			</button>
-		<div class="group text-[11px] m-1 ml-1 w-fit text-gray-500">
-			Für Tamina und Joni
-		</div>
+	<div id="header" class="absolute w-fit items-center bg-transparent">
+		<button
+			id="headerText"
+			class="oxygen-bold text-1xl w-fit rounded-md bg-gray-900 p-3 leading-tight text-gray-50 shadow-xl"
+		>
+			Travel Log
+		</button>
+		<div class="group m-1 ml-1 w-fit text-[11px] text-gray-500">Für Tamina und Joni</div>
 	</div>
 </div>
