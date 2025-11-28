@@ -12,5 +12,3 @@
 		<Map bind:map={map!} bind:mapContainer bind:data />
 	</div>
 </div>
-
-<div class="bg-cyan-900 invisible"></div>

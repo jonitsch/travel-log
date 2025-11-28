@@ -1,29 +1,32 @@
 <script lang="ts">
 	import { Control, ControlButton, ControlGroup, MapLibre, Marker, Popup } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
-	import { onMount } from 'svelte';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
 		data: {
 			journeys: {
+				journeyId: string;
+				name: string;
+				color: string;
+				lng: number;
+				lat: number;
 				marker: {
-					id: number;
+					journeyId: string;
+					name: string;
+					color: string;
 					lng: number;
 					lat: number;
-					name: string;
-					journeyId: string;
-					color: string;
-					nextId: string;
+					id: number;
 				}[];
 				image: {
+					journeyId: string;
 					lng: number | null;
 					lat: number | null;
-					journeyId: string;
 					path: string;
-					width: number;
 					fileName: string;
-					heigt: number;
+					width: number;
+					height: number;
 				}[];
 			}[];
 		};
@@ -36,15 +39,26 @@
 	let enabled = $state(false);
 	let images: any = $state();
 	let error = $state();
-	let currentJourney: any = $state();
+	let currentJourneyId: string = $state('');
+	let currentJourneyData: any = $state();
 	let showImages = $state<boolean>(true);
+	let viewMode: string = $state('overview');
 
-	export async function updateMarkers(journeyId: string) {
+	export async function setJourney(journeyId: string): Promise<any> {
+		let journeyData = await getJourneyData(journeyId);
+		currentJourneyData = journeyData;
+		console.log(currentJourneyData);
+		return journeyData;
+	}
+
+	async function getJourneyData(journeyId: string): Promise<any> {
 		try {
 			const res = await fetch(`/api/journeys?journeyId=${journeyId}`, {
-				method: 'GET'
+				method: 'GET' // get Journey Data related to journeyId
 			});
-			currentJourney = await res.json();
+			currentJourneyData = await res.json(); // save Journey Data to currentJourneyData
+			console.log('returning: ', currentJourneyData);
+			return currentJourneyData;
 		} catch (err) {
 			error = err;
 		}
@@ -58,39 +72,30 @@
 		images = images;
 	}
 
-	onMount(() => {
-		updateMarkers('default');
-	});
+	// $inspect('currentJourneyData',currentJourneyData);
 </script>
 
 <CreateJourneyModal bind:this={modal} />
 
-{#await updateMarkers('default')}
-	Loading...
-{:then showMap}
-	<MapLibre
-		standardControls={false}
-		bind:map
-		style="https://tiles.openfreemap.org/styles/liberty"
-		center={[13.388, 52.517]}
-		bind:zoom
-		onzoom={() => (zoom = zoom)}
-		bind:mapContainer
-		projection={{ type: 'globe' }}
-		class="h-full max-h-full w-full rounded-md contain-inline-size sm:aspect-[19.43/9] sm:max-h-full"
-		dragRotate={false}
-		zoomOnDoubleClick={false}
-		minZoom={1.5}
-	>
-		<Control class="rounded-md bg-gray-900 p-3 text-white">
-			<ControlButton>
-				{zoom.toPrecision(3)}
-			</ControlButton>
-		</Control>
-		{#each currentJourney.marker as { lng, lat, name, journeyId, journey, color, nextId }}
+<MapLibre
+	standardControls={false}
+	bind:map
+	style="https://tiles.openfreemap.org/styles/liberty"
+	center={[13.388, 52.517]}
+	bind:zoom
+	onzoom={() => (zoom = zoom)}
+	bind:mapContainer
+	projection={{ type: 'globe' }}
+	class="h-full max-h-full w-full rounded-md contain-inline-size sm:aspect-[19.43/9] sm:max-h-full"
+	dragRotate={false}
+	zoomOnDoubleClick={false}
+	minZoom={1.5}
+>
+	{#if viewMode == 'overview'}
+		{#each data.journeys as { lng, lat, name, journeyId, color }}
 			<Marker
 				lngLat={[lng, lat]}
-				class={`h-3 w-3 place-items-center rounded-full ${color ?? currentJourney.color ?? 'bg-black'} focus:outline-2 focus:outline-black`}
+				class={`h-3 w-3 place-items-center rounded-full ${color ?? currentJourneyData.color ?? 'bg-black'} focus:outline-2 focus:outline-black`}
 			>
 				<Popup
 					anchor="bottom"
@@ -100,16 +105,14 @@
 					closeButton={false}
 				>
 					<button
-						class={`px-3 py-0.5 ${color ?? currentJourney.color ?? 'bg-black'} rounded-md text-white opacity-95`}
+						class={`px-3 py-0.5 ${color ?? currentJourneyData.color ?? 'bg-black'} rounded-md text-white opacity-95`}
 						onclick={() => {
-							if (!nextId || nextId != 'default') {
-								map.flyTo({ center: [lng, lat], zoom: 10.5, speed: 0.7 });
-								enabled = true;
-								currentJourney = name;
-								updateMarkers(nextId ?? journeyId);
-								getImages(`pictures/${journeyId}`);
-								showImages = true;
-							}
+							map.flyTo({ center: [lng, lat], zoom: 10.5, speed: 0.7 });
+							enabled = true;
+							currentJourneyId = journeyId;
+							// getImages(`pictures/${journeyId}`);
+							viewMode = 'journey';
+							showImages = true;
 						}}
 					>
 						<text class="oxygen-regular">
@@ -118,51 +121,93 @@
 					</button>
 				</Popup>
 			</Marker>
-			{#if showImages && journeyId != 'default'}
-				{#await getImages(`pictures/${journeyId}`)}
-					<button
-						class={`absolute top-[15px] left-[50%] z-999 h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
+		{/each}
+	{/if}
+	<Control class="rounded-md bg-gray-900 p-3 text-white">
+		<ControlButton>
+			{zoom.toPrecision(3)}
+		</ControlButton>
+	</Control>
+	{#if viewMode === 'journey'}
+
+		{#await getJourneyData(currentJourneyId)}
+			Loading Journey Data...
+		{:then currentJourneyData}
+			{#each currentJourneyData.marker as { lng, lat, name, journeyId, journey, color }}
+				<Marker
+					lngLat={[lng, lat]}
+					class={`h-3 w-3 place-items-center rounded-full ${color ?? currentJourneyData.color ?? 'bg-black'} focus:outline-2 focus:outline-black`}
+				>
+					<Popup
+						anchor="bottom"
+						offset={-15}
+						open={true}
+						closeOnClickOutside={false}
+						closeButton={false}
 					>
-						Loading {currentJourney.name}...
-					</button>
-				{:then done}
-					{#if enabled}
 						<button
-							class={`absolute top-[15px] left-[50%] z-999 h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
+							class={`px-3 py-0.5 ${color ?? currentJourneyData.color ?? 'bg-black'} rounded-md text-white opacity-95`}
 							onclick={() => {
-								updateMarkers('default');
-								map.flyTo({ center: [13.388, 52.517], zoom: 1.5 });
+								map.flyTo({ center: [13.388, 52.517], zoom: zoom, speed: 0.7 });
+								viewMode = 'overview';
 								enabled = false;
+								showImages = false;
 							}}
 						>
-							{currentJourney.name}
+							<text class="oxygen-regular">
+								{name}
+							</text>
 						</button>
-					{/if}
-					{#each images as { name, path, lng, lat, type }}
-						{#if lng && lat && type != 'HEIC'}
-							<Marker
-								lngLat={[lng, lat]}
-								class={`grid h-2 w-2 place-items-center rounded-full bg-red-900 text-black shadow-2xl focus:outline-2 focus:outline-black`}
+					</Popup>
+				</Marker>
+				{#if false}
+					{#await getImages(`pictures/${journeyId}`)}
+						<button
+							class={`z-999 absolute left-[50%] top-[15px] h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
+						>
+							Loading {currentJourneyData.name}...
+						</button>
+					{:then}
+						{#if enabled}
+							<button
+								class={`z-999 absolute left-[50%] top-[15px] h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
+								onclick={() => {
+									setJourney('default');
+									map.flyTo({ center: [13.388, 52.517], zoom: zoom });
+									enabled = false;
+								}}
 							>
-								<Popup anchor="bottom" openOn="click">
-									<img src={path} alt={name} class="max-w-[8vw] border border-amber-950" />
-								</Popup>
-							</Marker>
+								{currentJourneyData.name}
+							</button>
 						{/if}
-					{/each}
-				{/await}
-			{/if}
-		{/each}
-	</MapLibre>
-{:catch}
+						{#each images as { name, path, lng, lat, type }}
+							{#if lng && lat && type != 'HEIC'}
+								<Marker
+									lngLat={[lng, lat]}
+									class={`grid h-2 w-2 place-items-center rounded-full bg-red-900 text-black shadow-2xl focus:outline-2 focus:outline-black`}
+								>
+									<Popup anchor="bottom" openOn="click">
+										<img src={path} alt={name} class="max-w-[8vw] border border-amber-950" />
+									</Popup>
+								</Marker>
+							{/if}
+						{/each}
+					{/await}
+				{/if}
+			{/each}
+		{/await}
+	{/if}
+</MapLibre>
+
+<!-- {:catch}
 	<div
-		class="absolute top-[50%] left-[50%] z-1500000 h-fit w-fit -translate-x-1/2 items-center rounded-md bg-red-950 p-3 text-center text-white"
+		class="z-1500000 absolute left-[50%] top-[50%] h-fit w-fit -translate-x-1/2 items-center rounded-md bg-red-950 p-3 text-center text-white"
 	>
 		<text class="oxygen-bold text-2xl">Failed to Load Map</text>
 		<br />
 		<text class="text-1xl oxygen-light">{error}</text>
 	</div>
-{/await}
+{/await} -->
 
 <style>
 	:global(.maplibregl-map) {

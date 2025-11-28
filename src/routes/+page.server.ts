@@ -6,6 +6,11 @@ const require = createRequire(import.meta.url);
 export const load = (async () => {
     const journeys = await prisma.journey.findMany({
         select: {
+            journeyId: true,
+            name: true,
+            color: true,
+            lng: true,
+            lat: true,
             marker: true,
             image: true
         }
