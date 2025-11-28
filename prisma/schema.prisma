@@ -1,20 +1,20 @@
 generator client {
-  provider        = "prisma-client"
-  output          = "../src/generated/prisma/client"
-  engineType      = "client"
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma/client"
+  engineType = "client"
 }
 
 datasource db {
   provider = "mysql"
-  url = "mysql://root:@localhost:3306/db"
+  url      = "mysql://root:@localhost:3306/db"
 }
 
 model journey {
   journeyId String   @id @default("journey")
   name      String
   color     String   @default("bg-white")
-  lng       Float @default(0)
-  lat       Float @default(0)
+  lng       Float    @default(0)
+  lat       Float    @default(0)
   marker    marker[]
   image     image[]
 }
@@ -27,6 +27,7 @@ model marker {
   color     String  @default("bg-white")
   journeyId String
   journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
+
   @@index([journeyId], map: "Marker_journeyId_fkey")
 }
 
@@ -34,7 +35,7 @@ model image {
   path      String  @id
   fileName  String
   width     Int
-  heigt     Int
+  height    Int
   lng       Float?
   lat       Float?
   journeyId String
