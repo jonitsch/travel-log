@@ -24,16 +24,14 @@
 </svelte:head>
 
 <div id="main" class="absolute h-full w-full overflow-hidden p-5">
+	<div id="content" class="absolute inset-0 z-999 h-full w-full">
+		{@render children?.()}
+	</div>
 	<div
-		class="z-999999999 group absolute top-[65px] m-1 ml-1 w-fit cursor-grab text-[11px] text-transparent"
+		class="z-0 group absolute top-[65px] m-1 ml-1 w-fit cursor-grab text-[11px] text-transparent group"
 	>
 		Für Tamina und Joni
-		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible"
-			>♥</text
-		>
-	</div>
-	<div id="content" class="absolute inset-0 z-0 h-full w-full">
-		{@render children?.()}
+		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">♥</text>
 	</div>
 	<div id="header" class="absolute w-fit items-center bg-transparent">
 		<button
@@ -42,6 +40,8 @@
 		>
 			Travel Log
 		</button>
-		<div class="group m-1 ml-1 w-fit text-[11px] text-gray-500">Für Tamina und Joni</div>
+		<div class="group m-1 ml-1 w-fit text-[11px] text-gray-500">Für Tamina und Joni
+			<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">♥</text>
+		</div>
 	</div>
 </div>

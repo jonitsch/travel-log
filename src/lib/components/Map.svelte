@@ -31,8 +31,16 @@
 			}[];
 		};
 		map: maplibregl.Map;
+		currentJourneyData: any;
+		viewMode: string;
 	}
-	let { map = $bindable(), mapContainer = $bindable(), data = $bindable() }: Props = $props();
+	let {
+		map = $bindable(),
+		mapContainer = $bindable(),
+		data = $bindable(),
+		currentJourneyData = $bindable(),
+		viewMode = $bindable()
+	}: Props = $props();
 
 	let zoom: number = $state(1.5);
 	let modal: CreateJourneyModal;
@@ -40,24 +48,15 @@
 	let images: any = $state();
 	let error = $state();
 	let currentJourneyId: string = $state('');
-	let currentJourneyData: any = $state();
 	let showImages = $state<boolean>(true);
-	let viewMode: string = $state('overview');
-
-	export async function setJourney(journeyId: string): Promise<any> {
-		let journeyData = await getJourneyData(journeyId);
-		currentJourneyData = journeyData;
-		console.log(currentJourneyData);
-		return journeyData;
-	}
 
 	async function getJourneyData(journeyId: string): Promise<any> {
+		mapContainer.style = 'width: 50vw';
 		try {
 			const res = await fetch(`/api/journeys?journeyId=${journeyId}`, {
 				method: 'GET' // get Journey Data related to journeyId
 			});
 			currentJourneyData = await res.json(); // save Journey Data to currentJourneyData
-			console.log('returning: ', currentJourneyData);
 			return currentJourneyData;
 		} catch (err) {
 			error = err;
@@ -70,6 +69,20 @@
 		});
 		images = await response.json();
 		images = images;
+	}
+
+	export function switchModes() {
+		viewMode = viewMode === 'overview' ? 'journey' : 'overview';
+		if (viewMode === 'overview') {
+			mapContainer.style = 'width: 100vw';
+			enabled = false;
+			showImages = false;
+		}
+		if (viewMode === 'journey') {
+			enabled = true;
+			showImages = true;
+			// getImages(`pictures/${journeyId}`);
+		}
 	}
 
 	// $inspect('currentJourneyData',currentJourneyData);
@@ -91,7 +104,7 @@
 	zoomOnDoubleClick={false}
 	minZoom={1.5}
 >
-	{#if viewMode == 'overview'}
+	{#if viewMode === 'overview'}
 		{#each data.journeys as { lng, lat, name, journeyId, color }}
 			<Marker
 				lngLat={[lng, lat]}
@@ -108,11 +121,10 @@
 						class={`px-3 py-0.5 ${color ?? currentJourneyData.color ?? 'bg-black'} rounded-md text-white opacity-95`}
 						onclick={() => {
 							map.flyTo({ center: [lng, lat], zoom: 10.5, speed: 0.7 });
-							enabled = true;
-							currentJourneyId = journeyId;
-							// getImages(`pictures/${journeyId}`);
 							viewMode = 'journey';
+							enabled = true;
 							showImages = true;
+							currentJourneyId = journeyId;
 						}}
 					>
 						<text class="oxygen-regular">
@@ -129,7 +141,6 @@
 		</ControlButton>
 	</Control>
 	{#if viewMode === 'journey'}
-
 		{#await getJourneyData(currentJourneyId)}
 			Loading Journey Data...
 		{:then currentJourneyData}
@@ -148,10 +159,12 @@
 						<button
 							class={`px-3 py-0.5 ${color ?? currentJourneyData.color ?? 'bg-black'} rounded-md text-white opacity-95`}
 							onclick={() => {
-								map.flyTo({ center: [13.388, 52.517], zoom: zoom, speed: 0.7 });
+								map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 								viewMode = 'overview';
+								mapContainer.style = 'width: 100vw'
 								enabled = false;
 								showImages = false;
+								currentJourneyId = journeyId;
 							}}
 						>
 							<text class="oxygen-regular">
@@ -172,7 +185,6 @@
 							<button
 								class={`z-999 absolute left-[50%] top-[15px] h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
 								onclick={() => {
-									setJourney('default');
 									map.flyTo({ center: [13.388, 52.517], zoom: zoom });
 									enabled = false;
 								}}
