@@ -61,15 +61,15 @@
 			id="book"
 			class="grid flex-1 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 overflow-auto p-4"
 		>
+			<h2 class="rounded-md p-3 col-span-full font-semibold text-white text-5xl {currentJourneyData?.color} text-center">
+				{currentJourneyData?.name}
+			</h2>
 			{#await currentJourneyData then currentJourneyData}
 				{#each currentJourneyData?.image as { journeyId, lng, lat, path, fileName, width, height }}
 					<img
 						src={path}
 						alt={fileName}
 						class="h-auto w-full cursor-pointer rounded-lg object-cover hover:scale-105"
-						onclick={() => {
-							
-						}}
 					/>
 				{/each}
 			{/await}
