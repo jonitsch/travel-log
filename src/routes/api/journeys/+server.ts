@@ -5,7 +5,8 @@ export async function GET(journeyId) {
   let journeyIdString = journeyId.url.search.split('=')[1]
   const journey = await prisma.journey.findUnique({
     include: {
-      marker: true
+      marker: true,
+      image: true,
     },
     where: {
       journeyId: journeyIdString

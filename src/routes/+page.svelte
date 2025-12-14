@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CreateJourneyModal from '$lib/components/CreateJourneyModal.svelte';
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
 
@@ -32,6 +33,8 @@
 	}>();
 	let viewMode: string = $state('overview');
 	let images: any = $state([]);
+	let modalContent: any = $state();
+	let modal = $state();
 
 	export async function getImages(dir: string) {
 		let response = await fetch(`/api/images?dir=${dir}`, {
@@ -42,7 +45,7 @@
 	}
 </script>
 
-<div class="flex-row">
+<div class="flex h-screen w-screen flex-row">
 	{#if viewMode === 'overview' || viewMode === 'journey'}
 		<div
 			id="mapContainer"
@@ -54,6 +57,22 @@
 	{/if}
 
 	{#if viewMode === 'journey'}
-		{console.log($state.snapshot(currentJourneyData))}
+		<div
+			id="book"
+			class="grid flex-1 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 overflow-auto p-4"
+		>
+			{#await currentJourneyData then currentJourneyData}
+				{#each currentJourneyData?.image as { journeyId, lng, lat, path, fileName, width, height }}
+					<img
+						src={path}
+						alt={fileName}
+						class="h-auto w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+						onclick={() => {
+							
+						}}
+					/>
+				{/each}
+			{/await}
+		</div>
 	{/if}
 </div>

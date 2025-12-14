@@ -137,7 +137,7 @@
 	{/if}
 	<Control class="rounded-md bg-gray-900 p-3 text-white">
 		<ControlButton>
-			{zoom.toPrecision(3)}
+			{viewMode}
 		</ControlButton>
 	</Control>
 	{#if viewMode === 'journey'}
