@@ -32,7 +32,8 @@ model marker {
 }
 
 model image {
-  path      String  @id
+  id        Int     @id @default(autoincrement())
+  path      String
   fileName  String
   width     Int
   height    Int
