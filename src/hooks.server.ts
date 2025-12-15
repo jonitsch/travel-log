@@ -69,7 +69,7 @@ export async function getImages(journeyId: string) {
             let fileType = await fileTypeFromFile(fullPath);
             let metaData = await sharp(fullPath).metadata();
             let journeyId = entry.parentPath.split('\\')[1];
-            console.log(journeyId)
+            console.log('Loaded Image: ', fullPath)
             if (fileType) {
                 if (fileType.mime.includes('image') && fileType.ext != 'heic') {
                     let coords: any;
@@ -117,7 +117,7 @@ export async function getImages(journeyId: string) {
             }
         }
     }
-    console.log('GetImages finished')
+    console.log('GetImages finished!')
     return images;
 }
 
