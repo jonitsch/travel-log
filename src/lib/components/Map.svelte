@@ -51,7 +51,6 @@
 	let showImages = $state<boolean>(true);
 
 	async function getJourneyData(journeyId: string): Promise<any> {
-		mapContainer.style = 'width: 50vw';
 		try {
 			const res = await fetch(`/api/journeys?journeyId=${journeyId}`, {
 				method: 'GET' // get Journey Data related to journeyId
@@ -144,7 +143,8 @@
 		{#await getJourneyData(currentJourneyId)}
 			Loading Journey Data...
 		{:then currentJourneyData}
-			{#each currentJourneyData.marker as { lng, lat, name, journeyId, journey, color }}
+			{console.log($state.snapshot(currentJourneyData))}
+			{#each currentJourneyData.marker as { i, lng, lat, name, journeyId, journey, color, image }}
 				<Marker
 					lngLat={[lng, lat]}
 					class={`h-3 w-3 place-items-center rounded-full ${color ?? currentJourneyData.color ?? 'bg-black'} focus:outline-2 focus:outline-black`}
@@ -161,7 +161,7 @@
 							onclick={() => {
 								map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 								viewMode = 'overview';
-								mapContainer.style = 'width: 100vw'
+								mapContainer.style = 'width: 100vw';
 								enabled = false;
 								showImages = false;
 								currentJourneyId = journeyId;
@@ -173,38 +173,15 @@
 						</button>
 					</Popup>
 				</Marker>
-				{#if false}
-					{#await getImages(`pictures/${journeyId}`)}
-						<button
-							class={`z-999 absolute left-[50%] top-[15px] h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
-						>
-							Loading {currentJourneyData.name}...
-						</button>
-					{:then}
-						{#if enabled}
-							<button
-								class={`z-999 absolute left-[50%] top-[15px] h-fit w-fit -translate-x-1/2 items-center rounded-md ${color ?? journey.color ?? 'bg-black'} p-3 text-2xl text-white`}
-								onclick={() => {
-									map.flyTo({ center: [13.388, 52.517], zoom: zoom });
-									enabled = false;
-								}}
-							>
-								{currentJourneyData.name}
-							</button>
+				{#if currentJourneyData.image}
+					{#each currentJourneyData.image as { lng, lat, fileName }}
+						{#if lng && lat}
+							<Marker
+								lngLat={[lat, lng]}
+								class={`grid h-2 w-2 place-items-center rounded-full ${color} text-black shadow-2xl focus:outline-2 focus:outline-black`}
+							/>
 						{/if}
-						{#each images as { name, path, lng, lat, type }}
-							{#if lng && lat && type != 'HEIC'}
-								<Marker
-									lngLat={[lng, lat]}
-									class={`grid h-2 w-2 place-items-center rounded-full bg-red-900 text-black shadow-2xl focus:outline-2 focus:outline-black`}
-								>
-									<Popup anchor="bottom" openOn="click">
-										<img src={path} alt={name} class="max-w-[8vw] border border-amber-950" />
-									</Popup>
-								</Marker>
-							{/if}
-						{/each}
-					{/await}
+					{/each}
 				{/if}
 			{/each}
 		{/await}
