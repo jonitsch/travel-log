@@ -6,6 +6,8 @@
 
 	let { children } = $props();
 	let displayMode: string | undefined = $state('');
+	let headerStyle =
+		'oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50 shadow-xl';
 
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
@@ -20,26 +22,31 @@
 	<div id="content" class="z-999 absolute inset-0 h-full w-full">
 		{@render children?.()}
 	</div>
-	<div
-		class="group absolute top-[65px] z-0 m-1 ml-1 w-fit cursor-grab text-[11px] text-transparent"
-	>
-		Für Tamina und Joni
-		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">
-			♥
-		</text>
-	</div>
-	<div id="header" class="absolute w-fit items-center bg-transparent">
-		<button
-			id="headerText"
-			class="oxygen-bold text-1xl w-fit rounded-md bg-gray-900 p-3 leading-tight text-gray-50 shadow-xl"
-		>
-			Travel Log
-		</button>
-		<div class="group m-1 ml-1 w-fit text-[11px] text-gray-500">
-			Für Tamina und Joni
-			<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible"
-				>♥</text
+	<div class="absolute flex flex-row items-start">
+		{#if true}
+			<div id="header" class="w-fit items-center bg-transparent group">
+				<button id="headerText" class="{headerStyle} bg-gray-900"
+				onclick={() => global.viewMode = "overview"}> Travel Log </button>
+				<div class="invisible group m-1 ml-1 w-fit text-[9.5px] text-gray-500 group-hover:visible">
+					Für Tamina und Joni
+					<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible"
+						>♥</text
+					>
+				</div>
+			</div>
+		{/if}
+		{#if global.viewMode === 'journey'}
+			<div
+				id="journeyHeader"
+				class="before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
 			>
-		</div>
+				<button
+					id="headerText"
+					class="{headerStyle} {global.journeyData?.color ?? 'bg-black'} whitespace-nowrap"
+				>
+					{global.journeyData?.name}
+				</button>
+			</div>
+		{/if}
 	</div>
 </div>

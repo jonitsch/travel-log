@@ -41,11 +41,10 @@
 			class="grid flex-[1.5] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 overflow-auto p-4"
 		>
 			<button
-				class="col-span-full rounded-md p-3 text-5xl font-semibold text-white {global.journeyData
-					?.color} text-center"
+				class="col-span-full rounded-md p-3 text-5xl font-semibold text-white text-left"
 				onclick={() => (global.viewMode = 'overview')}
 			>
-				{global.journeyData?.name}
+				Pictures
 			</button>
 			{#if global.journeyData?.image}
 				{#if global.journeyData.image.length > 0}
