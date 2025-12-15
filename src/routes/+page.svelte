@@ -59,19 +59,30 @@
 	{#if viewMode === 'journey'}
 		<div
 			id="book"
-			class="grid flex-1 grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 overflow-auto p-4"
+			class="flex-[1.5] grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 overflow-auto p-4"
 		>
-			<h2 class="rounded-md p-3 col-span-full font-semibold text-white text-5xl {currentJourneyData?.color} text-center">
+			<button
+class="col-span-full rounded-md p-3 text-5xl font-semibold text-white {currentJourneyData?.color} text-center"
+				onclick={() => (viewMode = 'overview')}
+>
 				{currentJourneyData?.name}
-			</h2>
+			</button>
 			{#await currentJourneyData then currentJourneyData}
+{#if currentJourneyData?.image}
+					{#if currentJourneyData.image.length > 0}
 				{#each currentJourneyData?.image as { journeyId, lng, lat, path, fileName, width, height }}
 					<img
 						src={path}
 						alt={fileName}
-						class="h-auto w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+						class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
 					/>
 				{/each}
+{:else}
+						<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105">
+							No images yet
+						</div>
+					{/if}
+				{/if}
 			{/await}
 		</div>
 	{/if}
