@@ -6,11 +6,16 @@ const require = createRequire(import.meta.url);
 export const load = (async () => {
     const journeys = await prisma.journey.findMany({
         select: {
+            journeyId: true,
+            name: true,
+            color: true,
+            lng: true,
+            lat: true,
             marker: true,
-            image: true
+            image: true,
         }
     })
-    return { journeys };
+    return { journeys: journeys };
 }) satisfies PageServerLoad;
 
 async function filterAndConvertHEIC(files: string[]) {

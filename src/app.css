@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Daydream';
+  src: url('static/fonts/Daydream DEMO.otf') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CODELight';
+  src: url('static/fonts/CODELight.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'CODEBold';
+  src: url('static/fonts/CODEBold.otf') format('otf');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.outfit-oxygen {
+  font-family: "Oxygen";
+  font-optical-sizing: auto;
+  font-weight: 350;
+  font-style: normal;
+}
+
+.oxygen-light {
+  font-family: "Oxygen";
+  font-weight: 300;
+  font-style: normal;
+}
+
+.oxygen-regular {
+  font-family: "Oxygen";
+  font-weight: 400;
+  font-style: normal;
+}
+
+.oxygen-bold {
+  font-family: "Oxygen", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.emoji {
+  font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
+}

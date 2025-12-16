@@ -1,7 +1,7 @@
 generator client {
-  provider        = "prisma-client"
-  output          = "../src/generated/prisma/client"
-  engineType      = "client"
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma/client"
+  engineType = "client"
 }
 
 datasource db {
@@ -13,6 +13,8 @@ model journey {
   journeyId String   @id @default("journey")
   name      String
   color     String   @default("bg-white")
+  lng       Float    @default(0)
+  lat       Float    @default(0)
   marker    marker[]
   image     image[]
 }
@@ -24,17 +26,17 @@ model marker {
   lat       Float
   color     String  @default("bg-white")
   journeyId String
-  nextId    String  @default("default")
   journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
 
   @@index([journeyId], map: "Marker_journeyId_fkey")
 }
 
 model image {
-  path      String  @id
+  id        Int     @id @default(autoincrement())
+  path      String
   fileName  String
   width     Int
-  heigt     Int
+  height    Int
   lng       Float?
   lat       Float?
   journeyId String
