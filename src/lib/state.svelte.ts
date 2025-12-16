@@ -1,34 +1,17 @@
+import type { Journey } from "./server/database";
+
+export type ViewMode = 'overview' | 'journey' | null;
+
 type State = {
-  viewMode: string | null;
-  journeyData: {
-		journeyId: string;
-		name: string;
-		color: string;
-		lng: number;
-		lat: number;
-		marker: {
-			journeyId: string;
-			name: string;
-			color: string;
-			lng: number;
-			lat: number;
-			id: number;
-		}[];
-		image: {
-			journeyId: string;
-			lng: number | null;
-			lat: number | null;
-			path: string;
-			fileName: string;
-			width: number;
-			height: number;
-		}[];
-	} | null;
-  journeyId: string;
+	viewMode: ViewMode;
+	journeyData: Journey | null;
+	journeyId: string;
+	map: maplibregl.Map | null;
 };
 
 export const global: State = $state({
-  viewMode: 'overview',
-  journeyData: null,
-  journeyId: '',
+	viewMode: 'overview' as ViewMode,
+	journeyData: null,
+	journeyId: '',
+	map: null,
 });

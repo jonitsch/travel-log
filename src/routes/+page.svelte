@@ -2,7 +2,7 @@
 	import CreateJourneyModal from '$lib/components/CreateJourneyModal.svelte';
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
-	import { global } from '$lib/state.svelte';
+	import { global, type ViewMode } from '$lib/state.svelte';
 
 	let { data }: PageProps = $props();
 	let mapContainer = $state<HTMLDivElement>();

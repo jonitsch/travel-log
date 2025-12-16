@@ -1,36 +1,13 @@
 <script lang="ts">
 	import { Control, ControlButton, ControlGroup, MapLibre, Marker, Popup } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
-	import { global } from '$lib/state.svelte';
+	import { global, type ViewMode } from '$lib/state.svelte';
+	import { onMount, untrack } from 'svelte';
+	import type { Data } from '$lib/server/database';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
-		data: {
-			journeys: {
-				journeyId: string;
-				name: string;
-				color: string;
-				lng: number;
-				lat: number;
-				marker: {
-					journeyId: string;
-					name: string;
-					color: string;
-					lng: number;
-					lat: number;
-					id: number;
-				}[];
-				image: {
-					journeyId: string;
-					lng: number | null;
-					lat: number | null;
-					path: string;
-					fileName: string;
-					width: number;
-					height: number;
-				}[];
-			}[];
-		};
+		data: Data;
 		map: maplibregl.Map;
 	}
 	let { map = $bindable(), mapContainer = $bindable(), data = $bindable() }: Props = $props();
