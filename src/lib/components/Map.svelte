@@ -4,6 +4,7 @@
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount, untrack } from 'svelte';
 	import type { Data } from '$lib/server/database';
+	import maplibregl from 'maplibre-gl';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
@@ -13,10 +14,13 @@
 	let { map = $bindable(), mapContainer = $bindable(), data = $bindable() }: Props = $props();
 
 	const markerStyle = 'h-3 w-3 place-items-center rounded-full focus:outline-2 focus:outline-black';
-	const popupStyle = 'px-3 py-0.5 rounded-md text-white opacity-95'
+	const popupStyle = 'px-3 py-0.5 rounded-md text-white opacity-95';
 	let zoom: number = $state(1.5);
 	let modal: CreateJourneyModal;
-	let error = $state();
+	let error: unknown = $state();
+	let attributionControl = new maplibregl.AttributionControl({
+		compact: true
+	});
 
 	async function getJourneyData(journeyId: string): Promise<any> {
 		try {
@@ -29,6 +33,9 @@
 			error = err;
 		}
 	}
+	onMount(() => {
+		map.addControl(attributionControl);
+	});
 
 	$effect(() => {
 		// Runs whenever global.viewMode changes
@@ -37,6 +44,8 @@
 			untrack(() => {
 				map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 			});
+			attributionControl._container.classList.add('maplibregl-compact-show');
+			attributionControl._container.removeAttribute('open');
 		}
 	});
 </script>
@@ -56,6 +65,7 @@
 	dragRotate={false}
 	zoomOnDoubleClick={false}
 	minZoom={1.5}
+	attributionControl={false}
 >
 	{#if global.viewMode === 'overview'}
 		{#each data.journeys as journey}
@@ -76,6 +86,8 @@
 							map.flyTo({ center: [journey.lng, journey.lat], zoom: 10.5, speed: 0.7 });
 							global.journeyId = journey.journeyId;
 							global.viewMode = 'journey';
+							attributionControl._container.setAttribute('open', '');
+							attributionControl._container.classList.remove('maplibregl-compact-show');
 						}}
 					>
 						<text class="oxygen-regular">
@@ -105,7 +117,7 @@
 							closeButton={false}
 						>
 							<button
-								class={`px-3 py-0.5 rounded-md text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
+								class={`rounded-md px-3 py-0.5 text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
 								onclick={() => {
 									map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 									global.viewMode = 'overview';
@@ -122,10 +134,7 @@
 					{#if global.journeyData.image}
 						{#each global.journeyData.image as { lng, lat, fileName }}
 							{#if lng && lat}
-								<Marker
-									lngLat={[lat, lng]}
-									class={`${markerStyle} ${color}`}
-								/>
+								<Marker lngLat={[lat, lng]} class={`${markerStyle} ${color}`} />
 							{/if}
 						{/each}
 					{/if}
