@@ -1,4 +1,4 @@
-import { prisma } from '$lib/server/database.js';
+import { prisma, type Journey } from '$lib/server/database.js';
 import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import path from "path";
@@ -17,11 +17,11 @@ async function initializeDatabase() {
     let images = await prisma.image.findMany();
     if (images) {
         try {
-            prisma.image.deleteMany();
+            await prisma.image.deleteMany();
             let journeys = await prisma.journey.findMany();
             journeys.forEach(async (j) => {
-                images = await getImages(j.journeyId);
-                images.forEach(async (i) => {
+                let journeyImages = await getImages(j.journeyId);
+                journeyImages.forEach(async (i) => {
                     await prisma.image.create({
                         data: {
                             path: i.path,
@@ -37,10 +37,12 @@ async function initializeDatabase() {
             })
         }
         catch (err) {
+            images = [];
             console.log('Database Initialization failed', err)
             console.error(err)
         }
     }
+    images = [];
     console.log('Database Initialization finished')
 }
 
