@@ -21,34 +21,45 @@
 	}
 </script>
 
-<div class="flex flex-row gap-4 h h-full max-h-full w-full overflow-hidden">
-	{#if global.viewMode === 'overview' || global.viewMode === 'journey'}
-		<div id="mapContainer" class="h-full w-full flex-1" bind:this={mapContainer}>
+<div class="h flex h-full max-h-full w-full flex-row gap-4 overflow-hidden">
+	<div class="items-top flex flex-1 flex-col gap-4">
+		<div id="header" class="{global.viewMode === 'journey' ? 'h-fit' : 'hidden'} ">
+			<text class="text-4xl text-white">{global.journeyData?.name ?? 'Hello World'}</text>
+		</div>
+		<div id="mapContainer" class="h-full flex-1" bind:this={mapContainer}>
 			<Map bind:map={map!} bind:mapContainer bind:data />
 		</div>
-	{/if}
+		<div id="header" class="{global.viewMode === 'journey' ? 'flex-[1.5]' : 'hidden'} ">
+			<text class="text-2xl text-white">Info</text>
+		</div>
+	</div>
 
 	{#if global.viewMode === 'journey'}
-		<div
-			id="book"
-			class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 overflow-auto"
-			bind:this={book}
-		>
-			{#if global.journeyData?.image}
-				{#if global.journeyData.image.length > 0}
-					{#each global.journeyData?.image as { id, lng, lat, path, fileName, width, height }}
-						<img
-							src={path}
-							alt={fileName}
-							class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
-						/>
-					{/each}
-				{:else}
-					<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105">
-						No images yet
-					</div>
+		<div class="items-top flex flex-[3] flex-col gap-4">
+			<div id="header" class="{global.viewMode === 'journey' ? 'h-fit' : 'hidden'} ">
+				<text class="text-4xl text-white invisible">.</text>
+			</div>
+			<div
+				id="book"
+				class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 overflow-auto"
+				bind:this={book}
+			>
+				{#if global.journeyData?.image}
+					{#if global.journeyData.image.length > 0}
+						{#each global.journeyData?.image as { id, lng, lat, path, fileName, width, height }}
+							<img
+								src={path}
+								alt={fileName}
+								class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+							/>
+						{/each}
+					{:else}
+						<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105">
+							No images yet
+						</div>
+					{/if}
 				{/if}
-			{/if}
+			</div>
 		</div>
 	{/if}
 </div>
