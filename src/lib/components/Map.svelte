@@ -12,6 +12,8 @@
 	}
 	let { map = $bindable(), mapContainer = $bindable(), data = $bindable() }: Props = $props();
 
+	const markerStyle = 'h-3 w-3 place-items-center rounded-full focus:outline-2 focus:outline-black';
+	const popupStyle = 'px-3 py-0.5 rounded-md text-white opacity-95'
 	let zoom: number = $state(1.5);
 	let modal: CreateJourneyModal;
 	let error = $state();
@@ -28,7 +30,15 @@
 		}
 	}
 
-	// $inspect('global.journeyData',global.journeyData);
+	$effect(() => {
+		// Runs whenever global.viewMode changes
+		let currentMode = global.viewMode;
+		if (currentMode === 'overview') {
+			untrack(() => {
+				map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
+			});
+		}
+	});
 </script>
 
 <CreateJourneyModal bind:this={modal} />
@@ -42,16 +52,16 @@
 	onzoom={() => (zoom = zoom)}
 	bind:mapContainer
 	projection={{ type: 'globe' }}
-	class="h-full max-h-full w-full rounded-md contain-inline-size sm:aspect-[19.43/9] sm:max-h-full"
+	class="h-full w-full rounded-md"
 	dragRotate={false}
 	zoomOnDoubleClick={false}
 	minZoom={1.5}
 >
 	{#if global.viewMode === 'overview'}
-		{#each data.journeys as { lng, lat, name, journeyId, color }}
+		{#each data.journeys as journey}
 			<Marker
-				lngLat={[lng, lat]}
-				class={`h-3 w-3 place-items-center rounded-full ${color ?? global.journeyData?.color ?? 'bg-black'} focus:outline-2 focus:outline-black`}
+				lngLat={[journey.lng, journey.lat]}
+				class={`${markerStyle} ${journey.color ?? global.journeyData?.color ?? 'bg-black'}`}
 			>
 				<Popup
 					anchor="bottom"
@@ -61,26 +71,21 @@
 					closeButton={false}
 				>
 					<button
-						class={`px-3 py-0.5 ${color ?? global.journeyData?.color ?? 'bg-black'} rounded-md text-white opacity-95`}
+						class={`${popupStyle} ${journey.color ?? global.journeyData?.color ?? 'bg-black'}`}
 						onclick={() => {
-							map.flyTo({ center: [lng, lat], zoom: 10.5, speed: 0.7 });
-							global.journeyId = journeyId;
+							map.flyTo({ center: [journey.lng, journey.lat], zoom: 10.5, speed: 0.7 });
+							global.journeyId = journey.journeyId;
 							global.viewMode = 'journey';
 						}}
 					>
 						<text class="oxygen-regular">
-							{name}
+							{journey.name}
 						</text>
 					</button>
 				</Popup>
 			</Marker>
 		{/each}
 	{/if}
-	<Control class="rounded-md bg-gray-900 p-3 text-white">
-		<ControlButton onclick={() => map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 })}>
-			{global.viewMode}
-		</ControlButton>
-	</Control>
 	{#if global.viewMode === 'journey'}
 		{#await getJourneyData(global.journeyId)}
 			Loading Journey Data...
@@ -90,7 +95,7 @@
 				{#each global.journeyData.marker as { name, journeyId, lng, lat, color }}
 					<Marker
 						lngLat={[lng, lat]}
-						class={`h-3 w-3 place-items-center rounded-full ${color ?? global.journeyData.color ?? 'bg-black'} focus:outline-2 focus:outline-black`}
+						class={`${markerStyle} ${color ?? global.journeyData.color ?? 'bg-black'}`}
 					>
 						<Popup
 							anchor="bottom"
@@ -100,7 +105,7 @@
 							closeButton={false}
 						>
 							<button
-								class={`px-3 py-0.5 ${color ?? global.journeyData.color ?? 'bg-black'} rounded-md text-white opacity-95`}
+								class={`px-3 py-0.5 rounded-md text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
 								onclick={() => {
 									map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 									global.viewMode = 'overview';
@@ -119,7 +124,7 @@
 							{#if lng && lat}
 								<Marker
 									lngLat={[lat, lng]}
-									class={`grid h-2 w-2 place-items-center rounded-full ${color} text-black shadow-2xl focus:outline-2 focus:outline-black`}
+									class={`${markerStyle} ${color}`}
 								/>
 							{/if}
 						{/each}

@@ -12,10 +12,10 @@ export const load = (async () => {
             lng: true,
             lat: true,
             marker: true,
-            image: true
+            image: true,
         }
     })
-    return { journeys };
+    return { journeys: journeys };
 }) satisfies PageServerLoad;
 
 async function filterAndConvertHEIC(files: string[]) {

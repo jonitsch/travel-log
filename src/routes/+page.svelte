@@ -21,16 +21,9 @@
 	}
 </script>
 
-{#if global.viewMode === 'journey'}
-	<div></div>
-{/if}
-<div class="flex h-screen w-screen flex-row">
+<div class="flex flex-row gap-4 h h-full max-h-full w-full overflow-hidden">
 	{#if global.viewMode === 'overview' || global.viewMode === 'journey'}
-		<div
-			id="mapContainer"
-			class="h-screen w-screen flex-1 overflow-hidden"
-			bind:this={mapContainer}
-		>
+		<div id="mapContainer" class="h-full w-full flex-1" bind:this={mapContainer}>
 			<Map bind:map={map!} bind:mapContainer bind:data />
 		</div>
 	{/if}
@@ -38,17 +31,12 @@
 	{#if global.viewMode === 'journey'}
 		<div
 			id="book"
-			class="grid flex-[1.5] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-4 overflow-auto p-4"
+			class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 overflow-auto"
+			bind:this={book}
 		>
-			<button
-				class="col-span-full rounded-md p-3 text-5xl font-semibold text-white text-left"
-				onclick={() => (global.viewMode = 'overview')}
-			>
-				Pictures
-			</button>
 			{#if global.journeyData?.image}
 				{#if global.journeyData.image.length > 0}
-					{#each global.journeyData?.image as { journeyId, lng, lat, path, fileName, width, height }}
+					{#each global.journeyData?.image as { id, lng, lat, path, fileName, width, height }}
 						<img
 							src={path}
 							alt={fileName}
