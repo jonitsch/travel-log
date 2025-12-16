@@ -12,6 +12,11 @@
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
 	}
+
+	function resetToOverview() {
+		global.viewMode = null;
+		global.viewMode = 'overview';
+	}
 </script>
 
 <svelte:head>
@@ -25,7 +30,7 @@
 				<button
 					id="headerText"
 					class="{headerStyle} bg-gray-900"
-					onclick={() => (global.viewMode = 'overview')}
+					onclick={() => resetToOverview()}
 				>
 					<text class="">Travel Log</text>
 				</button>
@@ -44,8 +49,11 @@
 				</button>
 			</div>
 		{/if}
-		<div id="resetButton" class="group w-fit items-center bg-transparent pb-5 ml-auto">
-			<button onclick={() => global.viewMode = 'overview'} class="{headerStyle} bg-gray-900">
+		<div id="resetButton" class="group ml-auto w-fit items-center bg-transparent pb-5">
+			<button
+				onclick={() => resetToOverview()}
+				class="{headerStyle} bg-gray-900"
+			>
 				Reset
 			</button>
 		</div>
