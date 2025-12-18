@@ -21,16 +21,16 @@ async function initializeDatabase() {
             let journeys = await prisma.journey.findMany();
             journeys.forEach(async (j) => {
                 let journeyImages = await getImages(j.journeyId);
-                journeyImages.forEach(async (i) => {
+                journeyImages.forEach(async (img) => {
                     await prisma.image.create({
                         data: {
-                            path: i.path,
-                            fileName: i.fileName,
-                            width: i.width,
-                            height: i.height,
-                            lng: i.lng ?? null,
-                            lat: i.lat ?? null,
-                            journeyId: i.journeyId,
+                            path: img.path,
+                            fileName: img.fileName,
+                            width: img.width,
+                            height: img.height,
+                            lng: img.lng ?? null,
+                            lat: img.lat ?? null,
+                            journeyId: img.journeyId,
                         }
                     })
                 })
@@ -48,7 +48,7 @@ async function initializeDatabase() {
 
 export async function getImages(journeyId: string) {
     console.log('GetImages started')
-    if(await prisma.image.findMany()) {
+    if (await prisma.image.findMany()) {
         await prisma.image.deleteMany();
     }
     let dir = `pictures/${journeyId}`
@@ -64,13 +64,15 @@ export async function getImages(journeyId: string) {
     if (!fs.existsSync(dir)) {
         return images;
     };
-    let entries = await fs.promises.readdir(`pictures/${journeyId}`, { withFileTypes: true, recursive: true });
-    for (const entry of entries) {
+    let entries = await fs.promises.readdir(`pictures/${journeyId}`, {
+        withFileTypes: true,
+        recursive: true
+    });
+    entries.forEach(async (entry) => {
         if (entry.isFile()) {
             let fullPath = path.join(entry.parentPath, entry.name);
             let fileType = await fileTypeFromFile(fullPath);
             let metaData = await sharp(fullPath).metadata();
-            let journeyId = entry.parentPath.split('\\')[1];
             console.log('Loaded Image: ', fullPath)
             if (fileType) {
                 if (fileType.mime.includes('image') && fileType.ext != 'heic') {
@@ -118,7 +120,7 @@ export async function getImages(journeyId: string) {
                                 } */
             }
         }
-    }
+    });
     console.log('GetImages finished!')
     return images;
 }
