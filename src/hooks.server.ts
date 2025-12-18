@@ -1,12 +1,11 @@
-import { prisma, type Journey } from '$lib/server/database.js';
-import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import path from "path";
-import { fileTypeFromFile } from 'file-type';
-import exifr from 'exifr';
-import convert from 'heic-convert';
+import { prisma } from '$lib/server/database.js';
 import type { ServerInit } from '@sveltejs/kit';
+import { fileTypeFromFile, type FileTypeResult } from 'file-type';
+import exifr from 'exifr';
 import sharp from 'sharp';
+import convert from 'heic-convert';
 
 export const init: ServerInit = async () => {
     await initializeDatabase();
@@ -16,6 +15,7 @@ async function initializeDatabase() {
     console.log('Database Initialization started')
     let images = await prisma.image.findMany();
     if (images) {
+        await prisma.image.deleteMany();
         try {
             await prisma.image.deleteMany();
             let journeys = await prisma.journey.findMany();
@@ -43,15 +43,17 @@ async function initializeDatabase() {
         }
     }
     images = [];
-    console.log('Database Initialization finished')
+    console.log('Database Initialization finished!');
+}
+
+type imgFile = {
+    name: string,
+    path: string,
+    type: FileTypeResult | undefined,
 }
 
 export async function getImages(journeyId: string) {
-    console.log('GetImages started')
-    if (await prisma.image.findMany()) {
-        await prisma.image.deleteMany();
-    }
-    let dir = `pictures/${journeyId}`
+    console.log('GetImages started');
     let images: {
         path: string;
         fileName: string;
@@ -61,67 +63,95 @@ export async function getImages(journeyId: string) {
         lat: number | null;
         journeyId: string;
     }[] = [];
-    if (!fs.existsSync(dir)) {
-        return images;
-    };
-    let entries = await fs.promises.readdir(`pictures/${journeyId}`, {
-        withFileTypes: true,
-        recursive: true
-    });
-    entries.forEach(async (entry) => {
-        if (entry.isFile()) {
+    try {
+        let dir = `pictures/${journeyId}`
+        if (!fs.existsSync(dir)) {
+            return images;
+        };
+        let entries = await fs.promises.readdir(`pictures/${journeyId}`, {
+            withFileTypes: true,
+            recursive: true,
+        });
+        for (const entry of entries) {
             let fullPath = path.join(entry.parentPath, entry.name);
-            let fileType = await fileTypeFromFile(fullPath);
-            let metaData = await sharp(fullPath).metadata();
-            console.log('Loaded Image: ', fullPath)
-            if (fileType) {
-                if (fileType.mime.includes('image') && fileType.ext != 'heic') {
-                    let coords: any;
-                    if (await exifr.gps(fullPath)) {
-                        coords = await exifr.gps(fullPath)
-                    }
-                    images.push({
-                        path: fullPath,
-                        fileName: entry.name,
-                        width: metaData.width,
-                        height: metaData.height,
-                        lng: coords?.latitude ?? null,
-                        lat: coords?.longitude ?? null,
-                        journeyId: journeyId,
-                    });
+            if (entry.isFile()) {
+                let file: imgFile = {
+                    name: entry.name,
+                    path: fullPath,
+                    type: await fileTypeFromFile(fullPath),
                 }
-                /*                 else if (fileType.ext === 'heic') {
-                                    try {
-                                        (async () => {
-                                            const inputBuffer = await fs.promises.readFile(fullPath);
-                                            const outputBuffer = await convert({
-                                                buffer: inputBuffer.buffer, // the HEIC file buffer
-                                                format: 'JPEG',      // output format
-                                                quality: 1           // the jpeg compression quality, between 0 and 1
-                                            });
-                                            await fs.promises.writeFile(`${entry.parentPath}${entry.name}.jpeg`, new Uint8Array(outputBuffer));
-                                            fullPath = `${entry.parentPath}${entry.name}.jpeg`;
-                                        })()
-                                    } catch (err) {
-                                        console.log('GetImages failed', err)
-                                        console.error(err);
-                                    } finally {
-                                        let { latitude, longitude } = await exifr.gps(fullPath);
-                                        images.push({
-                                            path: fullPath,
-                                            fileName: entry.name,
-                                            width: metaData.width,
-                                            height: metaData.height,
-                                            lng: latitude ?? null,
-                                            lat: longitude ?? null,
-                                            journeyId: entry.parentPath.split('\\\\')[1],
-                                        });
-                                    }
-                                } */
+                if (file.type) {
+                    if (file.type.ext === 'heic') {
+                        let convertedFile =
+                            await convertHEICtoJPEG(entry);
+                        file = convertedFile;
+                    }
+                    if (file.type?.mime.includes('image') && file.type.ext.toLowerCase() != 'heic') {
+                        let metaData: sharp.Metadata = await sharp(file.path).metadata();
+                        let coords: {
+                            latitude: number,
+                            longitude: number,
+                        } | undefined;
+                        if (await exifr.gps(file.path)) {
+                            coords = await exifr.gps(file.path)
+                        }
+                        images.push({
+                            path: file.path,
+                            fileName: file.name,
+                            width: metaData.width,
+                            height: metaData.height,
+                            lng: coords?.longitude ?? null,
+                            lat: coords?.latitude ?? null,
+                            journeyId: journeyId,
+                        });
+                        console.log('Loaded Image: ', file.path)
+                    }
+                    else { console.log('Skipped file as it is not an image: ', file.path) }
+                }
             }
-        }
-    });
-    console.log('GetImages finished!')
-    return images;
+            else { console.log('Skipped entry as it is not a file: ', fullPath) }
+        };
+    } catch (err) {
+        console.log('GetImages failed', err)
+        console.error(err);
+    } finally {
+        console.log('GetImages finished!')
+        return images;
+    }
 }
 
+/**
+ * Converts a HEIC file to JPEG format using the specified quality settings.
+ * 
+ * @param dirent - The fs.Dirent of the HEIC file 
+ * @returns The converted JPEG file object
+ * @throws Error if file reading, conversion, or writing fails
+ */
+export async function convertHEICtoJPEG(dirent: fs.Dirent): Promise<imgFile> {
+    console.log('File Conversion started');
+
+    if (!dirent.isFile()) {
+        throw new Error('File Conversion failed: Dirent is not a file!');
+    }
+    const oldPath = path.join(dirent.parentPath, dirent.name);
+    const inputBuffer =
+        await fs.promises.readFile(oldPath);
+    const outputBuffer = await convert({
+        buffer: inputBuffer,
+        format: 'JPEG',
+        quality: 1,
+    });
+    const newName: string = path.parse(dirent.name).name + '.jpeg';
+    const newPath: string = path.join(dirent.parentPath, newName);
+    await fs.promises.writeFile(newPath, new Uint8Array(outputBuffer));
+    const newFile: imgFile = {
+        name: newName,
+        path: newPath,
+        type: await fileTypeFromFile(newPath),
+    }
+    fs.unlinkSync(oldPath);
+
+    console.log('File Conversion finished!');
+    console.log('Created new file at', newFile.path);
+    return newFile;
+}
