@@ -46,10 +46,10 @@
 			>
 				{#if global.journeyData?.image}
 					{#if global.journeyData.image.length > 0}
-						{#each global.journeyData?.image as { id, lng, lat, path, fileName, width, height }}
+						{#each global.journeyData?.image as img}
 							<img
-								src={path}
-								alt={fileName}
+								src={img.path}
+								alt={img.fileName}
 								class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
 							/>
 						{/each}

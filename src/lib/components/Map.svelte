@@ -44,7 +44,7 @@
 			untrack(() => {
 				map.flyTo({
 					center: [global.journeyData?.lng ?? 13.388, global.journeyData?.lat ?? 52.517],
-					zoom: 2.0,
+					zoom: 1.5,
 					speed: 0.7
 				});
 			});
