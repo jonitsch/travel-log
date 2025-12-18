@@ -1,5 +1,4 @@
 <script lang="ts">
-	import CreateJourneyModal from '$lib/components/CreateJourneyModal.svelte';
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
 	import { global, type ViewMode } from '$lib/state.svelte';
@@ -8,16 +7,13 @@
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
 	let book = $state<HTMLDivElement>();
-	let images: any = $state([]);
-	let modalContent: any = $state();
-	let modal = $state();
 
-	export async function getImages(dir: string) {
-		let response = await fetch(`/api/images?dir=${dir}`, {
+	export async function getImages(journeyId: string): Promise<any> {
+		let response = await fetch(`/api/images?dir=${journeyId}`, {
 			method: 'GET'
 		});
-		images = await response.json();
-		images = images;
+		let images = await response.json();
+		return images;
 	}
 </script>
 
@@ -37,7 +33,7 @@
 	{#if global.viewMode === 'journey'}
 		<div class="items-top flex flex-[3] flex-col gap-4">
 			<div id="header" class="{global.viewMode === 'journey' ? 'h-fit' : 'hidden'} ">
-				<text class="text-4xl text-white invisible">.</text>
+				<text class="invisible text-4xl text-white">.</text>
 			</div>
 			<div
 				id="book"

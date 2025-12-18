@@ -6,12 +6,6 @@ const prisma = new PrismaClient({ adapter: new PrismaMariaDb(env.DATABASE_URL)})
 
 export { prisma };
 
-/* export async function getJourneys() {
-  let markers = await prisma.journey.findMany()
-  return markers;
-}
-*/
-
 export type Data = {
   journeys: Journey[]
 };
@@ -41,18 +35,3 @@ export type Journey = {
     height: number;
   }[];
 };
-
-export async function getMarkers(journeyId: string) {
-  let markers = await prisma.marker.findMany(
-    {
-      include: {
-        journey: {
-        }
-      },
-      where: {
-        journeyId: journeyId
-      }
-    }
-  )
-  return markers;
-}
