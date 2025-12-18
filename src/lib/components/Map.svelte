@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Control, ControlButton, ControlGroup, MapLibre, Marker, Popup } from 'svelte-maplibre';
+	import { MapLibre, Marker, Popup } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount, untrack } from 'svelte';
@@ -42,7 +42,11 @@
 		let currentMode = global.viewMode;
 		if (currentMode === 'overview') {
 			untrack(() => {
-				map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
+				map.flyTo({
+					center: [global.journeyData?.lng ?? 13.388, global.journeyData?.lat ?? 52.517],
+					zoom: 2.0,
+					speed: 0.7
+				});
 			});
 			attributionControl._container.classList.add('maplibregl-compact-show');
 			attributionControl._container.removeAttribute('open');
@@ -102,57 +106,86 @@
 		{#await getJourneyData(global.journeyId)}
 			Loading Journey Data...
 		{:then}
-			{#if global.journeyData}
+			{#if global.journeyData?.marker && (global.journeyData?.marker.length ?? 0 > 0)}
 				{console.log($state.snapshot(global.journeyData))}
-				{#each global.journeyData.marker as { name, journeyId, lng, lat, color }}
-					<Marker
-						lngLat={[lng, lat]}
-						class={`${markerStyle} ${color ?? global.journeyData.color ?? 'bg-black'}`}
-					>
-						<Popup
-							anchor="bottom"
-							offset={-15}
-							open={true}
-							closeOnClickOutside={false}
-							closeButton={false}
+				{#if global.journeyData.marker}
+					{#each global.journeyData.marker as { name, journeyId, lng, lat, color }}
+						<Marker
+							lngLat={[lng, lat]}
+							class={`${markerStyle} ${color ?? global.journeyData.color ?? 'bg-black'}`}
 						>
-							<button
-								class={`rounded-md px-3 py-0.5 text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
-								onclick={() => {
-									map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
-									global.viewMode = 'overview';
-									mapContainer.style = 'width: 100vw';
-									global.journeyId = journeyId;
-								}}
+							<Popup
+								anchor="bottom"
+								offset={-15}
+								open={true}
+								closeOnClickOutside={false}
+								closeButton={false}
 							>
-								<text class="oxygen-regular">
-									{name}
-								</text>
-							</button>
-						</Popup>
-					</Marker>
-					{#if global.journeyData.image}
-						{#each global.journeyData.image as { lng, lat, fileName }}
-							{#if lng && lat}
-								<Marker lngLat={[lat, lng]} class={`${markerStyle} ${color}`} />
-							{/if}
-						{/each}
-					{/if}
-				{/each}
+								<button
+									class={`rounded-md px-3 py-0.5 text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
+									onclick={() => {
+										map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
+										global.viewMode = 'overview';
+										mapContainer.style = 'width: 100vw';
+										global.journeyId = journeyId;
+									}}
+								>
+									<text class="oxygen-regular">
+										{name}
+									</text>
+								</button>
+							</Popup>
+						</Marker>
+						{#if global.journeyData.image}
+							{#each global.journeyData.image as { lng, lat, fileName }}
+								{#if lng && lat}
+									<Marker lngLat={[lat, lng]} class={`${markerStyle} ${color}`} />
+								{/if}
+							{/each}
+						{/if}
+					{/each}
+				{/if}
+			{:else if global.journeyData}
+				<Marker
+					lngLat={[global.journeyData.lng, global.journeyData.lat]}
+					class={`${markerStyle} ${global.journeyData.color ?? 'bg-black'}`}
+				>
+					<Popup
+						anchor="bottom"
+						offset={-15}
+						open={true}
+						closeOnClickOutside={false}
+						closeButton={false}
+					>
+						<button
+							class={`rounded-md px-3 py-0.5 text-white opacity-95 ${global.journeyData.color ?? 'bg-black'}`}
+							onclick={() => {
+								map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
+								global.viewMode = 'overview';
+								mapContainer.style = 'width: 100vw';
+								global.journeyId = global.journeyData?.journeyId ?? '';
+							}}
+						>
+							<text class="oxygen-regular">
+								{global.journeyData.name}
+							</text>
+						</button>
+					</Popup>
+				</Marker>
+			{:else}
+				{new Error('Map failed to load - no valid data received')}
 			{/if}
+		{:catch}
+			<div
+				class="z-1500000 absolute left-[50%] top-[50%] h-fit w-fit -translate-x-1/2 items-center rounded-md bg-red-950 p-3 text-center text-white"
+			>
+				<text class="oxygen-bold text-2xl">Failed to Load Map</text>
+				<br />
+				<text class="text-1xl oxygen-light">{error}</text>
+			</div>
 		{/await}
 	{/if}
 </MapLibre>
-
-<!-- {:catch}
-	<div
-		class="z-1500000 absolute left-[50%] top-[50%] h-fit w-fit -translate-x-1/2 items-center rounded-md bg-red-950 p-3 text-center text-white"
-	>
-		<text class="oxygen-bold text-2xl">Failed to Load Map</text>
-		<br />
-		<text class="text-1xl oxygen-light">{error}</text>
-	</div>
-{/await} -->
 
 <style>
 	:global(.maplibregl-map) {
