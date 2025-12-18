@@ -1,10 +1,10 @@
 import type { PageServerLoad, Actions } from './$types';
 import { createRequire } from 'module';
-import { prisma } from '$lib/server/database';
+import { prisma, type Journey } from '$lib/server/database';
 const require = createRequire(import.meta.url);
 
 export const load = (async () => {
-    const journeys = await prisma.journey.findMany({
+    const journeys: Journey[] = await prisma.journey.findMany({
         select: {
             journeyId: true,
             name: true,
@@ -15,7 +15,7 @@ export const load = (async () => {
             image: true,
         }
     })
-    return { journeys: journeys };
+    return { journeys };
 }) satisfies PageServerLoad;
 
 async function filterAndConvertHEIC(files: string[]) {
