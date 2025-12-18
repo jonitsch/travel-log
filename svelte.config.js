@@ -14,7 +14,8 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			'$gen': './src/generated'
+			'$gen': './src/generated',
+			'$src': './src'
 		}
 	}
 };
