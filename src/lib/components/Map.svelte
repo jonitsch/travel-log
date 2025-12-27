@@ -15,7 +15,7 @@
 	let { map = $bindable(), mapContainer = $bindable(), data = $bindable() }: Props = $props();
 
 	const markerStyle = 'h-3 w-3 place-items-center rounded-full focus:outline-2 focus:outline-black';
-	const popupStyle = 'px-3 py-0.5 rounded-md text-white opacity-95';
+	const popupStyle = 'text-[1rem] px-3 py-0.4 rounded-md text-white opacity-95';
 	let zoom: number = $state(1.5);
 	let modal: CreateJourneyModal;
 	let error: unknown = $state();

@@ -12,16 +12,16 @@ export const init: ServerInit = async () => {
 }
 
 async function initializeDatabase() {
-    console.log('Database Initialization started')
+    console.log('Database Initialization started');
     let images = await prisma.image.findMany();
     if (images) {
         await prisma.image.deleteMany();
         try {
             await prisma.image.deleteMany();
             let journeys = await prisma.journey.findMany();
-            journeys.forEach(async (j) => {
+            for (const j of journeys) {
                 let journeyImages = await getImages(j.journeyId);
-                journeyImages.forEach(async (img) => {
+                for (const img of journeyImages) {
                     await prisma.image.create({
                         data: {
                             path: img.path,
