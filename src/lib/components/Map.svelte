@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { MapLibre, Marker, Popup } from 'svelte-maplibre';
+	import { MapLibre, Marker, Popup, GeoJSON, LineLayer } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount, untrack } from 'svelte';
 	import type { Data } from '$lib/server/database';
+	import type { FeatureCollection, Feature, LineString } from 'geojson';
 	import maplibregl from 'maplibre-gl';
 
 	interface Props {
@@ -21,6 +22,7 @@
 	let attributionControl = new maplibregl.AttributionControl({
 		compact: true
 	});
+	let geoJSON: FeatureCollection | null = $state(null);
 
 	async function getJourneyData(journeyId: string): Promise<any> {
 		try {
@@ -28,11 +30,41 @@
 				method: 'GET' // get Journey Data related to journeyId
 			});
 			global.journeyData = await res.json(); // save Journey Data to global.journeyData
+			geoJSON = (await buildGeoJSON()) ?? null;
+			console.log(geoJSON);
 			return global.journeyData;
 		} catch (err) {
 			error = err;
 		}
 	}
+	async function buildGeoJSON(): Promise<FeatureCollection | null> {
+		let geoJSON: FeatureCollection = {
+			type: 'FeatureCollection',
+			features: []
+		};
+		if (global.journeyData?.image) {
+			let imagesWithCoords = global.journeyData?.image.filter((img) => {
+				return img.lat && img.lng;
+			});
+			if (imagesWithCoords) {
+				let lineString: LineString = {
+					type: 'LineString',
+					coordinates: []
+				};
+				for (const img of imagesWithCoords) {
+					lineString.coordinates?.push([img.lng!, img.lat!]);
+				}
+				geoJSON.features.push({
+					type: 'Feature',
+					geometry: lineString,
+					properties: {}
+				});
+				return geoJSON;
+			}
+		}
+		return null;
+	}
+
 	onMount(() => {
 		map.addControl(attributionControl);
 	});
@@ -107,43 +139,40 @@
 			Loading Journey Data...
 		{:then}
 			{#if global.journeyData?.marker && (global.journeyData?.marker.length ?? 0 > 0)}
-				{console.log($state.snapshot(global.journeyData))}
-				{#if global.journeyData.marker}
-					{#each global.journeyData.marker as { name, journeyId, lng, lat, color }}
-						<Marker
-							lngLat={[lng, lat]}
-							class={`${markerStyle} ${color ?? global.journeyData.color ?? 'bg-black'}`}
+				{#each global.journeyData.marker as { name, journeyId, lng, lat, color }}
+					<Marker
+						lngLat={[lng, lat]}
+						class={`${markerStyle} ${color ?? global.journeyData.color ?? 'bg-black'}`}
+					>
+						<Popup
+							anchor="bottom"
+							offset={-15}
+							open={true}
+							closeOnClickOutside={false}
+							closeButton={false}
 						>
-							<Popup
-								anchor="bottom"
-								offset={-15}
-								open={true}
-								closeOnClickOutside={false}
-								closeButton={false}
+							<button
+								class={`rounded-md px-3 py-0.5 text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
+								onclick={() => {
+									map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
+									global.viewMode = 'overview';
+									global.journeyId = journeyId;
+								}}
 							>
-								<button
-									class={`rounded-md px-3 py-0.5 text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
-									onclick={() => {
-										map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
-										global.viewMode = 'overview';
-										global.journeyId = journeyId;
-									}}
-								>
-									<text class="oxygen-regular">
-										{name}
-									</text>
-								</button>
-							</Popup>
-						</Marker>
-						{#if global.journeyData.image}
-							{#each global.journeyData.image as { lng, lat, fileName }}
-								{#if lng && lat}
-									<Marker lngLat={[lat, lng]} class={`${markerStyle} ${color}`} />
-								{/if}
-							{/each}
-						{/if}
-					{/each}
-				{/if}
+								<text class="oxygen-regular">
+									{name}
+								</text>
+							</button>
+						</Popup>
+					</Marker>
+					{#if global.journeyData.image}
+						{#each global.journeyData.image as { lng, lat, fileName }}
+							{#if lng && lat}
+								<Marker lngLat={[lat, lng]} class={`${markerStyle} ${color}`} />
+							{/if}
+						{/each}
+					{/if}
+				{/each}
 			{:else if global.journeyData}
 				<Marker
 					lngLat={[global.journeyData.lng, global.journeyData.lat]}
@@ -161,7 +190,6 @@
 							onclick={() => {
 								map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 								global.viewMode = 'overview';
-								mapContainer.style = 'width: 100vw';
 								global.journeyId = global.journeyData?.journeyId ?? '';
 							}}
 						>
@@ -173,6 +201,18 @@
 				</Marker>
 			{:else}
 				{new Error('Map failed to load - no valid data received')}
+			{/if}
+			{#if geoJSON}
+				<GeoJSON data={geoJSON}>
+					<LineLayer
+						layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+						paint={{
+							'line-width': 5,
+							'line-color': '#008800',
+							'line-opacity': 0.8
+						}}
+					/>
+				</GeoJSON>
 			{/if}
 		{:catch}
 			<div

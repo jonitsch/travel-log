@@ -25,7 +25,7 @@ export type Journey = {
     id: number;
   }[];
   image: {
-    id: number;
+    id: string;
     journeyId: string;
     lng: number | null;
     lat: number | null;

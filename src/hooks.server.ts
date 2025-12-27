@@ -50,15 +50,18 @@ type imgFile = {
     name: string,
     path: string,
     type: FileTypeResult | undefined,
+    createdOn: Date | null
 }
 
 export async function getImages(journeyId: string) {
     console.log('GetImages started');
     let images: {
+        id: string;
         path: string;
         fileName: string;
         width: number;
         height: number;
+        createdOn: Date;
         lng: number | null;
         lat: number | null;
         journeyId: string;
@@ -74,11 +77,13 @@ export async function getImages(journeyId: string) {
         });
         for (const entry of entries) {
             let fullPath = path.join(entry.parentPath, entry.name);
+            let date = await exifr.parse(fullPath, ['DateTimeOriginal']);
             if (entry.isFile()) {
                 let file: imgFile = {
                     name: entry.name,
                     path: fullPath,
                     type: await fileTypeFromFile(fullPath),
+                    createdOn: date ?? null
                 }
                 if (file.type) {
                     if (file.type.ext === 'heic') {
@@ -93,18 +98,20 @@ export async function getImages(journeyId: string) {
                             longitude: number,
                         } | undefined;
                         if (await exifr.gps(file.path)) {
-                            coords = await exifr.gps(file.path)
+                            coords = await exifr.gps(file.path);
                         }
                         images.push({
+                            id: crypto.randomUUID(),
                             path: file.path,
                             fileName: file.name,
                             width: metaData.width,
                             height: metaData.height,
+                            createdOn: date ?? new Date,
                             lng: coords?.longitude ?? null,
                             lat: coords?.latitude ?? null,
                             journeyId: journeyId,
                         });
-                        console.log('Loaded Image: ', file.path)
+                        console.log('Loaded Image into Database: ', file.path)
                     }
                     else { console.log('Skipped file as it is not an image: ', file.path) }
                 }
