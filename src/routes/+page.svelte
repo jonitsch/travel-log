@@ -17,9 +17,15 @@
 		return images;
 	}
 
-	async function getURI(src: string): Promise<string> {
-		let response = await fetch(`/api/imgproxy?src=${src}`);
-		let url = response.json()
+	async function getImgProxyURL(src: string, width?: number, height?: number): Promise<string> {
+		const params = new URLSearchParams({
+			src: src,
+			width: width ? Math.round(width)?.toString() : '',
+			height: height ? Math.round(height)?.toString() : ''
+		});
+
+		const response = await fetch(`/api/imgproxy?${params.toString()}`);
+		let url = response.json();
 		return url;
 	}
 </script>
@@ -50,10 +56,9 @@
 				{#if global.journeyData?.image}
 					{#if global.journeyData.image.length > 0}
 						{#each global.journeyData?.image as img}
-							{#await getURI(img.path)}
+							{#await getImgProxyURL(img.path, img.width * 0.33, img.height * 0.33)}
 								getting img uri
 							{:then response}
-								{console.log(response)}
 								<img
 									src={response}
 									alt={img.fileName}

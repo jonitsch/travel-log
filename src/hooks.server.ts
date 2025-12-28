@@ -31,10 +31,12 @@ async function initializeDatabase() {
                             lng: img.lng ?? null,
                             lat: img.lat ?? null,
                             journeyId: img.journeyId,
+                            createdOn: img.createdOn,
+                            fileType: img.fileType,
                         }
                     })
-                })
-            })
+                }
+            }
         }
         catch (err) {
             images = [];
@@ -50,21 +52,21 @@ type imgFile = {
     name: string,
     path: string,
     type: FileTypeResult | undefined,
-    createdOn: Date | null
 }
 
 export async function getImages(journeyId: string) {
-    console.log('GetImages started');
+    console.log('GetImages started: Getting Images for: ', journeyId);
     let images: {
         id: string;
-        path: string;
-        fileName: string;
-        width: number;
-        height: number;
-        createdOn: Date;
+        journeyId: string;
         lng: number | null;
         lat: number | null;
-        journeyId: string;
+        path: string;
+        fileName: string;
+        fileType: string | null;
+        createdOn: Date | null;
+        width: number;
+        height: number;
     }[] = [];
     try {
         let dir = `pictures/${journeyId}`
@@ -77,41 +79,38 @@ export async function getImages(journeyId: string) {
         });
         for (const entry of entries) {
             let fullPath = path.join(entry.parentPath, entry.name);
-            let date = await exifr.parse(fullPath, ['DateTimeOriginal']);
             if (entry.isFile()) {
                 let file: imgFile = {
                     name: entry.name,
                     path: fullPath,
                     type: await fileTypeFromFile(fullPath),
-                    createdOn: date ?? null
                 }
                 if (file.type) {
-                    if (file.type.ext === 'heic') {
-                        let convertedFile =
-                            await convertHEICtoJPEG(entry);
-                        file = convertedFile;
-                    }
-                    if (file.type?.mime.includes('image') && file.type.ext.toLowerCase() != 'heic') {
+                    if (file.type?.mime.includes('image')) {
                         let metaData: sharp.Metadata = await sharp(file.path).metadata();
                         let coords: {
                             latitude: number,
                             longitude: number,
                         } | undefined;
                         if (await exifr.gps(file.path)) {
-                            coords = await exifr.gps(file.path);
+                            coords = await exifr.gps(file.path)
                         }
+                        let createdOn: {
+                            DateTimeOriginal: Date
+                        } = await exifr.parse(file.path, ['DateTimeOriginal']);
                         images.push({
                             id: crypto.randomUUID(),
                             path: file.path,
                             fileName: file.name,
+                            fileType: file.type.ext,
+                            createdOn: createdOn.DateTimeOriginal ?? null,
                             width: metaData.width,
                             height: metaData.height,
-                            createdOn: date ?? new Date,
                             lng: coords?.longitude ?? null,
                             lat: coords?.latitude ?? null,
                             journeyId: journeyId,
                         });
-                        console.log('Loaded Image into Database: ', file.path)
+                        console.log('Loaded Image: ', file.path)
                     }
                     else { console.log('Skipped file as it is not an image: ', file.path) }
                 }

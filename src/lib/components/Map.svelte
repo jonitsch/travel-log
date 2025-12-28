@@ -3,7 +3,7 @@
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount, untrack } from 'svelte';
-	import type { Data } from '$lib/server/database';
+	import type { Data } from '$lib/server/prisma';
 	import type { FeatureCollection, Feature, LineString } from 'geojson';
 	import maplibregl from 'maplibre-gl';
 
@@ -26,12 +26,9 @@
 
 	async function getJourneyData(journeyId: string): Promise<any> {
 		try {
-			const res = await fetch(`/api/journeys?journeyId=${journeyId}`, {
-				method: 'GET' // get Journey Data related to journeyId
-			});
-			global.journeyData = await res.json(); // save Journey Data to global.journeyData
+			const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
+			global.journeyData = await res.json();
 			geoJSON = (await buildGeoJSON()) ?? null;
-			console.log(geoJSON);
 			return global.journeyData;
 		} catch (err) {
 			error = err;
@@ -46,12 +43,22 @@
 			let imagesWithCoords = global.journeyData?.image.filter((img) => {
 				return img.lat && img.lng;
 			});
+			imagesWithCoords.sort((a, b) => {
+				if (a.createdOn < b.createdOn) {
+					return -1;
+				} else if (a.createdOn > b.createdOn) {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
 			if (imagesWithCoords) {
 				let lineString: LineString = {
 					type: 'LineString',
 					coordinates: []
 				};
 				for (const img of imagesWithCoords) {
+					console.log(img.createdOn);
 					lineString.coordinates?.push([img.lng!, img.lat!]);
 				}
 				geoJSON.features.push({
@@ -63,6 +70,18 @@
 			}
 		}
 		return null;
+	}
+
+	async function getImgProxyURL(src: string, width?: number, height?: number): Promise<string> {
+		const params = new URLSearchParams({
+			src: src,
+			width: width ? Math.round(width)?.toString() : '',
+			height: height ? Math.round(height)?.toString() : ''
+		});
+
+		const response = await fetch(`/api/imgproxy?${params.toString()}`);
+		let url = response.json();
+		return url;
 	}
 
 	onMount(() => {
@@ -77,7 +96,7 @@
 				map.flyTo({
 					center: [global.journeyData?.lng ?? 13.388, global.journeyData?.lat ?? 52.517],
 					zoom: 1.5,
-					speed: 0.7
+					speed: 1
 				});
 			});
 			attributionControl._container.classList.add('maplibregl-compact-show');
@@ -166,9 +185,19 @@
 						</Popup>
 					</Marker>
 					{#if global.journeyData.image}
-						{#each global.journeyData.image as { lng, lat, fileName }}
-							{#if lng && lat}
-								<Marker lngLat={[lat, lng]} class={`${markerStyle} ${color}`} />
+						{#each global.journeyData.image as img}
+							{#if img.lng && img.lat}
+								<Marker lngLat={[img.lng, img.lat]} class={`${markerStyle.replace('h-3 w-3', '')} h-7 w-7`}>
+									{#await getImgProxyURL(img.path, img.width * 0.33, img.height * 0.33)}
+										getting img uri
+									{:then response}
+										<img
+											src={response}
+											alt={img.fileName}
+											class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+										/>
+									{/await}
+								</Marker>
 							{/if}
 						{/each}
 					{/if}
