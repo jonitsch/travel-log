@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from "path";
-import { prisma } from '$lib/server/database.js';
+import { prisma } from '$src/lib/server/prisma.js';
 import type { ServerInit } from '@sveltejs/kit';
 import { fileTypeFromFile, type FileTypeResult } from 'file-type';
 import exifr from 'exifr';

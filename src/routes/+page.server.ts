@@ -1,6 +1,6 @@
 import type { PageServerLoad, Actions } from './$types';
 import { createRequire } from 'module';
-import { prisma, type Journey } from '$lib/server/database';
+import { prisma, type Journey } from '$src/lib/server/prisma';
 const require = createRequire(import.meta.url);
 
 export const load = (async () => {

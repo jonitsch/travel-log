@@ -1,4 +1,4 @@
-import type { Journey } from "./server/database";
+import type { Journey } from "./server/prisma";
 
 export type ViewMode = 'overview' | 'journey' | null;
 
