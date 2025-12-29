@@ -11,6 +11,8 @@ export const init: ServerInit = async () => {
     await initializeDatabase();
 }
 
+type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data']
+
 async function initializeDatabase() {
     console.log('Database Initialization started');
     let images = await prisma.image.findMany();
@@ -23,18 +25,8 @@ async function initializeDatabase() {
                 let journeyImages = await getImages(j.journeyId);
                 for (const img of journeyImages) {
                     await prisma.image.create({
-                        data: {
-                            path: img.path,
-                            fileName: img.fileName,
-                            width: img.width,
-                            height: img.height,
-                            lng: img.lng ?? null,
-                            lat: img.lat ?? null,
-                            journeyId: img.journeyId,
-                            createdOn: img.createdOn,
-                            fileType: img.fileType,
-                        }
-                    })
+                        data: img
+                    });
                 }
             }
         }
@@ -48,26 +40,9 @@ async function initializeDatabase() {
     console.log('Database Initialization finished!');
 }
 
-type imgFile = {
-    name: string,
-    path: string,
-    type: FileTypeResult | undefined,
-}
-
-export async function getImages(journeyId: string) {
+async function getImages(journeyId: string) {
     console.log('GetImages started: Getting Images for: ', journeyId);
-    let images: {
-        id: string;
-        journeyId: string;
-        lng: number | null;
-        lat: number | null;
-        path: string;
-        fileName: string;
-        fileType: string | null;
-        createdOn: Date | null;
-        width: number;
-        height: number;
-    }[] = [];
+    let images: Array<imgCreateBody> = [];
     try {
         let dir = `pictures/${journeyId}`
         if (!fs.existsSync(dir)) {
@@ -80,40 +55,37 @@ export async function getImages(journeyId: string) {
         for (const entry of entries) {
             let fullPath = path.join(entry.parentPath, entry.name);
             if (entry.isFile()) {
-                let file: imgFile = {
-                    name: entry.name,
-                    path: fullPath,
-                    type: await fileTypeFromFile(fullPath),
-                }
-                if (file.type) {
-                    if (file.type?.mime.includes('image')) {
-                        let metaData: sharp.Metadata = await sharp(file.path).metadata();
-                        let coords: {
+                let type: FileTypeResult | undefined = await fileTypeFromFile(fullPath);
+                if (type?.mime.includes('image')) {
+                    let name = entry.name,
+                        path = fullPath,
+                        metaData: sharp.Metadata = await sharp(path).metadata(),
+                        coords: {
                             latitude: number,
                             longitude: number,
                         } | undefined;
-                        if (await exifr.gps(file.path)) {
-                            coords = await exifr.gps(file.path)
-                        }
-                        let createdOn: {
-                            DateTimeOriginal: Date
-                        } = await exifr.parse(file.path, ['DateTimeOriginal']);
-                        images.push({
-                            id: crypto.randomUUID(),
-                            path: file.path,
-                            fileName: file.name,
-                            fileType: file.type.ext,
-                            createdOn: createdOn.DateTimeOriginal ?? null,
-                            width: metaData.width,
-                            height: metaData.height,
-                            lng: coords?.longitude ?? null,
-                            lat: coords?.latitude ?? null,
-                            journeyId: journeyId,
-                        });
-                        console.log('Loaded Image: ', file.path)
+                    if (await exifr.gps(path)) {
+                        coords = await exifr.gps(path);
                     }
-                    else { console.log('Skipped file as it is not an image: ', file.path) }
+                    let createdOn: {
+                        DateTimeOriginal: Date
+                    } = await exifr.parse(path, ['DateTimeOriginal']);
+                    let imgData: imgCreateBody = {
+                        path: path,
+                        fileName: name,
+                        fileType: type.ext,
+                        createdOn: createdOn.DateTimeOriginal,
+                        width: metaData.width,
+                        height: metaData.height,
+                        lng: coords?.longitude ?? null,
+                        lat: coords?.latitude ?? null,
+                        journeyId: journeyId,
+                    }
+                    images.push(imgData);
+                    console.log('Loaded Image: ', path)
                 }
+                else { console.log('Skipped file as it is not an image: ', path) }
+
             }
             else { console.log('Skipped entry as it is not a file: ', fullPath) }
         };
