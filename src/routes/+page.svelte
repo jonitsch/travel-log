@@ -44,6 +44,7 @@
 	</div>
 
 	{#if global.viewMode === 'journey'}
+		{@const journey = global.journeyData}
 		<div class="items-top flex flex-[1] flex-col gap-4">
 			<div id="header" class="{global.viewMode === 'journey' ? 'h-fit' : 'hidden'} ">
 				<text class="invisible text-4xl text-white">.</text>
@@ -53,16 +54,17 @@
 				class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 overflow-auto"
 				bind:this={book}
 			>
-				{#if global.journeyData?.image}
-					{#if global.journeyData.image.length > 0}
-						{#each global.journeyData?.image as img}
-							{#await getImgProxyURL(img.path, img.width * 0.33, img.height * 0.33)}
-								getting img uri
+				{#if journey?.image}
+					{#if journey.image.length > 0}
+						{#each journey.image as img}
+							{#await getImgProxyURL(img.path, img.width * 0.3, img.height * 0.3)}
+								<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105 bg-slate-600"></div>
 							{:then response}
 								<img
 									src={response}
 									alt={img.fileName}
 									class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+									title={img.createdOn.toString()}
 								/>
 							{/await}
 						{/each}

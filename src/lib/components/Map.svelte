@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { MapLibre, Marker, Popup, GeoJSON, LineLayer } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
-	import { global, type ViewMode } from '$lib/state.svelte';
+	import { global } from '$lib/state.svelte';
 	import { onMount, untrack } from 'svelte';
-	import type { Data } from '$lib/server/prisma';
-	import type { FeatureCollection, Feature, LineString } from 'geojson';
+	import type { Data, Journey } from '$lib/server/prisma';
+	import type { FeatureCollection, LineString } from 'geojson';
 	import maplibregl from 'maplibre-gl';
 	import ErrorMessage from './ErrorMessage.svelte';
 
@@ -19,20 +19,19 @@
 	const popupStyle = 'text-[1rem] px-3 py-0.4 rounded-md text-white opacity-95';
 	let zoom: number = $state(1.5);
 	let modal: CreateJourneyModal;
-	let error: unknown = $state();
 	let attributionControl = new maplibregl.AttributionControl({
 		compact: true
 	});
 	let geoJSON: FeatureCollection | null = $state(null);
 
-	async function getJourneyData(journeyId: string): Promise<any> {
+	async function getJourneyData(journeyId: string): Promise<Journey | null> {
 		try {
 			const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
 			global.journeyData = await res.json();
 			geoJSON = (await buildGeoJSON()) ?? null;
 			return global.journeyData;
 		} catch (err) {
-			error = err;
+			throw err;
 		}
 	}
 	async function buildGeoJSON(): Promise<FeatureCollection | null> {
@@ -79,7 +78,6 @@
 			width: width ? Math.round(width)?.toString() : '',
 			height: height ? Math.round(height)?.toString() : ''
 		});
-
 		const response = await fetch(`/api/imgproxy?${params.toString()}`);
 		let url = response.json();
 		return url;
@@ -127,7 +125,7 @@
 		{#each data.journeys as journey}
 			<Marker
 				lngLat={[journey.lng, journey.lat]}
-				class={`${markerStyle} ${journey.color ?? global.journeyData?.color ?? 'bg-black'}`}
+				class={`${markerStyle} ${journey.color ?? 'bg-black'}`}
 			>
 				<Popup
 					anchor="bottom"
@@ -137,7 +135,7 @@
 					closeButton={false}
 				>
 					<button
-						class={`${popupStyle} ${journey.color ?? global.journeyData?.color ?? 'bg-black'}`}
+						class={`${popupStyle} ${journey.color ?? 'bg-black'}`}
 						onclick={() => {
 							map.flyTo({ center: [journey.lng, journey.lat], zoom: 10.5, speed: 0.7 });
 							global.journeyId = journey.journeyId;
@@ -157,12 +155,61 @@
 	{#if global.viewMode === 'journey'}
 		{#await getJourneyData(global.journeyId)}
 			Loading Journey Data...
-		{:then}
-			{#if global.journeyData?.marker && (global.journeyData?.marker.length ?? 0 > 0)}
-				{#each global.journeyData.marker as { name, journeyId, lng, lat, color }}
+		{:then data}
+			{@const journey = global.journeyData}
+			{#if journey}
+				{#if journey.marker.length ?? 0 > 0}
+					{#each journey.marker as marker}
+						<Marker
+							lngLat={[marker.lng, marker.lat]}
+							class={`${markerStyle} ${marker.color ?? 'bg-black'}`}
+						>
+							<Popup
+								anchor="bottom"
+								offset={-15}
+								open={true}
+								closeOnClickOutside={false}
+								closeButton={false}
+							>
+								<button
+									class={`rounded-md px-3 py-0.5 text-white opacity-95 ${marker.color ?? 'bg-black'}`}
+									onclick={() => {
+										map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
+										global.viewMode = 'overview';
+										global.journeyId = marker.journeyId;
+									}}
+								>
+									<text class="oxygen-regular">
+										{marker.name}
+									</text>
+								</button>
+							</Popup>
+						</Marker>
+						{#if journey.image}
+							{#each journey.image as img}
+								{#if img.lng && img.lat}
+									<Marker
+										lngLat={[img.lng, img.lat]}
+										class={`${markerStyle.replace('h-3 w-3', '')} h-7 w-7`}
+									>
+										{#await getImgProxyURL(img.path, img.width * 0.1, img.height * 0.1)}
+											<div class="color h-[10%] w-[10%] {journey.color} rounded-lg"></div>
+										{:then response}
+											<img
+												src={response}
+												alt={img.fileName}
+												class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+											/>
+										{/await}
+									</Marker>
+								{/if}
+							{/each}
+						{/if}
+					{/each}
+				{:else}
 					<Marker
-						lngLat={[lng, lat]}
-						class={`${markerStyle} ${color ?? global.journeyData.color ?? 'bg-black'}`}
+						lngLat={[journey.lng, journey.lat]}
+						class={`${markerStyle} ${journey.color ?? 'bg-black'}`}
 					>
 						<Popup
 							anchor="bottom"
@@ -172,78 +219,32 @@
 							closeButton={false}
 						>
 							<button
-								class={`rounded-md px-3 py-0.5 text-white opacity-95 ${color ?? global.journeyData.color ?? 'bg-black'}`}
+								class={`rounded-md px-3 py-0.5 text-white opacity-95 ${journey.color ?? 'bg-black'}`}
 								onclick={() => {
 									map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
 									global.viewMode = 'overview';
-									global.journeyId = journeyId;
+									global.journeyId = journey.journeyId ?? '';
 								}}
 							>
 								<text class="oxygen-regular">
-									{name}
+									{journey.name}
 								</text>
 							</button>
 						</Popup>
 					</Marker>
-					{#if global.journeyData.image}
-						{#each global.journeyData.image as img}
-							{#if img.lng && img.lat}
-								<Marker lngLat={[img.lng, img.lat]} class={`${markerStyle.replace('h-3 w-3', '')} h-7 w-7`}>
-									{#await getImgProxyURL(img.path, img.width * 0.33, img.height * 0.33)}
-										getting img uri
-									{:then response}
-										<img
-											src={response}
-											alt={img.fileName}
-											class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
-										/>
-									{/await}
-								</Marker>
-							{/if}
-						{/each}
-					{/if}
-				{/each}
-			{:else if global.journeyData}
-				<Marker
-					lngLat={[global.journeyData.lng, global.journeyData.lat]}
-					class={`${markerStyle} ${global.journeyData.color ?? 'bg-black'}`}
-				>
-					<Popup
-						anchor="bottom"
-						offset={-15}
-						open={true}
-						closeOnClickOutside={false}
-						closeButton={false}
-					>
-						<button
-							class={`rounded-md px-3 py-0.5 text-white opacity-95 ${global.journeyData.color ?? 'bg-black'}`}
-							onclick={() => {
-								map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
-								global.viewMode = 'overview';
-								global.journeyId = global.journeyData?.journeyId ?? '';
+				{/if}
+				{#if geoJSON}
+					<GeoJSON data={geoJSON}>
+						<LineLayer
+							layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+							paint={{
+								'line-width': 3,
+								'line-color': '#008800',
+								'line-opacity': 0.8
 							}}
-						>
-							<text class="oxygen-regular">
-								{global.journeyData.name}
-							</text>
-						</button>
-					</Popup>
-				</Marker>
-			{:else}
-				{new Error('Map failed to load - no valid data received')}
-			{/if}
-			{#if geoJSON}
-				<GeoJSON data={geoJSON}>
-					<LineLayer
-						layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-						paint={{
-							'line-width': 5,
-							'line-color': '#008800',
-							'line-opacity': 0.8
-						}}
-					/>
-				</GeoJSON>
-			{/if}
+						/>
+					</GeoJSON>
+				{/if}
 			{:else}
 				{@const error = new Error('Map failed to load - no journey data received')}
 				<ErrorMessage {error}>Failed To Load Map</ErrorMessage>
