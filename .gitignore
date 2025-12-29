@@ -27,3 +27,6 @@ vite.config.ts.timestamp-*
 
 # Prisma
 src/generated/
+
+# Unlighthouse
+.unlighthouse/
