@@ -5,7 +5,7 @@ import type { ServerInit } from '@sveltejs/kit';
 import { fileTypeFromFile, type FileTypeResult } from 'file-type';
 import exifr from 'exifr';
 import sharp from 'sharp';
-import convert from 'heic-convert';
+import type { Prisma } from '$gen/prisma/client/client';
 
 export const init: ServerInit = async () => {
     await initializeDatabase();
@@ -124,40 +124,4 @@ export async function getImages(journeyId: string) {
         console.log('GetImages finished!')
         return images;
     }
-}
-
-/**
- * Converts a HEIC file to JPEG format using the specified quality settings.
- * 
- * @param dirent - The fs.Dirent of the HEIC file 
- * @returns The converted JPEG file object
- * @throws Error if file reading, conversion, or writing fails
- */
-export async function convertHEICtoJPEG(dirent: fs.Dirent): Promise<imgFile> {
-    console.log('File Conversion started');
-
-    if (!dirent.isFile()) {
-        throw new Error('File Conversion failed: Dirent is not a file!');
-    }
-    const oldPath = path.join(dirent.parentPath, dirent.name);
-    const inputBuffer =
-        await fs.promises.readFile(oldPath);
-    const outputBuffer = await convert({
-        buffer: inputBuffer,
-        format: 'JPEG',
-        quality: 1,
-    });
-    const newName: string = path.parse(dirent.name).name + '.jpeg';
-    const newPath: string = path.join(dirent.parentPath, newName);
-    await fs.promises.writeFile(newPath, new Uint8Array(outputBuffer));
-    const newFile: imgFile = {
-        name: newName,
-        path: newPath,
-        type: await fileTypeFromFile(newPath),
-    }
-    fs.unlinkSync(oldPath);
-
-    console.log('File Conversion finished!');
-    console.log('Created new file at', newFile.path);
-    return newFile;
 }
