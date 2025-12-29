@@ -35,8 +35,8 @@ model image {
   id        String   @id @default(uuid())
   path      String
   fileName  String
-  fileType  String?
-  createdOn DateTime?
+  fileType  String
+  createdOn DateTime
   width     Int
   height    Int
   lng       Float?
