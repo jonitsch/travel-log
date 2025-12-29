@@ -6,6 +6,7 @@
 	import type { Data } from '$lib/server/prisma';
 	import type { FeatureCollection, Feature, LineString } from 'geojson';
 	import maplibregl from 'maplibre-gl';
+	import ErrorMessage from './ErrorMessage.svelte';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
@@ -243,14 +244,13 @@
 					/>
 				</GeoJSON>
 			{/if}
-		{:catch}
-			<div
-				class="z-1500000 absolute left-[50%] top-[50%] h-fit w-fit -translate-x-1/2 items-center rounded-md bg-red-950 p-3 text-center text-white"
-			>
-				<text class="oxygen-bold text-2xl">Failed to Load Map</text>
-				<br />
-				<text class="text-1xl oxygen-light">{error}</text>
-			</div>
+			{:else}
+				{@const error = new Error('Map failed to load - no journey data received')}
+				<ErrorMessage {error}>Failed To Load Map</ErrorMessage>
+			{/if}
+		{:catch err}
+			{@const error = err}
+			<ErrorMessage {error}>Failed To Load Journey Data</ErrorMessage>
 		{/await}
 	{/if}
 </MapLibre>

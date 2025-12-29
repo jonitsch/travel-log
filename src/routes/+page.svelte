@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
-	import { global, type ViewMode } from '$lib/state.svelte';
+	import { global } from '$lib/state.svelte';
+	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 
 	let { data }: PageProps = $props();
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
 	let book = $state<HTMLDivElement>();
-	let testURL: string = 'pictures/dolo25/CIMG3991.jpeg';
 
 	export async function getImages(journeyId: string): Promise<any> {
 		let response = await fetch(`/api/images?dir=${journeyId}`, {
@@ -71,6 +71,9 @@
 							No images yet
 						</div>
 					{/if}
+				{:else}
+					{@const error = new Error('Images failed to load - no image data received')}
+					<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
 				{/if}
 			</div>
 		</div>
