@@ -32,13 +32,15 @@ model marker {
 }
 
 model image {
-  id        String     @id @default(uuid())
+  id        String   @id @default(uuid())
   path      String
   fileName  String
+  fileType  String
+  createdOn DateTime
   width     Int
   height    Int
   lng       Float?
   lat       Float?
   journeyId String
-  journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
+  journey   journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
 }

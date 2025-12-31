@@ -1,7 +1,8 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
-	import { global, type ViewMode } from '$lib/state.svelte';
+	import { global } from '$lib/state.svelte';
+	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 
 	let { data }: PageProps = $props();
 	let mapContainer = $state<HTMLDivElement>();
@@ -15,6 +16,18 @@
 		let images = await response.json();
 		return images;
 	}
+
+	async function getImgProxyURL(src: string, width?: number, height?: number): Promise<string> {
+		const params = new URLSearchParams({
+			src: src,
+			width: width ? Math.round(width)?.toString() : '',
+			height: height ? Math.round(height)?.toString() : ''
+		});
+
+		const response = await fetch(`/api/imgproxy?${params.toString()}`);
+		let url = response.json();
+		return url;
+	}
 </script>
 
 <div class="h flex h-full max-h-full w-full flex-row gap-4 overflow-hidden">
@@ -25,13 +38,14 @@
 		<div id="mapContainer" class="h-full flex-1" bind:this={mapContainer}>
 			<Map bind:map={map!} bind:mapContainer bind:data />
 		</div>
-		<div id="header" class="{global.viewMode === 'journey' ? 'flex-[1.5]' : 'hidden'} ">
+		<div id="header" class="{global.viewMode === 'journey' ? 'flex-[0]' : 'hidden'} ">
 			<text class="text-2xl text-white">Info</text>
 		</div>
 	</div>
 
 	{#if global.viewMode === 'journey'}
-		<div class="items-top flex flex-[3] flex-col gap-4">
+		{@const journey = global.journeyData}
+		<div class="items-top flex flex-[1] flex-col gap-4">
 			<div id="header" class="{global.viewMode === 'journey' ? 'h-fit' : 'hidden'} ">
 				<text class="invisible text-4xl text-white">.</text>
 			</div>
@@ -40,20 +54,28 @@
 				class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 overflow-auto"
 				bind:this={book}
 			>
-				{#if global.journeyData?.image}
-					{#if global.journeyData.image.length > 0}
-						{#each global.journeyData?.image as img}
-							<img
-								src={img.path}
-								alt={img.fileName}
-								class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
-							/>
+				{#if journey?.image}
+					{#if journey.image.length > 0}
+						{#each journey.image as img}
+							{#await getImgProxyURL(img.path, img.width * 0.3, img.height * 0.3)}
+								<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105 bg-slate-600"></div>
+							{:then response}
+								<img
+									src={response}
+									alt={img.fileName}
+									class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
+									title={img.createdOn.toString()}
+								/>
+							{/await}
 						{/each}
 					{:else}
 						<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105">
 							No images yet
 						</div>
 					{/if}
+				{:else}
+					{@const error = new Error('Images failed to load - no image data received')}
+					<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
 				{/if}
 			</div>
 		</div>

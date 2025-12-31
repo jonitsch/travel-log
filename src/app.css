@@ -25,6 +25,27 @@
   font-style: normal;
 }
 
+/* SCROLLBAR */
+  /* Firefox */
+    * {
+      scrollbar-width: thick;
+      scrollbar-color: #202c47 transparent;
+    }
+  /* WebKit */
+    ::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #202c47;
+      border-radius: 8px;
+    }
+
+
 .outfit-oxygen {
   font-family: "Oxygen";
   font-optical-sizing: auto;
