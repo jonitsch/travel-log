@@ -5,7 +5,7 @@ export type ViewMode = 'overview' | 'journey' | null;
 type State = {
 	viewMode: ViewMode;
 	journeyData: Journey | null;
-	journeyId: string;
+	journeyId: string | undefined;
 	map: maplibregl.Map | null;
 };
 
