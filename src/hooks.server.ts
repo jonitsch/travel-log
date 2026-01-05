@@ -67,14 +67,24 @@ async function getImages(journeyId: string) {
                     if (await exifr.gps(path)) {
                         coords = await exifr.gps(path);
                     }
-                    let createdOn: {
-                        DateTimeOriginal: Date
-                    } = await exifr.parse(path, ['DateTimeOriginal']);
+                    let exifrDates: {
+                        DateTimeOriginal: string;
+                        CreateDate: string;
+                        ModifyDate: string;
+                    } = await exifr.parse(path, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
+                    console.log(exifrDates);
+                    let createdOn: Date;
+                    if (!exifrDates) {
+                        createdOn = new Date(Date.now())
+                    } else {
+                        createdOn = new Date(exifrDates.DateTimeOriginal ?? exifrDates.CreateDate ?? exifrDates.ModifyDate);
+                    }
+                    // exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
                     let imgData: imgCreateBody = {
                         path: path,
                         fileName: name,
                         fileType: type.ext,
-                        createdOn: createdOn.DateTimeOriginal,
+                        createdOn: createdOn,
                         width: metaData.width,
                         height: metaData.height,
                         lng: coords?.longitude ?? null,
