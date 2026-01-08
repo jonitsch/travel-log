@@ -2,7 +2,7 @@
 #### This Web-Project is designed to document all of your Journeys in one place! 🌍
 
 ## Development
-> ### Enviroment Variables
+### Enviroment Variables
 | Variable | Description |
 | ----------- | ----------- |
 | `DATABASE_URL` | Your Database URL |
@@ -11,11 +11,11 @@
 | `IMGPROXY_SALT` | Your ImgProxy Salt (HEX-Format) |
 | `IMGPROXY_URL` | Your ImgProxy Base URL |
 
-> ### Generate Key and Salt
+### Generate Key and Salt
 KEY: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`  
 SALT: `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 
-> ### Run ImgProxy Container locally
+### Run ImgProxy Container locally
 ```docker
  docker run 
     -p 8080:8080
