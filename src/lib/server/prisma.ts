@@ -1,5 +1,5 @@
 import { env } from "$env/dynamic/private";
-import { PrismaClient } from "$gen/prisma/client/client";
+import { Prisma, PrismaClient } from "$gen/prisma/client/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
 const prisma = new PrismaClient({ adapter: new PrismaMariaDb(env.DATABASE_URL) });
@@ -13,26 +13,8 @@ export type Data = {
     color: string;
     lng: number;
     lat: number;
-    marker: {
-      journeyId: string;
-      name: string;
-      color: string;
-      lng: number;
-      lat: number;
-      id: number;
-    }[];
-    image: {
-      id: string;
-      journeyId: string;
-      lng: number | null;
-      lat: number | null;
-      path: string;
-      fileName: string;
-      fileType: string | null;
-      createdOn: Date | null;
-      width: number;
-      height: number;
-    }[];
+    marker: Marker[];
+    image: Image[];
   }[]
 };
 
@@ -42,24 +24,28 @@ export type Journey = {
   color: string;
   lng: number;
   lat: number;
-  marker: {
-    journeyId: string;
-    name: string;
-    color: string;
-    lng: number;
-    lat: number;
-    id: number;
-  }[];
-  image: {
-    id: string;
-    journeyId: string;
-    lng: number | null;
-    lat: number | null;
-    path: string;
-    fileName: string;
-    fileType: string | null;
-    createdOn: Date;
-    width: number;
-    height: number;
-  }[];
+  marker: Marker[];
+  image: Image[];
+};
+
+export type Image = {
+  id: string;
+  journeyId: string;
+  lng: number | null;
+  lat: number | null;
+  path: string;
+  fileName: string;
+  fileType: string | null;
+  createdOn: Date;
+  width: number;
+  height: number;
+};
+
+export type Marker = {
+  journeyId: string;
+  name: string;
+  color: string;
+  lng: number;
+  lat: number;
+  id: number;
 };
