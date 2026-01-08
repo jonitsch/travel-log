@@ -3,6 +3,7 @@
 	import type { PageProps } from './$types';
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
+	import { getImgProxyURL } from '$src/lib/imgproxy';
 
 	let { data }: PageProps = $props();
 	let mapContainer = $state<HTMLDivElement>();
@@ -15,18 +16,6 @@
 		});
 		let images = await response.json();
 		return images;
-	}
-
-	async function getImgProxyURL(src: string, width?: number, height?: number): Promise<string> {
-		const params = new URLSearchParams({
-			src: src,
-			width: width ? Math.round(width)?.toString() : '',
-			height: height ? Math.round(height)?.toString() : ''
-		});
-
-		const response = await fetch(`/api/imgproxy?${params.toString()}`);
-		let url = response.json();
-		return url;
 	}
 </script>
 
@@ -58,9 +47,12 @@
 					{#if journey.image.length > 0}
 						{#each journey.image as img}
 							{#await getImgProxyURL(img.path, img.width * 0.3, img.height * 0.3)}
-								<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105 bg-slate-600"></div>
+								<div
+									class="h-full w-full cursor-pointer rounded-lg bg-slate-600 object-cover hover:scale-105"
+								></div>
 							{:then response}
 								<img
+									id={`bookpic-${img.id}`}
 									src={response}
 									alt={img.fileName}
 									class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
