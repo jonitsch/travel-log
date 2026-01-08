@@ -1,40 +1,34 @@
-import { prisma, type Journey } from '$lib/server/database.js';
-import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import path from "path";
-import { fileTypeFromFile } from 'file-type';
-import exifr from 'exifr';
-import convert from 'heic-convert';
+import { prisma } from '$src/lib/server/prisma.js';
 import type { ServerInit } from '@sveltejs/kit';
+import { fileTypeFromFile, type FileTypeResult } from 'file-type';
+import exifr from 'exifr';
 import sharp from 'sharp';
+import type { Prisma } from '$gen/prisma/client/client';
 
 export const init: ServerInit = async () => {
     await initializeDatabase();
 }
 
+type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data']
+
 async function initializeDatabase() {
-    console.log('Database Initialization started')
+    console.log('Database Initialization started');
     let images = await prisma.image.findMany();
     if (images) {
+        await prisma.image.deleteMany();
         try {
             await prisma.image.deleteMany();
             let journeys = await prisma.journey.findMany();
-            journeys.forEach(async (j) => {
+            for (const j of journeys) {
                 let journeyImages = await getImages(j.journeyId);
-                journeyImages.forEach(async (i) => {
+                for (const img of journeyImages) {
                     await prisma.image.create({
-                        data: {
-                            path: i.path,
-                            fileName: i.fileName,
-                            width: i.width,
-                            height: i.height,
-                            lng: i.lng ?? null,
-                            lat: i.lat ?? null,
-                            journeyId: i.journeyId,
-                        }
-                    })
-                })
-            })
+                        data: img
+                    });
+                }
+            }
         }
         catch (err) {
             images = [];
@@ -43,83 +37,73 @@ async function initializeDatabase() {
         }
     }
     images = [];
-    console.log('Database Initialization finished')
+    console.log('Database Initialization finished!');
 }
 
-export async function getImages(journeyId: string) {
-    console.log('GetImages started')
-    if(await prisma.image.findMany()) {
-        await prisma.image.deleteMany();
-    }
-    let dir = `pictures/${journeyId}`
-    let images: {
-        path: string;
-        fileName: string;
-        width: number;
-        height: number;
-        lng: number | null;
-        lat: number | null;
-        journeyId: string;
-    }[] = [];
-    if (!fs.existsSync(dir)) {
-        return images;
-    };
-    let entries = await fs.promises.readdir(`pictures/${journeyId}`, { withFileTypes: true, recursive: true });
-    for (const entry of entries) {
-        if (entry.isFile()) {
+async function getImages(journeyId: string) {
+    console.log('GetImages started: Getting Images for: ', journeyId);
+    let images: Array<imgCreateBody> = [];
+    try {
+        let dir = `pictures/${journeyId}`
+        if (!fs.existsSync(dir)) {
+            return images;
+        };
+        let entries = await fs.promises.readdir(`pictures/${journeyId}`, {
+            withFileTypes: true,
+            recursive: true,
+        });
+        for (const entry of entries) {
             let fullPath = path.join(entry.parentPath, entry.name);
-            let fileType = await fileTypeFromFile(fullPath);
-            let metaData = await sharp(fullPath).metadata();
-            let journeyId = entry.parentPath.split('\\')[1];
-            console.log('Loaded Image: ', fullPath)
-            if (fileType) {
-                if (fileType.mime.includes('image') && fileType.ext != 'heic') {
-                    let coords: any;
-                    if (await exifr.gps(fullPath)) {
-                        coords = await exifr.gps(fullPath)
+            if (entry.isFile()) {
+                let type: FileTypeResult | undefined = await fileTypeFromFile(fullPath);
+                if (type?.mime.includes('image')) {
+                    let name = entry.name,
+                        path = fullPath,
+                        metaData: sharp.Metadata = await sharp(path).metadata(),
+                        coords: {
+                            latitude: number,
+                            longitude: number,
+                        } | undefined;
+                    if (await exifr.gps(path)) {
+                        coords = await exifr.gps(path);
                     }
-                    images.push({
-                        path: fullPath,
-                        fileName: entry.name,
+                    let exifrDates: {
+                        DateTimeOriginal: string;
+                        CreateDate: string;
+                        ModifyDate: string;
+                    } = await exifr.parse(path, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
+                    console.log(exifrDates);
+                    let createdOn: Date;
+                    if (!exifrDates) {
+                        createdOn = new Date(Date.now())
+                    } else {
+                        createdOn = new Date(exifrDates.DateTimeOriginal ?? exifrDates.CreateDate ?? exifrDates.ModifyDate);
+                    }
+                    // exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
+                    let imgData: imgCreateBody = {
+                        path: path,
+                        fileName: name,
+                        fileType: type.ext,
+                        createdOn: createdOn,
                         width: metaData.width,
                         height: metaData.height,
-                        lng: coords?.latitude ?? null,
-                        lat: coords?.longitude ?? null,
+                        lng: coords?.longitude ?? null,
+                        lat: coords?.latitude ?? null,
                         journeyId: journeyId,
-                    });
+                    }
+                    images.push(imgData);
+                    console.log('Loaded Image: ', path)
                 }
-                /*                 else if (fileType.ext === 'heic') {
-                                    try {
-                                        (async () => {
-                                            const inputBuffer = await fs.promises.readFile(fullPath);
-                                            const outputBuffer = await convert({
-                                                buffer: inputBuffer.buffer, // the HEIC file buffer
-                                                format: 'JPEG',      // output format
-                                                quality: 1           // the jpeg compression quality, between 0 and 1
-                                            });
-                                            await fs.promises.writeFile(`${entry.parentPath}${entry.name}.jpeg`, new Uint8Array(outputBuffer));
-                                            fullPath = `${entry.parentPath}${entry.name}.jpeg`;
-                                        })()
-                                    } catch (err) {
-                                        console.log('GetImages failed', err)
-                                        console.error(err);
-                                    } finally {
-                                        let { latitude, longitude } = await exifr.gps(fullPath);
-                                        images.push({
-                                            path: fullPath,
-                                            fileName: entry.name,
-                                            width: metaData.width,
-                                            height: metaData.height,
-                                            lng: latitude ?? null,
-                                            lat: longitude ?? null,
-                                            journeyId: entry.parentPath.split('\\\\')[1],
-                                        });
-                                    }
-                                } */
-            }
-        }
-    }
-    console.log('GetImages finished!')
-    return images;
-}
+                else { console.log('Skipped file as it is not an image: ', path) }
 
+            }
+            else { console.log('Skipped entry as it is not a file: ', fullPath) }
+        };
+    } catch (err) {
+        console.log('GetImages failed', err)
+        console.error(err);
+    } finally {
+        console.log('GetImages finished!')
+        return images;
+    }
+}

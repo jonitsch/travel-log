@@ -1,11 +1,11 @@
-import type { Journey } from "./server/database";
+import type { Journey } from "./server/prisma";
 
 export type ViewMode = 'overview' | 'journey' | null;
 
 type State = {
 	viewMode: ViewMode;
 	journeyData: Journey | null;
-	journeyId: string;
+	journeyId: string | undefined;
 	map: maplibregl.Map | null;
 };
 
