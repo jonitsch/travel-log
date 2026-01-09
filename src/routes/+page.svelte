@@ -40,7 +40,7 @@
 			</div>
 			<div
 				id="book"
-				class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-3 overflow-auto"
+				class="grid flex-[3] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] overflow-x-hidden"
 				bind:this={book}
 			>
 				{#if journey?.image}
@@ -48,20 +48,19 @@
 						{#each journey.image as img}
 							{#await getImgProxyURL(img.path, img.width * 0.3, img.height * 0.3)}
 								<div
-									class="h-full w-full cursor-pointer rounded-lg bg-slate-600 object-cover hover:scale-105"
+									class="h-full w-full cursor-pointer rounded-lg bg-slate-600 hover:scale-105"
 								></div>
 							{:then response}
 								<img
 									id={`bookpic-${img.id}`}
 									src={response}
 									alt={img.fileName}
-									class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105"
-									title={img.createdOn.toString()}
+									class="cursor-pointer rounded-lg hover:scale-105 transition duration-100 ease-in-out"
 								/>
 							{/await}
 						{/each}
 					{:else}
-						<div class="h-full w-full cursor-pointer rounded-lg object-cover hover:scale-105">
+						<div class="h-full w-full cursor-pointer rounded-lg hover:scale-105">
 							No images yet
 						</div>
 					{/if}
