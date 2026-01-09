@@ -61,7 +61,7 @@
 	<div id="content" class="flex-auto overflow-hidden">
 		{@render children?.()}
 	</div>
-	<div class="flex-none group m-1 ml-1 mb-1 w-fit text-[9.5px] text-gray-500 hover:visible">
+	<div class="flex-none group mb-1 w-fit text-[9.5px] text-gray-500 hover:visible">
 		Für Tamina und Joni
 		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">
 			♥

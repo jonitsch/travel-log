@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { Marker, Popup } from 'svelte-maplibre';
 	import { type LngLatLike } from 'maplibre-gl';
-	import type { Snippet } from 'svelte';
-	import type { Image } from '../server/prisma';
 
 	interface Props {
 		lngLat: LngLatLike;
