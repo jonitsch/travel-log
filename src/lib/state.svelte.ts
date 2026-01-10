@@ -7,6 +7,12 @@ type State = {
 	journeyData: Journey | null;
 	journeyId: string | undefined;
 	map: maplibregl.Map | null;
+	loadingJourney: boolean;
+	savedViewPort: {
+		zoom: number | undefined;
+		center: maplibregl.LngLatLike | undefined;
+		bounds: maplibregl.LngLatBoundsLike | undefined;
+	} | null;
 };
 
 export const global: State = $state({
@@ -14,4 +20,6 @@ export const global: State = $state({
 	journeyData: null,
 	journeyId: '',
 	map: null,
+	loadingJourney: false,
+	savedViewPort: null,
 });

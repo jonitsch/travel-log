@@ -3,6 +3,8 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { browser } from '$app/environment';
 	import { global } from '$lib/state.svelte';
+	import { slide } from 'svelte/transition';
+	import { switchToJourneyMode, switchToOverview } from '$src/lib/map';
 
 	let { children } = $props();
 	let displayMode: string | undefined = $state('');
@@ -11,11 +13,6 @@
 
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
-	}
-
-	function resetToOverview() {
-		global.viewMode = null;
-		global.viewMode = 'overview';
 	}
 </script>
 
@@ -30,38 +27,36 @@
 				<button
 					id="headerText"
 					class="{headerStyle} bg-gray-900"
-					onclick={() => resetToOverview()}
+					onclick={() => switchToOverview()}
 				>
 					<text class="">Travel Log</text>
 				</button>
 			</div>
 		{/if}
 		{#if global.viewMode === 'journey'}
+			{@const journey = global.journeyData}
 			<div
+				transition:slide={{ axis: 'y' }}
 				id="journeyHeader"
 				class="pb-2 before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
 			>
 				<button
 					id="headerText"
 					class="{headerStyle} bg-{global.journeyData?.color ?? 'bg-black'}/50 whitespace-nowrap"
+					onclick={() => switchToJourneyMode(journey?.journeyId ?? '')}
 				>
 					{global.journeyData?.name}
 				</button>
 			</div>
 		{/if}
-		<div id="resetButton" class="group ml-auto w-fit items-center bg-transparent pb-5">
-			<button
-				onclick={() => resetToOverview()}
-				class="{headerStyle} bg-gray-900"
-			>
-				Reset
-			</button>
+		<div id="resetButton" class="ml-auto w-fit items-center bg-transparent pb-5">
+			<button onclick={() => switchToOverview()} class="{headerStyle} bg-gray-900"> Reset </button>
 		</div>
 	</div>
 	<div id="content" class="flex-auto overflow-hidden">
 		{@render children?.()}
 	</div>
-	<div class="flex-none group mb-1 w-fit text-[9.5px] text-gray-500 hover:visible">
+	<div class="group my-1 ml-auto w-fit text-[9.5px] text-gray-500">
 		Für Tamina und Joni
 		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">
 			♥

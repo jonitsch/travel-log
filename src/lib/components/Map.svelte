@@ -2,14 +2,13 @@
 	import { MapLibre, Marker, GeoJSON, LineLayer } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global } from '$lib/state.svelte';
-	import { onMount, untrack } from 'svelte';
-	import type { Data, Journey } from '$lib/server/prisma';
-	import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
-	import maplibregl, { type LngLatBoundsLike } from 'maplibre-gl';
+	import { onMount } from 'svelte';
+	import type { Data } from '$lib/server/prisma';
+	import maplibregl from 'maplibre-gl';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
 	import { getImgProxyURL } from '$lib/imgproxy';
-	import { buildGeoJSON, getBBox, getJourneyData } from '$lib/map';
+	import { switchToJourneyMode, switchToOverview } from '$lib/map';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
@@ -18,14 +17,11 @@
 	}
 	let { map = $bindable(), mapContainer = $bindable(), data = $bindable() }: Props = $props();
 
+	let previousElement = $state<HTMLElement | null>(null);
+
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		zoom = $state<number | undefined>(1.5),
 		center = $state<maplibregl.LngLatLike | undefined>([13.388, 52.517]);
-	let savedViewPort = $state<{
-		zoom: number | undefined;
-		center: maplibregl.LngLatLike | undefined;
-		bounds: maplibregl.LngLatBoundsLike | undefined;
-	}>();
 
 	let modal: CreateJourneyModal;
 	let attributionControl = $state<maplibregl.AttributionControl>(
@@ -35,51 +31,20 @@
 	);
 	let selected = $state<boolean>(false);
 
-	async function switchToJourneyMode(journeyId: string): Promise<{
-		journey: Journey | null;
-		bbox: maplibregl.LngLatBoundsLike | null;
-		geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
-	} | null> {
-		const journey = await getJourneyData(journeyId);
-		if (journey) {
-			const bbox = await getBBox(journey);
-			const geoJSON = await buildGeoJSON(journey);
-			if (bbox) {
-				map.fitBounds(bbox);
-			} else {
-				map.flyTo({
-					center: [journey.lng, journey.lat]
-				});
-			}
-			attributionControl._container.setAttribute('open', '');
-			attributionControl._container.classList.remove('maplibregl-compact-show');
-
-			let data = {
-				journey: journey,
-				bbox: bbox,
-				geoJSON: geoJSON
-			};
-			return data;
-		}
-		return null;
-	}
-
 	onMount(() => {
+		global.map = map;
+		global.bounds = bounds;
 		map.addControl(attributionControl);
 	});
 
 	$effect(() => {
-		// Runs whenever global.viewMode changes
+		// close or open attributionControl whenever global.viewMode changes
 		let currentMode = global.viewMode;
 		if (currentMode === 'overview') {
-			untrack(() => {
-				map.flyTo({
-					center: savedViewPort?.center ?? [13.388, 52.517],
-					zoom: savedViewPort?.zoom ?? 3,
-					speed: 1
-				});
-			});
 			attributionControl._container.classList.add('maplibregl-compact-show');
+		} else if (currentMode === 'journey') {
+			attributionControl._container.setAttribute('open', '');
+			attributionControl._container.classList.remove('maplibregl-compact-show');
 		}
 	});
 </script>
@@ -92,40 +57,48 @@
 	bind:mapContainer
 	bind:bounds
 	bind:zoom
-	minZoom={1.5}
 	bind:center
+	minZoom={1.5}
 	onzoom={() => (zoom = zoom)}
 	projection={{ type: 'globe' }}
 	class="h-full w-full rounded-md"
-	dragRotate={true}
+	dragRotate={false}
 	zoomOnDoubleClick={false}
 	attributionControl={false}
 	style="https://tiles.openfreemap.org/styles/liberty"
 >
+	<!-------------------------------------------------- OVERVIEW MODE ---------------------------------------------------->
+
 	{#if global.viewMode === 'overview'}
-		{#each data.journeys as j}
+		{#each data.journeys as journey}
 			<JourneyMarker
-				popupText={j.name}
-				lngLat={[j.lng, j.lat]}
-				color={j.color ?? 'bg-black'}
+				popupText={journey.name}
+				lngLat={[journey.lng, journey.lat]}
+				color={journey.color ?? 'black'}
 				onclick={() => {
-					savedViewPort = {
+					global.savedViewPort = {
 						center: center,
 						zoom: zoom,
 						bounds: bounds
 					};
-					console.log($state.snapshot(savedViewPort));
-					global.journeyId = j.journeyId;
+					global.journeyId = journey.journeyId;
 					global.viewMode = 'journey';
 				}}
 				open={true}
-			></JourneyMarker>
+			/>
 		{/each}
 	{/if}
+
+	<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->
+
 	{#if global.viewMode === 'journey' && global.journeyId}
 		{#await switchToJourneyMode(global.journeyId)}
+			{(global.loadingJourney = true)}
 			Loading Journey Data...
 		{:then res}
+			{map.once('moveend', () => {
+				global.loadingJourney = false;
+			})}
 			{@const journey = res?.journey}
 			{@const geoJSON = res?.geoJSON}
 			{#if journey}
@@ -135,25 +108,28 @@
 							<JourneyMarker
 								popupText={marker.name}
 								lngLat={[marker.lng, marker.lat]}
-								color={marker.color ?? 'bg-black'}
-								onclick={() => {
-									global.viewMode = 'overview';
-									global.journeyId = undefined;
-								}}
+								color={marker.color ?? journey.color}
+								onclick={() => switchToOverview()}
 								open
 							/>
 						{/each}
 					{/if}
-					{#if journey.image}
+					{#if journey.image && !global.loadingJourney}
 						{#each journey.image as img}
 							{#if img.lng && img.lat}
 								<Marker
 									lngLat={[img.lng, img.lat]}
 									class={'h-7 w-7 place-items-center rounded-full focus:outline-2 focus:outline-black'}
 									onclick={() => {
+										if (previousElement) {
+											previousElement.style = '';
+										}
 										let el = document.getElementById(`bookpic-${img.id}`);
 										if (el) {
 											el.scrollIntoView({ behavior: 'smooth' });
+											el.classList.add('border border-8');
+											el.classList.add('border-indigo-600');
+											previousElement = el;
 										}
 									}}
 								>
@@ -163,7 +139,7 @@
 										<img
 											src={response}
 											alt={img.fileName}
-											class="h-full w-full cursor-pointer rounded-lg hover:scale-[110%] hover:z-50"
+											class="h-full w-full cursor-pointer rounded-lg hover:z-50 hover:scale-[110%]"
 										/>
 									{/await}
 								</Marker>
@@ -186,12 +162,8 @@
 					<JourneyMarker
 						popupText={journey.name}
 						lngLat={[journey.lng, journey.lat]}
-						color={journey.color ?? 'bg-black'}
-						onclick={() => {
-							map.flyTo({ center: [13.388, 52.517], zoom: 1.5, speed: 0.7 });
-							global.viewMode = 'overview';
-							global.journeyId = journey.journeyId ?? '';
-						}}
+						color={journey.color ?? 'black'}
+						onclick={() => switchToOverview()}
 						open={true}
 					/>
 				{/if}
