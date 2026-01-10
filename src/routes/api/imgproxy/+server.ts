@@ -19,7 +19,7 @@ export async function GET(req) {
         hmac.update(target);
         return hmac.digest('base64url');
     }
-    const target = `/rs:fit:${width}:${height}/plain/local:///${src}`;
+    const target = `/rs:fit:${width}:${height}/plain/local:///${encodeURI(src ?? '')}`;
     const signature = sign(SALT, target, KEY);
 
     const result = `${env.IMGPROXY_URL}/${signature + target}`;
