@@ -24,7 +24,7 @@ model marker {
   name      String
   lng       Float
   lat       Float
-  color     String  @default("bg-white")
+  color     String?
   journeyId String
   journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
 
