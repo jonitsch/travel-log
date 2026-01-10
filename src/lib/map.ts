@@ -3,7 +3,6 @@ import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike } from 'maplibre-gl';
 import { global } from '$lib/state.svelte';
 
-
 export async function getJourneyData(journeyId: string): Promise<Journey | null> {
     try {
         const res = await fetch(`/api/journeys?journeyId=${journeyId}`);

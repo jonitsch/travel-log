@@ -23,11 +23,12 @@
 		...rest
 	}: Props = $props();
 
-	const markerStyle = 'place-items-center rounded-full focus:outline-2 focus:outline-black';
-	const popupStyle = 'text-[1rem] px-3 py-0.4 rounded-md text-white opacity-95';
 </script>
 
-<Marker {lngLat} class={`h-${height} w-${width} ${markerStyle} bg-${color}`}>
+<Marker
+	{lngLat}
+	class={`h-${height} w-${width} place-items-center rounded-full bg-${color}`}
+>
 	{#if popupText}
 		<Popup
 			anchor="bottom"
@@ -37,7 +38,10 @@
 			{open}
 			{...rest}
 		>
-			<button class={`${popupStyle} bg-${color}`} onclick={() => onclick()}>
+			<button
+				class={`text-sm px-3 py-0.4 rounded-md text-white opacity-95 bg-${color}`}
+				onclick={() => onclick()}
+			>
 				<text class="oxygen-regular">
 					{popupText}
 				</text>

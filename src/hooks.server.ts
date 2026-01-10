@@ -72,7 +72,6 @@ async function getImages(journeyId: string) {
                         CreateDate: string;
                         ModifyDate: string;
                     } = await exifr.parse(path, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
-                    console.log(exifrDates);
                     let createdOn: Date;
                     if (!exifrDates) {
                         createdOn = new Date(Date.now())
