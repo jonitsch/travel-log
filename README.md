@@ -19,8 +19,9 @@ SALT: `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 ```docker
  docker run 
     -p 8080:8080
-    -v {PATH_TO_PROJECT}:/pictures:ro 
+    -v {PATH_TO_IMAGE_FOLDER}:/pictures:ro 
     -e IMGPROXY_LOCAL_FILESYSTEM_ROOT=/pictures
     -e IMGPROXY_KEY={YOUR_KEY} -e IMGPROXY_SALT={YOUR_SALT}
     -it ghcr.io/imgproxy/imgproxy:latest
 ```
+Any Image Path that you try to sign and fetch with the ImgProxy API must be relative to {PATH_TO_IMAGE_FOLDER}

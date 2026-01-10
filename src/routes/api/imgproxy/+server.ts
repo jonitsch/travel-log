@@ -5,7 +5,7 @@ import { createHmac } from 'node:crypto';
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url);
-    const src = searchParams.get("src")?.replace(/\\/g, "/");
+    const src = searchParams.get("src")?.replace(/\\/g, "/").replace('pictures/','');
     const width = searchParams.get("width") ?? '300';
     const height = searchParams.get("height") ?? '300';
 
