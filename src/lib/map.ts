@@ -1,7 +1,62 @@
 import type { Journey } from '$lib/server/prisma';
-import type { FeatureCollection, LineString } from 'geojson';
+import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
 import { type LngLatBoundsLike } from 'maplibre-gl';
 import { global } from '$lib/state.svelte';
+
+export function switchToOverview() {
+    global.viewMode = 'overview';
+    const map = global.map;
+    if (map) {
+        map.setProjection({ type: 'globe' })
+        if (global.savedViewPort?.center && global.savedViewPort?.zoom) {
+            map.flyTo({
+                center: global.savedViewPort.center,
+                zoom: global.savedViewPort.zoom,
+                speed: 1.5
+            });
+        } else {
+            map.flyTo({
+                center: [13.388, 52.517],
+                zoom: 1.5,
+                speed: 1
+            });
+        }
+    } else {
+        throw new Error('Map not found!');
+    }
+    global.savedViewPort = null;
+    global.journeyData = null;
+    global.journeyId = undefined;
+    global.loadingJourney = false;
+}
+
+export async function switchToJourneyMode(journeyId: string): Promise<{
+    journey: Journey | null;
+    bbox: maplibregl.LngLatBoundsLike | null;
+    geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
+} | null> {
+    const journey = await getJourneyData(journeyId);
+    const map = global.map;
+    if (map && journey) {
+        map.setProjection({ type: 'mercator' })
+        const bbox = await getBBox(journey);
+        if (bbox) {
+            map.fitBounds(bbox);
+        } else {
+            map.flyTo({
+                center: [journey.lng, journey.lat]
+            });
+        }
+        const geoJSON = await buildGeoJSON(journey);
+        const data = {
+            journey: journey,
+            bbox: bbox,
+            geoJSON: geoJSON
+        };
+        return data;
+    }
+    return null;
+}
 
 export async function getJourneyData(journeyId: string): Promise<Journey | null> {
     try {
@@ -71,8 +126,8 @@ export async function getBBox(journey: Journey): Promise<LngLatBoundsLike | null
     }
     if (lngs.length > 0 && lats.length > 0) {
         const bbox: LngLatBoundsLike = [
-            [Math.min(...lngs) * 0.99, Math.max(...lats) * 1.01],
-            [Math.max(...lngs) * 1.01, Math.min(...lats) * 0.99]
+            [Math.min(...lngs) * 0.98, Math.max(...lats) * 1.02],
+            [Math.max(...lngs) * 1.02, Math.min(...lats) * 0.98]
         ];
         return bbox;
     }
