@@ -20,7 +20,7 @@
 	let previousElement = $state<HTMLElement | null>(null);
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
-		zoom = $state<number | undefined>(1.5),
+		zoom = $state<number>(0),
 		center = $state<maplibregl.LngLatLike | undefined>([13.388, 52.517]);
 
 	let modal: CreateJourneyModal;
@@ -29,11 +29,9 @@
 			compact: true
 		})
 	);
-	let selected = $state<boolean>(false);
 
 	onMount(() => {
 		global.map = map;
-		global.bounds = bounds;
 		map.addControl(attributionControl);
 	});
 
@@ -86,6 +84,10 @@
 				}}
 				open={true}
 			/>
+			<Marker
+				lngLat={[journey.lng, journey.lat]}
+				class={`h-3 w-3 place-items-center rounded-full bg-${journey.color}`}
+			/>
 		{/each}
 	{/if}
 
@@ -121,19 +123,29 @@
 									lngLat={[img.lng, img.lat]}
 									class={'h-7 w-7 place-items-center rounded-full focus:outline-2 focus:outline-black'}
 									onclick={() => {
-										if (previousElement) {
-											previousElement.style = '';
-										}
-										let el = document.getElementById(`bookpic-${img.id}`);
-										if (el) {
-											el.scrollIntoView({ behavior: 'smooth' });
-											el.classList.add('border border-8');
-											el.classList.add('border-indigo-600');
-											previousElement = el;
+										if (previousElement) previousElement.style.border = '';
+										let bookpic = document.getElementById(`bookpic-${img.id}`);
+										if (bookpic) {
+											if (previousElement === bookpic) {
+												bookpic.style.border = '';
+												previousElement = null;
+												return;
+											}
+											bookpic.scrollIntoView({ behavior: 'smooth' });
+											bookpic.style.border = 'solid #475569 5px';
+											previousElement = bookpic;
+											window.addEventListener('click', () => {
+												if (previousElement) previousElement.style.border = '';
+												window.removeEventListener('click', () => {});
+											});
 										}
 									}}
+									ondblclick={() => {
+										let newZoom = (zoom ?? 0) + 5;
+										map.flyTo({center: [img.lng!, img.lat!] , zoom: newZoom})
+									}}
 								>
-									{#await getImgProxyURL(img.path, img.width * 0.1, img.height * 0.1)}
+									{#await getImgProxyURL(img.path, img.width * 0.05, img.height * 0.05)}
 										<div class="h-full w-full bg-{journey.color} rounded-lg"></div>
 									{:then response}
 										<img
