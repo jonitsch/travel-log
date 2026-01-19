@@ -42,7 +42,7 @@
 			>
 				<button
 					id="headerText"
-					class="{headerStyle} bg-{global.journeyData?.color ?? 'bg-black'}/50 whitespace-nowrap"
+					class="{headerStyle} bg-{global.journeyData?.color ?? 'bg-black'}/70 whitespace-nowrap"
 					onclick={() => switchToJourneyMode(journey?.journeyId ?? '')}
 				>
 					{global.journeyData?.name}
