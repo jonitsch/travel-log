@@ -4,7 +4,7 @@
 	import { browser } from '$app/environment';
 	import { global } from '$lib/state.svelte';
 	import { slide } from 'svelte/transition';
-	import { switchToJourneyMode, switchToOverview } from '$src/lib/map';
+	import { switchToJourneyMode, switchToOverview } from '$src/lib/utils';
 
 	let { children } = $props();
 	let displayMode: string | undefined = $state('');

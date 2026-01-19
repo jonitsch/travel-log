@@ -41,7 +41,15 @@ export async function switchToJourneyMode(journeyId: string): Promise<{
         map.setProjection({ type: 'mercator' })
         const bbox = await getBBox(journey);
         if (bbox) {
-            map.fitBounds(bbox);
+            map.fitBounds(bbox, {
+                padding: {
+                    top: 100,
+                    bottom: 150,
+                    left: 150,
+                    right: 150
+                },
+                duration: 500,
+            });
         } else {
             map.flyTo({
                 center: [journey.lng, journey.lat]
@@ -126,10 +134,31 @@ export async function getBBox(journey: Journey): Promise<LngLatBoundsLike | null
     }
     if (lngs.length > 0 && lats.length > 0) {
         const bbox: LngLatBoundsLike = [
-            [Math.min(...lngs) * 0.98, Math.max(...lats) * 1.02],
-            [Math.max(...lngs) * 1.02, Math.min(...lats) * 0.98]
+            [Math.min(...lngs), Math.max(...lats)],
+            [Math.max(...lngs), Math.min(...lats)]
         ];
         return bbox;
     }
     return null;
+}
+
+/**
+ * Runs a two-frame render pipeline and executes a callback
+ * after the browser has completed rendering the image.
+ *
+ * @param {Function} onRender - Callback executed after render completes
+ */
+export function awaitImageRender(onRender: () => void) {
+    function rendered() {
+        // Rendering finished;
+        onRender();
+    }
+    function startRender() {
+        //Rendering start
+        requestAnimationFrame(rendered);
+    }
+    function loaded() {
+        requestAnimationFrame(startRender);
+    }
+    loaded();
 }

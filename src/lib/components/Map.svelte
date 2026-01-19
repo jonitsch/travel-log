@@ -8,7 +8,7 @@
 	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
 	import { getImgProxyURL } from '$lib/imgproxy';
-	import { switchToJourneyMode, switchToOverview } from '$lib/map';
+	import { switchToJourneyMode, switchToOverview } from '$src/lib/utils';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
