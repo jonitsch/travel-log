@@ -52,7 +52,8 @@ export async function switchToJourneyMode(journeyId: string): Promise<{
             });
         } else {
             map.flyTo({
-                center: [journey.lng, journey.lat]
+                center: [journey.lng, journey.lat],
+                zoom: map.getZoom(),
             });
         }
         const geoJSON = await buildGeoJSON(journey);
@@ -115,6 +116,7 @@ export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection 
     return null;
 }
 export async function getBBox(journey: Journey): Promise<LngLatBoundsLike | null> {
+    if (journey.image.length === 0) return null;
     let lngs: Array<number> = [];
     let lats: Array<number> = [];
     if (journey.image) {

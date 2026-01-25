@@ -18,43 +18,48 @@ export const load = (async () => {
 
 export const actions = {
     addJourney: async ({ request }) => {
-        const data = await request.formData();
-        const name = data.get('name')?.toString() ?? '';
-        const lng = parseFloat(data.get('lng')?.toString() ?? '0');
-        const lat = parseFloat(data.get('lat')?.toString() ?? '0');
-
         try {
-            const journey = await prisma.journey.create({
+            const data = await request.formData();
+            const name: string = `${data.get('name')}`;
+            const lng: number = parseFloat(`${data.get('lng')}`);
+            const lat: number = parseFloat(`${data.get('lat')}`);
+            const color: string = `${data.get('color')}`;
+            const journeyId: string = `${name.toLowerCase().slice(0, 4)}-${crypto.randomUUID()}`;
+
+            const res = await prisma.journey.create({
                 data: {
                     name: name,
+                    lng: lng,
+                    lat: lat,
+                    color: color,
+                    journeyId: journeyId,
                 }
-            })
-            return { success: true }
+            });
+            const journey = {
+                journeyId: res.journeyId,
+                name: res.name,
+                color: res.color
+            }
+            return { success: true, journey };
         } catch (err) {
-            return err
+            console.error(err);
+            throw err;
         }
     },
-    getMarkers: async ({ request }) => {
-        const data = await request.formData();
-        const journeyId = data.get('journeyId')?.toString()
+    deleteJourney: async ({ request }) => {
         try {
-            let markers = await prisma.marker.findMany(
-                {
-                    include: {
-                        journey: {
-                            select: {
-                                color: true
-                            }
-                        }
-                    },
-                    where: {
-                        journeyId: journeyId
-                    }
+            const data = await request.formData();
+            const journeyId: string = `${data.get('journeyId')}`;
+            const res = await prisma.journey.delete({
+                where: {
+                    journeyId: journeyId
                 }
-            )
-            return markers;
+            });
+            const deletedId = res.journeyId
+            return { success: true, deletedId };
         } catch (err) {
-            return err
+            console.error(err);
+            throw err;
         }
-    }
+    },
 } satisfies Actions;
