@@ -17,7 +17,12 @@
 		map: maplibregl.Map;
 		createJourneyModal: CreateJourneyModal | undefined;
 	}
-	let { map = $bindable(), mapContainer = $bindable(), data = $bindable(), createJourneyModal = $bindable() }: Props = $props();
+	let {
+		map = $bindable(),
+		mapContainer = $bindable(),
+		data = $bindable(),
+		createJourneyModal = $bindable()
+	}: Props = $props();
 
 	let previousElement = $state<HTMLElement | null>(null);
 
@@ -70,14 +75,9 @@
 
 	{#if global.viewMode === 'overview'}
 		<Control>
-			<ControlButton
-				onclick={() => createJourneyModal?.open()}
-			>
-				<div class="flex flex-row items-center group gap-1 rounded-md bg-gray-900 p-2 text-white">
-					<div
-						class="text-1xl hidden group-hover:block"
-						id="addJourneyText"
-					>
+			<ControlButton onclick={() => createJourneyModal?.toggle()}>
+				<div class="animate-slide group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2 text-white">
+					<div class="text-1xl hidden group-hover:block" id="addJourneyText">
 						Add Journey
 					</div>
 					<div id="addJourneyIcon" class="relative">

@@ -7,6 +7,7 @@
 	import type { Journey } from '$src/lib/server/prisma';
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
 	import { awaitImageRender } from '$src/lib/utils';
+	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 
 	let { data }: PageProps = $props();
 	let createJourneyModal = $state<CreateJourneyModal>();
