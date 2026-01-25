@@ -4,10 +4,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@theme {
-  .animate-slide {
-    animation: slide 0.2s ease-in-out;
-  }
+/* SCROLLBAR */
+/* Firefox */
+* {
+  scrollbar-width: thick;
+  scrollbar-color: #202c47 transparent;
+}
+
+.animate-slide {
+  animation: slide 0.2s ease-in-out;
 }
 
 @keyframes slide {
@@ -20,13 +25,6 @@
     translate: 0 0;
     scale: 100% 1;
   }
-}
-
-/* SCROLLBAR */
-/* Firefox */
-* {
-  scrollbar-width: thick;
-  scrollbar-color: #202c47 transparent;
 }
 
 /* WebKit */
