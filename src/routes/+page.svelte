@@ -4,16 +4,16 @@
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$src/lib/imgproxy';
-	import { slide } from 'svelte/transition';
 	import type { Journey } from '$src/lib/server/prisma';
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
+	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 
 	let { data }: PageProps = $props();
+	let createJourneyModal = $state<CreateJourneyModal>();
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
 	let fullImageModal = $state<FullImageModal>();
 	let book = $state<HTMLDivElement>();
-	let renderingCounter = $state<number>(0);
 	let timeRange = (journey: Journey) => {
 		let end = new Date(journey.image[journey.image.length - 1].createdOn);
 		let start = new Date(journey.image[0].createdOn);
@@ -43,7 +43,7 @@
 	>
 		<!------------------- MAP CONTAINER --------------------->
 		<div id="mapContainer" class="flex-1" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:data />
+			<Map bind:map={map!} bind:mapContainer bind:data bind:createJourneyModal />
 		</div>
 
 		<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->
@@ -121,4 +121,6 @@
 			<FullImageModal bind:this={fullImageModal} />
 		</div>
 	{/if}
+	<!------------------- CREATE JOURNEY MODAL --------------------->
+	<CreateJourneyModal bind:this={createJourneyModal} />
 </div>
