@@ -9,11 +9,11 @@
 	import { awaitImageRender } from '$src/lib/utils';
 
 	let { data }: PageProps = $props();
+	let createJourneyModal = $state<CreateJourneyModal>();
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
 	let fullImageModal = $state<FullImageModal>();
 	let book = $state<HTMLDivElement>();
-	let renderingCounter = $state<number>(0);
 	let timeRange = (journey: Journey) => {
 		if (journey.image.length === 0) return;
 		let end = new Date(journey.image[journey.image.length - 1].createdOn);
@@ -44,7 +44,7 @@
 	>
 		<!------------------- MAP CONTAINER --------------------->
 		<div id="mapContainer" class="flex-1" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:data />
+			<Map bind:map={map!} bind:mapContainer bind:data bind:createJourneyModal />
 		</div>
 
 		<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->
@@ -144,4 +144,6 @@
 			<FullImageModal bind:this={fullImageModal} />
 		</div>
 	{/if}
+	<!------------------- CREATE JOURNEY MODAL --------------------->
+	<CreateJourneyModal bind:this={createJourneyModal} />
 </div>

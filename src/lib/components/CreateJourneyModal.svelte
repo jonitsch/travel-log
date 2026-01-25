@@ -133,6 +133,45 @@
 				</div>
 			</form>
 		</div>
+
+		<!-- Modal body -->
+		<form class="space-y-4" method="POST">
+			<!-- Name -->
+			<div>
+				<label for="name" class="mb-1 block text-sm font-medium text-gray-200"> Name </label>
+				<input id="name" type="text" placeholder="Enter journey name" class="inputField" />
+			</div>
+
+			<!-- Longitude -->
+			<div>
+				<label for="lng" class="mb-1 block text-sm font-medium text-gray-200"> Longitude </label>
+				<input id="lng" type="float" placeholder="e.g. 120.9822" class="inputField" />
+			</div>
+
+			<!-- Latitude -->
+			<div>
+				<label for="lat" class="mb-1 block text-sm font-medium text-gray-200"> Latitude </label>
+				<input id="lat" type="float" placeholder="e.g. 14.6042" class="inputField" />
+			</div>
+			<!-- Color -->
+			<div class="grid">
+
+			</div>
+
+			<!-- Modal footer -->
+			<div class="flex justify-end space-x-3">
+				<button
+					class="rounded bg-gray-100 px-4 py-2 text-gray-600 hover:bg-gray-200"
+					type="reset"
+					onclick={() => (isModalOpen = false)}
+				>
+					Cancel
+				</button>
+				<button type="submit" class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+					Confirm
+				</button>
+			</div>
+		</form>
 	</div>
 {/if}
 

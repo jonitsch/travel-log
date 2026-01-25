@@ -4,46 +4,44 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: 'Daydream';
-  src: url('static/fonts/Daydream DEMO.otf') format('woff2');
-  font-weight: normal;
-  font-style: normal;
+@theme {
+  .animate-slide {
+    animation: slide 0.2s ease-in-out;
+  }
 }
 
-@font-face {
-  font-family: 'CODELight';
-  src: url('static/fonts/CODELight.otf') format('otf');
-  font-weight: normal;
-  font-style: normal;
-}
+@keyframes slide {
+  from {
+    translate: 150vw 0;
+    scale: 200% 1;
+  }
 
-@font-face {
-  font-family: 'CODEBold';
-  src: url('static/fonts/CODEBold.otf') format('otf');
-  font-weight: normal;
-  font-style: normal;
+  to {
+    translate: 0 0;
+    scale: 100% 1;
+  }
 }
 
 /* SCROLLBAR */
-  /* Firefox */
-    * {
-      scrollbar-width: thick;
-      scrollbar-color: #202c47 transparent;
-    }
-  /* WebKit */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
+/* Firefox */
+* {
+  scrollbar-width: thick;
+  scrollbar-color: #202c47 transparent;
+}
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+/* WebKit */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
-    ::-webkit-scrollbar-thumb {
-      background: #202c47;
-      border-radius: 8px;
-    }
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #202c47;
+  border-radius: 8px;
+}
 
 
 .outfit-oxygen {
