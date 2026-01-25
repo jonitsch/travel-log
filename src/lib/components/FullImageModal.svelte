@@ -8,12 +8,16 @@
 
 	let modal = $state<HTMLButtonElement | undefined>();
 	let isModalOpen = $state<boolean>(false);
-	let img = $state<Image | undefined>();
-	let imgCon = $state<HTMLDivElement | undefined>();
-	let imgElement = $state<HTMLImageElement | undefined>();
-	let dateDisplay = $state<HTMLDivElement | undefined>();
 	let imageLoaded = $state<boolean>(false);
-	let formattedDate = (imgDate: Date) => {
+
+	let img = $state<Image | undefined>(),
+		imgCon = $state<HTMLDivElement | undefined>(),
+		imgElement = $state<HTMLImageElement | undefined>();
+
+	let dateDisplay = $state<HTMLDivElement | undefined>();
+	let skeletonImg = $state<HTMLDivElement | undefined>();
+
+	const formattedDate = (imgDate: Date) => {
 		let date = new Date(imgDate);
 		return date.toLocaleDateString('de-DE', {
 			day: '2-digit',
@@ -25,6 +29,7 @@
 			hour12: false
 		});
 	};
+
 	function getImageIndex(): number {
 		let index: number = -1;
 		const images = global.journeyData?.image;
@@ -87,9 +92,9 @@
 						close();
 						break;
 					case 'ArrowDown':
-						e.stopPropagation();
+						e.preventDefault();
 					case 'ArrowUp':
-						e.stopPropagation();
+						e.preventDefault();
 				}
 			}
 		}
@@ -109,12 +114,13 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<div
 			bind:this={imgCon}
-			class="relative max-h-[70dvh] max-w-[90dvw] flex-1 flex-col rounded-lg shadow-xl"
+			class="relative h-fit w-fit justify-center max-h-[75dvh] max-w-[70dvw] flex-1 flex-col rounded-lg shadow-xl"
 			onclick={(e) => e.stopPropagation()}
 		>
 			{#if !imageLoaded}
 				<div
-					id="skeletonFullPic"
+					bind:this={skeletonImg}
+					id="skeletonImg"
 					class="absolute inset-0 z-[1000] h-full w-full animate-pulse bg-slate-600"
 				></div>
 			{/if}
@@ -125,7 +131,7 @@
 						id="fullpic-{img.id}"
 						src={response}
 						alt={img.fileName}
-						class="relative h-fit max-h-full min-h-[600px] w-fit max-w-full"
+						class="relative h-fit w-fit min-w-[300px] max-h-full max-w-full object-contain"
 						loading="eager"
 						height="{img.height}px"
 						width="{img.width}px"
@@ -133,12 +139,7 @@
 							awaitImageRender(async () => {
 								await tick();
 								imageLoaded = true;
-								let dateDisplay = document.getElementById('dateDisplay');
-								let width = `${imgElement?.width}px`;
-								if (dateDisplay) {
-									dateDisplay.style.width = width;
-									dateDisplay.classList.remove('invisible');
-								}
+								if (dateDisplay) dateDisplay.classList.remove('invisible');
 							});
 						}}
 					/>
@@ -146,7 +147,7 @@
 				<div
 					bind:this={dateDisplay}
 					id="dateDisplay"
-					class="invisible flex-none rounded-b-md bg-gray-900 p-2 py-1 text-3xl text-white"
+					class="invisible min-w-fit flex-none rounded-b-md bg-gray-900 p-2 py-1 text-3xl text-white"
 				>
 					{formattedDate(img.createdOn)}
 				</div>
