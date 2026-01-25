@@ -5,7 +5,10 @@ import { createHmac } from 'node:crypto';
 
 export async function GET(req) {
     const { searchParams } = new URL(req.url);
-    const src = searchParams.get("src")?.replace(/\\/g, "/").replace('pictures/', '');
+    const src: string | undefined =
+        searchParams.get("src")
+        ?.replace(/\\/g, "/")
+        .replace('pictures/', '');
     if (!src) throw new Error('ImgProxy API called without specifying image source!');
 
     // optional parameters with default values
