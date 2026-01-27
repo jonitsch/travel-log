@@ -37,7 +37,7 @@
 			{@const journey = global.journeyData}
 			<div
 				id="journeyHeader"
-				class="animate-slide pb-2 before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
+				class="animate-slide-left pb-2 before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
 			>
 				<button
 					id="headerText"

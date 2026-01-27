@@ -41,10 +41,16 @@
 
 <div class="h flex h-full max-h-full w-full flex-row gap-4 overflow-hidden">
 	<div
-		class="items-top flex flex-col gap-4 {global.viewMode === 'overview' ? 'size-full' : 'h-full w-[40dvw]'}"
+		class="items-top flex flex-col gap-4 {global.viewMode === 'overview'
+			? 'size-full'
+			: 'h-full w-[40dvw]'}"
 	>
 		<!------------------- MAP CONTAINER --------------------->
-		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
+		<div
+			id="mapContainer"
+			class="size-full"
+			bind:this={mapContainer}
+		>
 			<Map bind:map={map!} bind:mapContainer bind:data bind:createJourneyModal />
 		</div>
 
@@ -52,18 +58,18 @@
 		{#if global.viewMode === 'journey'}
 			{@const journey = global.journeyData}
 			{#if journey}
-				<div class={`animate-slide flex flex-col ${!global.loadingJourney ? 'gap-0' : 'gap-3'}`}>
+				<div class="animate-slide-left flex flex-col gap-0">
 					<div
 						id="header"
 						class={[
-							'flex h-fit w-full flex-row gap-5 items-stretch',
+							'flex h-fit w-full flex-row items-stretch gap-5',
 							{ 'animate-pulse rounded-lg bg-slate-600 [&>*]:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="oxygen-bold text-5xl text-white">
-							{global.journeyData?.name ?? 'Loading Name'}
+							{journey.name ?? 'Loading Name'}
 						</text>
-<!-- 						<form method="POST" action="?/deleteJourney" class="mr-0">
+						<!-- 						<form method="POST" action="?/deleteJourney" class="mr-0">
 							<button
 								class="oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50 shadow-xl bg-gray-900"
 								aria-label="Delete Journey"
@@ -80,7 +86,7 @@
 							{ 'animate-pulse rounded-lg bg-slate-600 [&>*]:invisible': global.loadingJourney }
 						]}
 					>
-						<text class="flex text-2xl text-{journey.color}">
+						<text class="flex text-2xl">
 							{timeRange(journey)}
 						</text>
 					</div>
@@ -91,7 +97,7 @@
 
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<div class="animate-slide items-top w-[60dvw] flex flex-col gap-4">
+		<div class="animate-slide-right items-top flex w-[60dvw] flex-col gap-4">
 			<div
 				id="book"
 				class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden"

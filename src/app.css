@@ -11,13 +11,29 @@
   scrollbar-color: #202c47 transparent;
 }
 
-.animate-slide {
-  animation: slide 0.2s ease-in-out;
+.animate-slide-right {
+  animation: slide-right 0.2s ease-in-out;
 }
 
-@keyframes slide {
+@keyframes slide-right {
   from {
     translate: 150vw 0;
+    scale: 200% 1;
+  }
+
+  to {
+    translate: 0 0;
+    scale: 100% 1;
+  }
+}
+
+.animate-slide-left {
+  animation: slide-left 0.2s ease-in-out;
+}
+
+@keyframes slide-left {
+  from {
+    translate: -150vw 0;
     scale: 200% 1;
   }
 
