@@ -41,19 +41,18 @@
 
 <div class="h flex h-full max-h-full w-full flex-row gap-4 overflow-hidden">
 	<div
-		class="items-top flex {global.viewMode === 'journey' ? 'flex-[0.7]' : 'flex-1'} flex-col gap-4"
+		class="items-top flex flex-col gap-4 {global.viewMode === 'overview' ? 'size-full' : 'h-full w-[40dvw]'}"
 	>
 		<!------------------- MAP CONTAINER --------------------->
-		<div id="mapContainer" class="flex-1" bind:this={mapContainer}>
+		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
 			<Map bind:map={map!} bind:mapContainer bind:data bind:createJourneyModal />
 		</div>
 
-		<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->
+		<!------------------- JOURNEY HEADER --------------------->
 		{#if global.viewMode === 'journey'}
 			{@const journey = global.journeyData}
 			{#if journey}
-				<div class={`flex flex-col ${!global.loadingJourney ? 'gap-0' : 'gap-3'}`}>
-					<!------------------- JOURNEY HEADER --------------------->
+				<div class={`animate-slide flex flex-col ${!global.loadingJourney ? 'gap-0' : 'gap-3'}`}>
 					<div
 						id="header"
 						class={[
@@ -64,7 +63,7 @@
 						<text class="oxygen-bold text-5xl text-white">
 							{global.journeyData?.name ?? 'Loading Name'}
 						</text>
-						<form method="POST" action="?/deleteJourney" class="mr-0">
+<!-- 						<form method="POST" action="?/deleteJourney" class="mr-0">
 							<button
 								class="oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50 shadow-xl bg-gray-900"
 								aria-label="Delete Journey"
@@ -72,7 +71,7 @@
 								value={journey.journeyId}
 								type="submit">Delete</button
 							>
-						</form>
+						</form> -->
 					</div>
 					<!-------------------    INFO BOX     --------------------->
 					<div
@@ -92,7 +91,7 @@
 
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<div class="items-top flex flex-[1] flex-col gap-4">
+		<div class="animate-slide items-top w-[60dvw] flex flex-col gap-4">
 			<div
 				id="book"
 				class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden"
@@ -126,7 +125,7 @@
 										class="h-full w-full cursor-pointer rounded-md object-cover text-white
 												transition duration-100 ease-in-out hover:scale-105"
 										loading="lazy"
-										onload={(e) =>
+										onload={() =>
 											awaitImageRender(() => {
 												document.getElementById(`skeletonImage-${img.id}`)?.remove();
 											})}

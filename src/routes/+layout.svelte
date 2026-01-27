@@ -36,9 +36,8 @@
 		{#if global.viewMode === 'journey'}
 			{@const journey = global.journeyData}
 			<div
-				transition:slide={{ axis: 'y' }}
 				id="journeyHeader"
-				class="pb-2 before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
+				class="animate-slide pb-2 before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
 			>
 				<button
 					id="headerText"

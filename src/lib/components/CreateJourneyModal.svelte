@@ -1,9 +1,9 @@
 <script lang="ts">
-	let isModalOpen = $state(true);
+	let isModalOpen = $state(false);
 
-	const twColors = ['red', 'yellow', 'green', 'blue', 'indigo', 'purple', 'pink'];
+	const twColors = ['red', 'yellow', 'green', 'blue', 'purple', 'pink'];
 	const inputStyle =
-		'text-gray-900 w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500';
+		'text-gray-900 w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500';
 	const labelStyle = 'mb-1 block text-sm font-medium text-gray-200';
 
 	let selectedColorElement = $state<HTMLButtonElement>(),
@@ -17,19 +17,25 @@
 	export async function toggle() {
 		isModalOpen = !isModalOpen;
 	}
-
-	$effect(() => {
-		color;
+	function setPreviewColor() {
 		if (selectedColorElement && colorInput) {
 			const currentColor = window.getComputedStyle(selectedColorElement).backgroundColor;
 			colorInput.style.background = currentColor;
-		};
+			colorInput.style.color = 'white';
+		}
+	}
+
+	$effect(() => {
+		color;
+		setPreviewColor();
 	});
 </script>
 
 {#if isModalOpen}
 	<!-- Modal container -->
-	<div class="animate-slide w-full max-w-sm flex-[0.5] rounded-md bg-gray-900 p-6 text-white">
+	<div
+		class="animate-slide w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"
+	>
 		<div class="mb-4 flex flex-row">
 			<!-- Modal header -->
 			<h2 class="flex-1 text-xl font-semibold">Create new Journey</h2>
@@ -111,12 +117,13 @@
 					type="text"
 					readonly
 					required
-					class="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900"
+					class="pointer-events-none w-full rounded-md border border-gray-300 bg-{color ?? 'gray-200'} px-3 py-1 text-gray-900"
+					onload={() => setPreviewColor()}
 				/>
 			</div>
-			<div class="grid grid-cols-[repeat(6,1fr)] place-items-center gap-2">
+			<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
 				{#each twColors as twColor}
-					{#each { length: 6 } as el, i}
+					{#each { length: 5 } as el, i}
 						{@const currentColor = `${twColor}-${900 - i * 100}`}
 						<button
 							id={currentColor}
@@ -125,7 +132,7 @@
 							onclick={(e) => {
 								if (selectedColorElement) selectedColorElement.classList.remove('selected');
 								selectedColorElement = e.currentTarget;
-								console.log(selectedColorElement.style.background)
+								console.log(selectedColorElement.style.background);
 								selectedColorElement.classList.add('selected');
 								color = currentColor;
 							}}
