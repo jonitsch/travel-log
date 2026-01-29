@@ -4,7 +4,6 @@ import { type LngLatBoundsLike } from 'maplibre-gl';
 import { global } from '$lib/state.svelte';
 
 export function switchToOverview() {
-    global.viewMode = 'overview';
     const map = global.map;
     if (map) {
         map.setProjection({ type: 'globe' })
@@ -28,6 +27,8 @@ export function switchToOverview() {
     global.journeyData = null;
     global.journeyId = undefined;
     global.loadingJourney = false;
+    global.viewMode = 'overview';
+
 }
 
 export async function switchToJourneyMode(journeyId: string): Promise<{
@@ -43,10 +44,10 @@ export async function switchToJourneyMode(journeyId: string): Promise<{
         if (bbox) {
             map.fitBounds(bbox, {
                 padding: {
-                    top: 100,
-                    bottom: 150,
-                    left: 150,
-                    right: 150
+                    top: 90,
+                    bottom: 90,
+                    left: 90,
+                    right: 90
                 },
                 duration: 500,
             });
@@ -115,7 +116,7 @@ export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection 
     }
     return null;
 }
-export async function getBBox(journey: Journey): Promise<LngLatBoundsLike | null> {
+export function getBBox(journey: Journey): LngLatBoundsLike | null {
     if (journey.image.length === 0) return null;
     let lngs: Array<number> = [];
     let lats: Array<number> = [];

@@ -20,10 +20,10 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div id="main" class="inset-0 flex h-[100vh] w-[100vw] flex-col overflow-auto p-5">
-	<div id="header" class="z-999 flex flex-shrink-0 flex-row items-start">
+<div id="main" class="inset-0 flex h-[100vh] w-[100vw] flex-col overflow-auto p-3 gap-3">
+	<div id="header" class="flex h-fit flex-row items-center bg-gray-950/50 rounded-md">
 		{#if true}
-			<div id="header" class="group w-fit items-center bg-transparent pb-5">
+			<div id="mainHeader" class="items-center bg-transparent">
 				<button
 					id="headerText"
 					class="{headerStyle} bg-gray-900"
@@ -37,25 +37,25 @@
 			{@const journey = global.journeyData}
 			<div
 				id="journeyHeader"
-				class="animate-slide-left pb-2 before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
+				class="before:ml-2 before:mr-2 before:text-2xl before:text-white before:content-['/']"
 			>
 				<button
 					id="headerText"
-					class="{headerStyle} bg-{global.journeyData?.color ?? 'bg-black'}/70 whitespace-nowrap"
+					class="animate-slide-left  {headerStyle} bg-{global.journeyData?.color ?? 'bg-black'}/70 whitespace-nowrap"
 					onclick={() => switchToJourneyMode(journey?.journeyId ?? '')}
 				>
 					{global.journeyData?.name}
 				</button>
 			</div>
 		{/if}
-		<div id="resetButton" class="ml-auto w-fit items-center bg-transparent pb-5">
+		<div id="resetButton" class="ml-auto w-fit items-center bg-transparent">
 			<button onclick={() => switchToOverview()} class="{headerStyle} bg-gray-900"> Reset </button>
 		</div>
 	</div>
 	<div id="content" class="flex-auto overflow-hidden">
 		{@render children?.()}
 	</div>
-	<div class="group my-1 ml-auto w-fit text-[9.5px] text-gray-500">
+	<div class="group ml-auto w-fit text-[9.5px] text-gray-500">
 		Für Tamina und Joni
 		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">
 			♥
