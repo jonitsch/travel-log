@@ -135,11 +135,15 @@
 											{#if img.lng && img.lat}
 												<button
 													id="showOnMapButton-{img.id}"
-													title="{selectedId === img.id ? 'Reset Zoom Level' : 'Show Image on Map'}"
+													title="Show Image on Map"
 													onclick={() => {
 														if (!global.map || !img.lng || !img.lat) return;
 														map = global.map;
-														if (selectedId === img.id) {
+														if (
+															selectedId === img.id &&
+															map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
+															map.getZoom() === 13
+														) {
 															const bbox = getBBox(journey);
 															if (!bbox) return;
 															map.fitBounds(bbox, {
@@ -149,7 +153,7 @@
 																	left: 90,
 																	right: 90
 																},
-																duration: 1500,
+																duration: 1500
 															});
 															selectedId = undefined;
 														} else {
