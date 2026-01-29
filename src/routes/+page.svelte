@@ -30,6 +30,7 @@
 			year: 'numeric'
 		})}`;
 	};
+	let selectedId = $state<string>();
 
 	export async function getImages(journeyId: string): Promise<any> {
 		let response = await fetch(`/api/images?dir=${journeyId}`, {
@@ -124,22 +125,43 @@
 										<div
 											class="invisible flex h-fit w-full flex-row flex-wrap justify-evenly bg-slate-900/80 py-2 group-hover:visible"
 										>
-											<button title="View Full Image" onclick={() => fullImageModal?.open(img)}>
+											<button
+												id="viewFullImageButton-{img.id}"
+												title="View Full Image"
+												onclick={() => fullImageModal?.open(img)}
+											>
 												<SVGIcon type="fullscreen" />
 											</button>
 											{#if img.lng && img.lat}
 												<button
-													title="Show Image on Map"
+													id="showOnMapButton-{img.id}"
+													title="{selectedId === img.id ? 'Reset Zoom Level' : 'Show Image on Map'}"
 													onclick={() => {
 														if (!global.map || !img.lng || !img.lat) return;
 														map = global.map;
-														if (map.getZoom() === 13 && map.getCenter().lng === img.lng) {
-															map.fitBounds(getBBox(journey)!);
+														if (selectedId === img.id) {
+															const bbox = getBBox(journey);
+															if (!bbox) return;
+															map.fitBounds(bbox, {
+																padding: {
+																	top: 90,
+																	bottom: 90,
+																	left: 90,
+																	right: 90
+																},
+																duration: 1500,
+															});
+															selectedId = undefined;
+														} else {
+															map.flyTo({ center: [img.lng, img.lat], zoom: 13, speed: 2 });
+															selectedId = img.id;
 														}
-														map.flyTo({ center: [img.lng, img.lat], zoom: 13, speed: 2 });
 													}}
 												>
-													<SVGIcon type="marker" />
+													<SVGIcon
+														type="marker"
+														stroke={selectedId === img.id ? 'lightgreen' : 'white'}
+													/>
 												</button>
 											{:else}
 												<button title="Image has no Coordinate Data" disabled>
