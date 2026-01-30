@@ -6,9 +6,8 @@
 	import { getImgProxyURL } from '$src/lib/imgproxy';
 	import type { Journey } from '$src/lib/server/prisma';
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
-	import { awaitImageRender, getBBox } from '$src/lib/utils';
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
-	import SVGIcon from '$src/lib/components/SVGIcon.svelte';
+	import ImageCard from '$src/lib/components/ImageCard.svelte';
 
 	let { data }: PageProps = $props();
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -30,7 +29,6 @@
 			year: 'numeric'
 		})}`;
 	};
-	let selectedId = $state<string>();
 
 	export async function getImages(journeyId: string): Promise<any> {
 		let response = await fetch(`/api/images?dir=${journeyId}`, {
@@ -113,80 +111,7 @@
 					{#if journey.image.length > 0}
 						{#each journey.image as img}
 							{#await getImgProxyURL(img.path, img.width * 0.22, img.height * 0.22) then response}
-								<div id="imageCard-{img.id}" class="relative block">
-									<div
-										id="skeletonImage-{img.id}"
-										class="absolute inset-0 rounded-md bg-slate-600"
-									></div>
-									<div
-										id="imageControlOverlay"
-										class="group absolute inset-0 flex items-end rounded-md bg-transparent hover:bg-slate-900/30"
-									>
-										<div
-											class="invisible flex h-fit w-full flex-row flex-wrap justify-evenly bg-slate-900/80 py-2 group-hover:visible"
-										>
-											<button
-												id="viewFullImageButton-{img.id}"
-												title="View Full Image"
-												onclick={() => fullImageModal?.open(img)}
-											>
-												<SVGIcon type="fullscreen" />
-											</button>
-											{#if img.lng && img.lat}
-												<button
-													id="showOnMapButton-{img.id}"
-													title="Show Image on Map"
-													onclick={() => {
-														if (!global.map || !img.lng || !img.lat) return;
-														map = global.map;
-														if (
-															selectedId === img.id &&
-															map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-															map.getZoom() === 13
-														) {
-															const bbox = getBBox(journey);
-															if (!bbox) return;
-															map.fitBounds(bbox, {
-																padding: {
-																	top: 90,
-																	bottom: 90,
-																	left: 90,
-																	right: 90
-																},
-																duration: 1500
-															});
-															selectedId = undefined;
-														} else {
-															map.flyTo({ center: [img.lng, img.lat], zoom: 13, speed: 2 });
-															selectedId = img.id;
-														}
-													}}
-												>
-													<SVGIcon
-														type="marker"
-														stroke={selectedId === img.id ? 'lightgreen' : 'white'}
-													/>
-												</button>
-											{:else}
-												<button title="Image has no Coordinate Data" disabled>
-													<SVGIcon type="marker" disabled />
-												</button>
-											{/if}
-										</div>
-									</div>
-									<img
-										id="bookpic-{img.id}"
-										src={response}
-										alt={img.fileName}
-										class="h-full w-full cursor-pointer rounded-md object-cover text-white
-												transition duration-100 ease-in-out hover:scale-105"
-										loading="lazy"
-										onload={() =>
-											awaitImageRender(() => {
-												document.getElementById(`skeletonImage-${img.id}`)?.remove();
-											})}
-									/>
-								</div>
+								<ImageCard {img} src={response} {fullImageModal}/>
 							{/await}
 						{/each}
 					{:else}
