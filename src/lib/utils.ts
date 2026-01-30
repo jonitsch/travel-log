@@ -28,7 +28,6 @@ export function switchToOverview() {
     global.journeyId = undefined;
     global.loadingJourney = false;
     global.viewMode = 'overview';
-
 }
 
 export async function switchToJourneyMode(journeyId: string): Promise<{
@@ -45,7 +44,7 @@ export async function switchToJourneyMode(journeyId: string): Promise<{
             map.fitBounds(bbox, {
                 padding: {
                     top: 90,
-                    bottom: 90,
+                    bottom: 150,
                     left: 90,
                     right: 90
                 },
@@ -104,7 +103,7 @@ export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection 
                 coordinates: []
             };
             for (const img of images) {
-                lineString.coordinates?.push([img.lng!, img.lat!]);
+                lineString.coordinates.push([img.lng!, img.lat!]);
             }
             geoJSON.features.push({
                 type: 'Feature',
