@@ -38,7 +38,7 @@
 			if (!img) throw new Error('Image is undefined!');
 		} else {
 			const cImg: Image = img;
-			index = images.findIndex((i) => i.id === cImg.id);
+			index = images.findIndex((img) => img.id === cImg.id);
 		}
 		if (index === -1) throw new Error(`Index not found for image: ${img?.fileName}`);
 		return index;
@@ -112,29 +112,30 @@
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<div
-			bind:this={imgCon}
-			class="relative h-fit w-fit justify-center max-h-[75dvh] max-w-[70dvw] flex-1 flex-col rounded-lg shadow-xl"
-			onclick={(e) => e.stopPropagation()}
-		>
-			{#if !imageLoaded}
-				<div
-					bind:this={skeletonImg}
-					id="skeletonImg"
-					class="absolute inset-0 z-[1000] h-full w-full animate-pulse bg-slate-600"
-				></div>
-			{/if}
-			{#if img}
-				{#await getImgProxyURL(img.path, img.width / 3, img.height / 3) then response}
+		{#if img}
+			{@const { width, height, path, id, fileName, createdOn } = img}
+			<div
+				bind:this={imgCon}
+				class="relative h-fit max-h-[75dvh] w-fit max-w-[70dvw] flex-1 flex-col justify-center rounded-lg shadow-xl"
+				onclick={(e) => e.stopPropagation()}
+			>
+				{#if !imageLoaded}
+					<div
+						bind:this={skeletonImg}
+						id="skeletonImg"
+						class="absolute inset-0 z-[1000] animate-pulse bg-slate-600 object-contain"
+					></div>
+				{/if}
+				{#await getImgProxyURL(path, width / 3, height / 3) then response}
 					<img
 						bind:this={imgElement}
-						id="fullpic-{img.id}"
+						id="fullpic-{id}"
 						src={response}
-						alt={img.fileName}
-						class="relative h-fit w-fit min-w-[300px] max-h-full max-w-full object-contain"
+						alt={fileName}
+						class="relative h-fit max-h-full w-fit min-w-[300px] max-w-full object-contain"
 						loading="eager"
-						height="{img.height}px"
-						width="{img.width}px"
+						{height}
+						{width}
 						onload={() => {
 							awaitImageRender(async () => {
 								await tick();
@@ -149,9 +150,9 @@
 					id="dateDisplay"
 					class="invisible min-w-fit flex-none rounded-b-md bg-gray-900 p-2 py-1 text-3xl text-white"
 				>
-					{formattedDate(img.createdOn)}
+					{formattedDate(createdOn)}
 				</div>
-			{/if}
-		</div>
+			</div>
+		{/if}
 	</button>
 {/if}

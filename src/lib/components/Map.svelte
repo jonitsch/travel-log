@@ -84,11 +84,11 @@
 			<Control>
 				<ControlButton onclick={() => createJourneyModal?.toggle()}>
 					<div
-						class="animate-slide group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2 text-white"
+						class="animate-slide-right group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2"
 					>
-						<div class="text-1xl hidden group-hover:block" id="addJourneyText">Add Journey</div>
+						<div class="text-1xl text-white hidden group-hover:block" id="addJourneyText">Add Journey</div>
 						<div id="addJourneyIcon" class="relative">
-							<SVGIcon type="globePlus" fill="white" />
+							<SVGIcon type="globePlus" fill="white" hoverScale={false} />
 						</div>
 					</div>
 				</ControlButton>
@@ -120,7 +120,7 @@
 
 		{#if global.viewMode === 'journey' && global.journeyId}
 			{#await switchToJourneyMode(global.journeyId)}
-				{(global.loadingJourney = true)}
+				<div hidden>{(global.loadingJourney = true)}</div>
 				<div class="text-white">Loading Journey Data...</div>
 			{:then res}
 				{map.once('moveend', () => {
@@ -222,24 +222,6 @@
 	:global(.maplibregl-map) {
 		font: inherit;
 		margin-right: calc(100vw / 2) px;
-	}
-	:global(.maplibregl-popup-content) {
-		background-color: transparent;
-		border-radius: 15px;
-		box-shadow: none;
-		font-size: var(--text-1xl);
-	}
-	:global(.maplibregl-popup-anchor-bottom .maplibregl-popup-tip) {
-		border-top-color: transparent;
-	}
-	:global(.maplibregl-popup-anchor-left .maplibregl-popup-tip) {
-		border-right-color: transparent;
-	}
-	:global(.maplibregl-popup-anchor-right .maplibregl-popup-tip) {
-		border-left-color: transparent;
-	}
-	:global(.maplibregl-popup-anchor-top .maplibregl-popup-tip) {
-		border-bottom-color: transparent;
 	}
 
 	.map-wrapper {
