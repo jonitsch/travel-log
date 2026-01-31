@@ -15,12 +15,26 @@
 KEY: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`  
 SALT: `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
 
-### Run ImgProxy Container locally
+### Run ImgProxy-Container locally
+Windows
 ```docker
- docker run 
-    -p 8080:8080
-    -v {PATH_TO_PROJECT}:/pictures:ro 
-    -e IMGPROXY_LOCAL_FILESYSTEM_ROOT=/pictures
-    -e IMGPROXY_KEY={YOUR_KEY} -e IMGPROXY_SALT={YOUR_SALT}
-    -it ghcr.io/imgproxy/imgproxy:latest
+docker run 
+    -p 8080:8080 ^
+    -v {PATH_TO_IMAGE_FOLDER}/pictures:/pictures:ro ^
+    -e IMGPROXY_LOCAL_FILESYSTEM_ROOT=/pictures ^
+    -e IMGPROXY_KEY={YOUR_KEY} -e IMGPROXY_SALT={YOUR_SALT} ^
+    -it ghcr.io/imgproxy/imgproxy:latest ^
+```
+Linux  
+```docker
+docker run
+    -p 8080:8080 \
+    -v {PATH_TO_IMAGE_FOLDER}/pictures:/pictures:ro \
+    -e IMGPROXY_LOCAL_FILESYSTEM_ROOT=/pictures \
+    -e IMGPROXY_KEY={YOUR_KEY} -e IMGPROXY_SALT={YOUR_SALT} \
+    -it ghcr.io/imgproxy/imgproxy:latest \
+```
+Any Image Path that you try to sign and fetch with the **getImgProxyURL()** function must be relative to **{PATH_TO_IMAGE_FOLDER}**!
+```typescript
+import { getImgProxyURL } from '$src/lib/imgproxy';
 ```

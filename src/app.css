@@ -4,48 +4,60 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-@font-face {
-  font-family: 'Daydream';
-  src: url('static/fonts/Daydream DEMO.otf') format('woff2');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'CODELight';
-  src: url('static/fonts/CODELight.otf') format('otf');
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: 'CODEBold';
-  src: url('static/fonts/CODEBold.otf') format('otf');
-  font-weight: normal;
-  font-style: normal;
-}
-
 /* SCROLLBAR */
-  /* Firefox */
-    * {
-      scrollbar-width: thick;
-      scrollbar-color: #202c47 transparent;
-    }
-  /* WebKit */
-    ::-webkit-scrollbar {
-      width: 10px;
-    }
+/* Firefox */
+* {
+  scrollbar-width: thick;
+  scrollbar-color: #202c47 transparent;
+}
 
-    ::-webkit-scrollbar-track {
-      background: transparent;
-    }
+.animate-slide-right {
+  animation: slide-right 0.2s ease-in-out;
+}
 
-    ::-webkit-scrollbar-thumb {
-      background: #202c47;
-      border-radius: 8px;
-    }
+@keyframes slide-right {
+  from {
+    translate: 150vw 0;
+    scale: 200% 1;
+  }
 
+  to {
+    translate: 0 0;
+    scale: 100% 1;
+  }
+}
 
+.animate-slide-left {
+  animation: slide-left 0.2s ease-in-out;
+}
+
+@keyframes slide-left {
+  from {
+    translate: -150vw 0;
+    scale: 200% 1;
+  }
+
+  to {
+    translate: 0 0;
+    scale: 100% 1;
+  }
+}
+
+/* WebKit */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #202c47;
+  border-radius: 8px;
+}
+
+/* Fonts */
 .outfit-oxygen {
   font-family: "Oxygen";
   font-optical-sizing: auto;

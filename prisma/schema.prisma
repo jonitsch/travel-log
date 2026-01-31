@@ -10,7 +10,7 @@ datasource db {
 }
 
 model journey {
-  journeyId String   @id @default("journey")
+  journeyId String   @id @default(uuid())
   name      String
   color     String   @default("bg-white")
   lng       Float    @default(0)
@@ -24,7 +24,7 @@ model marker {
   name      String
   lng       Float
   lat       Float
-  color     String  @default("bg-white")
+  color     String?
   journeyId String
   journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
 

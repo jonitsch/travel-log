@@ -1,80 +1,171 @@
 <script lang="ts">
 	let isModalOpen = $state(false);
-	export async function openModal() {
-		isModalOpen = true;
+
+	const twColors = ['red', 'yellow', 'green', 'blue', 'purple', 'pink'];
+	const inputStyle =
+		'text-gray-900 w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500';
+	const labelStyle = 'mb-1 block text-sm font-medium text-gray-200';
+
+	let selectedColorElement = $state<HTMLButtonElement>(),
+		colorInput = $state<HTMLInputElement>();
+
+	let name = $state(''),
+		lng = $state<number>(),
+		lat = $state<number>(),
+		color = $state<string>();
+
+	export async function toggle() {
+		isModalOpen = !isModalOpen;
 	}
-	// svelte-ignore non_reactive_update
-		let modal: HTMLDivElement;
+	function setPreviewColor() {
+		if (selectedColorElement && colorInput) {
+			const currentColor = window.getComputedStyle(selectedColorElement).backgroundColor;
+			colorInput.style.background = currentColor;
+			colorInput.style.color = 'white';
+		}
+	}
+
+	$effect(() => {
+		color;
+		setPreviewColor();
+	});
 </script>
 
 {#if isModalOpen}
-	<!-- Backdrop -->
+	<!-- Modal container -->
 	<div
-		bind:this={modal}
-		class="absolute inset-0 z-15000 flex items-center justify-center bg-black/50"
+		class="animate-slide w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"
 	>
-		<!-- Modal container -->
-		<div class="fixed mx-4 w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+		<div class="mb-4 flex flex-row">
+			<!-- Modal header -->
+			<h2 class="flex-1 text-xl font-semibold">Create new Journey</h2>
 			<!-- Close button -->
 			<button
-				class="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+				class="text-xl text-gray-400 hover:text-gray-600"
 				aria-label="Close"
 				onclick={() => (isModalOpen = false)}
 			>
 				✕
 			</button>
-
-			<!-- Modal header -->
-			<h2 class="mb-4 text-xl font-semibold text-gray-800">Create a new Journey</h2>
-
-			<!-- Modal body -->
-			<form class="space-y-4" method='POST' action="?/addJourney">
-				<!-- Name -->
-				<div>
-					<label for="name" class="mb-1 block text-sm font-medium text-gray-700"> Name </label>
-					<input
-						id="name"
-						type="text"
-						placeholder="Enter location name"
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-				</div>
-
-				<!-- Longitude -->
-				<div>
-					<label for="lng" class="mb-1 block text-sm font-medium text-gray-700"> Longitude </label>
-					<input
-						id="lng"
-						type="float"
-						placeholder="e.g. 120.9822"
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-				</div>
-
-				<!-- Latitude -->
-				<div>
-					<label for="lat" class="mb-1 block text-sm font-medium text-gray-700"> Latitude </label>
-					<input
-						id="lat"
-						type="float"
-						placeholder="e.g. 14.6042"
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-				</div>
-
-				<!-- Modal footer -->
-				<div class="flex justify-end space-x-3">
-					<button
-						class="rounded bg-gray-100 px-4 py-2 text-gray-600 hover:bg-gray-200"
-						onclick={() => (isModalOpen = false)}
-					>
-						Cancel
-					</button>
-					<button class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-						Confirm
-					</button>
-				</div>
-			</form>
 		</div>
+
+		<!-- Modal body -->
+		<form class="space-y-4" method="POST" action="?/addJourney">
+			<!-- Name -->
+			<div>
+				<label for="name" class={labelStyle}> Name </label>
+				<input
+					bind:value={name}
+					required
+					name="name"
+					type="text"
+					placeholder="Enter location name"
+					class={inputStyle}
+				/>
+			</div>
+
+			<!-- Longitude -->
+			<div>
+				<label for="lng" class={labelStyle}> Longitude </label>
+				<input
+					bind:value={lng}
+					required
+					name="lng"
+					type="number"
+					step={0.01}
+					min={-180}
+					max={180}
+					placeholder="e.g. 120.9822"
+					class={inputStyle}
+					oninput={(e) => {
+						const target = e.currentTarget;
+						const val: number = target.valueAsNumber;
+						console.log(val.toString());
+						if (val.toString() === 'NaN') target.setCustomValidity('Please enter a valid number!');
+						if (val > 180 || val < 0)
+							target.setCustomValidity('The longitude needs to be between 0-180!');
+						else target.setCustomValidity('');
+						target.reportValidity();
+					}}
+				/>
+			</div>
+
+			<!-- Latitude -->
+			<div>
+				<label for="lat" class={labelStyle}> Latitude </label>
+				<input
+					bind:value={lat}
+					required
+					name="lat"
+					type="number"
+					step={0.01}
+					min={-90}
+					max={90}
+					placeholder="e.g. 14.6042"
+					class={inputStyle}
+				/>
+			</div>
+
+			<!-- Color -->
+			<div>
+				<label for="color" class={labelStyle}> Color </label>
+				<input
+					bind:value={color}
+					bind:this={colorInput}
+					name="color"
+					placeholder="Select a color"
+					type="text"
+					readonly
+					required
+					class="pointer-events-none w-full rounded-md border border-gray-300 bg-{color ?? 'gray-200'} px-3 py-1 text-gray-900"
+					onload={() => setPreviewColor()}
+				/>
+			</div>
+			<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
+				{#each twColors as twColor}
+					{#each { length: 5 } as el, i}
+						{@const currentColor = `${twColor}-${900 - i * 100}`}
+						<button
+							id={currentColor}
+							class="bg-{currentColor} size-8 cursor-pointer rounded-full transition duration-100 ease-in-out hover:scale-[120%]"
+							aria-label="Select color {currentColor}"
+							onclick={(e) => {
+								if (selectedColorElement) selectedColorElement.classList.remove('selected');
+								selectedColorElement = e.currentTarget;
+								console.log(selectedColorElement.style.background);
+								selectedColorElement.classList.add('selected');
+								color = currentColor;
+							}}
+							type="button"
+							title={currentColor}
+						></button>
+					{/each}
+				{/each}
+			</div>
+
+			<!-- Modal footer -->
+			<div class="flex justify-end space-x-3">
+				<button
+					class="rounded bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200"
+					onclick={() => (isModalOpen = false)}
+					type="reset"
+				>
+					Cancel
+				</button>
+				<button class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">
+					Confirm
+				</button>
+			</div>
+		</form>
 	</div>
 {/if}
+
+<style>
+	input:invalid {
+		border: red 2px solid;
+	}
+	.selected {
+		border: solid 3px #000000;
+		transform: scale(130%);
+	}
+</style>

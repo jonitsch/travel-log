@@ -42,10 +42,10 @@ export type Image = {
 };
 
 export type Marker = {
-  journeyId: string;
+  id: number;
   name: string;
-  color: string;
   lng: number;
   lat: number;
-  id: number;
+  color: string | null;
+  journeyId: string;
 };

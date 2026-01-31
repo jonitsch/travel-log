@@ -6,9 +6,8 @@ export default {
   },
   plugins: [],
   safelist: [
-    {
-      pattern: /bg-.+/,
-    }
+    { pattern: /bg-.+/ },
+    { pattern: /border-.+/ },
   ],
 }
 

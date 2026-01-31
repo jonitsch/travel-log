@@ -5,13 +5,14 @@ import type { ServerInit } from '@sveltejs/kit';
 import { fileTypeFromFile, type FileTypeResult } from 'file-type';
 import exifr from 'exifr';
 import sharp from 'sharp';
-import type { Prisma } from '$gen/prisma/client/client';
+import { Prisma } from '$gen/prisma/client/client';
+import { stat } from "fs/promises";
 
 export const init: ServerInit = async () => {
     await initializeDatabase();
 }
 
-type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data']
+type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
 
 async function initializeDatabase() {
     console.log('Database Initialization started');
@@ -67,19 +68,24 @@ async function getImages(journeyId: string) {
                     if (await exifr.gps(path)) {
                         coords = await exifr.gps(path);
                     }
+                    // exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
                     let exifrDates: {
                         DateTimeOriginal: string;
                         CreateDate: string;
                         ModifyDate: string;
                     } = await exifr.parse(path, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
-                    console.log(exifrDates);
                     let createdOn: Date;
-                    if (!exifrDates) {
-                        createdOn = new Date(Date.now())
-                    } else {
+                    if (exifrDates) {
                         createdOn = new Date(exifrDates.DateTimeOriginal ?? exifrDates.CreateDate ?? exifrDates.ModifyDate);
+                    } else {
+                        let systemDates = await stat(path);
+                        if (systemDates) {
+                            createdOn = new Date(systemDates.birthtime ?? systemDates.mtime ?? systemDates.ctime);
+                        } else {
+                            createdOn = new Date(Date.now());
+                            console.log(`No valid Date found for ${path} in exifr or system data, using fallback Date.now()`);
+                        }
                     }
-                    // exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
                     let imgData: imgCreateBody = {
                         path: path,
                         fileName: name,
@@ -94,7 +100,7 @@ async function getImages(journeyId: string) {
                     images.push(imgData);
                     console.log('Loaded Image: ', path)
                 }
-                else { console.log('Skipped file as it is not an image: ', path) }
+                else { console.log('Skipped file as it is not an image: ', entry.name) }
 
             }
             else { console.log('Skipped entry as it is not a file: ', fullPath) }
