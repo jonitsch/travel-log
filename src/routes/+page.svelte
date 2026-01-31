@@ -15,7 +15,11 @@
 	let map = $state<maplibregl.Map>();
 	let fullImageModal = $state<FullImageModal>();
 	let book = $state<HTMLDivElement>();
-	let previousDate = $state<string>();
+	// svelte-ignore non_reactive_update
+	let previousDate: string | null = null;
+	let dayOf = (date: Date) => {
+		return date.toISOString().slice(0, 10);
+	}; // DD//MM//YYYY
 
 	let timeRange = (journey: Journey) => {
 		if (journey.image.length === 0) return;
@@ -106,49 +110,44 @@
 		{@const journey = global.journeyData}
 		<div
 			id="book"
-			class="grid h-full w-[60dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible"
+			class="animate-slide-right grid pr-3 h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible"
 			bind:this={book}
 		>
 			{#if journey}
-				{@const uniqueDates = [
-					...new Set(
-						journey.image.map((img) => {
-							const date = new Date(img.createdOn);
-							return date.toISOString().slice(0, 10); // DD//MM//YYYY
-						})
-					)
-				]}
-				{#each uniqueDates as date}
-					<!-- Filter images by uniqueDate -->
-					{@const images = journey.image.filter((img) => {
-						let currDate = new Date(img.createdOn);
-						return currDate.toISOString().slice(0, 10) === date;
-					})}
-					<div
-						class="w-fit text-3xl text-white bg-{journey.color} col-span-full rounded-md px-2 py-1"
-					>
-						{formattedDate(new Date(date))}
-					</div>
-					{#if global.loadingJourney}
-						{#each { length: journey?.image.length ?? 200 }}
+				{@const images = journey.image}
+				{(previousDate = null)}
+				{#if global.loadingJourney}
+					<div class="col-span-full w-full rounded-md py-2 text-2xl text-[transparent] animate-pulse bg-slate-600">Placeholder</div>
+					{#each { length: images.length ?? 200 }}
+						<div
+							id="skeletonImage"
+							class="animate-pulse rounded-md bg-slate-600"
+							style="width: 1fr; height: 300px;"
+						></div>
+					{/each}
+				{:else if images.length > 0}
+					{#each images as img}
+						{@const date = new Date(img.createdOn)}
+						{#if previousDate != dayOf(date)}
 							<div
-								id="skeletonImage"
-								class="animate-pulse rounded-md bg-slate-600"
-								style="width: 1fr; height: 300px;"
-							></div>
-						{/each}
-					{:else if images.length > 0}
-						{#each images as img}
-							{#await getImgProxyURL(img.path, img.width * 0.22, img.height * 0.22) then response}
-								<div class="col-span-1">
-									<ImageCard {img} src={response} {fullImageModal} />
-								</div>
-							{/await}
-						{/each}
-					{:else}
-						<div class="h-full w-full text-2xl text-white">No images yet</div>
-					{/if}
-				{/each}
+								class={[
+									'col-span-full w-full rounded-md py-2 px-4 text-2xl text-white shadow-inner shadow-slate-400/60',
+									{ 'mt-4': previousDate }
+								]}
+							>
+								{formattedDate(date)}
+							</div>
+						{/if}
+						{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
+							<div class="col-span-1">
+								<ImageCard {img} src={response} {fullImageModal} />
+							</div>
+						{/await}
+						<div hidden>{(previousDate = dayOf(date))}</div>
+					{/each}
+				{:else}
+					<div class="h-full w-full text-2xl text-white">No images yet</div>
+				{/if}
 			{:else}
 				{@const error = new Error('Images failed to load - no image data received')}
 				<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
