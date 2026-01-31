@@ -6,15 +6,42 @@
 	import { awaitImageRender, getBBox } from '../utils';
 	import { tick } from 'svelte';
 
-	let {
-		img,
-		src,
-		fullImageModal
-	}: { img: Image; src: string; fullImageModal: FullImageModal | undefined } = $props();
+	interface Props {
+		img: Image;
+		src: string;
+		fullImageModal: FullImageModal | undefined;
+	}
+	let { img, src, fullImageModal }: Props = $props();
 
 	let imageLoaded = $state<boolean>(false);
 	let selectedId = $state<string>();
 	let journey = $derived(global.journeyData);
+
+	function handleShowOnMapClick() {
+		if (!global.map || !img.lng || !img.lat) return;
+		const map = global.map;
+		if (
+			selectedId === img.id &&
+			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
+			map.getZoom() === 13
+		) {
+			const bbox = getBBox(journey!);
+			if (!bbox) return;
+			map.fitBounds(bbox, {
+				padding: {
+					top: 90,
+					bottom: 90,
+					left: 90,
+					right: 90
+				},
+				duration: 1500
+			});
+			selectedId = undefined;
+		} else {
+			map.flyTo({ center: [img.lng, img.lat], zoom: 13, speed: 2 });
+			selectedId = img.id;
+		}
+	}
 </script>
 
 <div id="imageCard-{img.id}" class="relative block size-full">
@@ -35,32 +62,8 @@
 			{#if img.lng && img.lat}
 				<button
 					id="showOnMapButton-{img.id}"
-					title="Show Image on Map"
-					onclick={() => {
-						if (!global.map || !img.lng || !img.lat) return;
-						const map = global.map;
-						if (
-							selectedId === img.id &&
-							map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-							map.getZoom() === 13
-						) {
-							const bbox = getBBox(journey!);
-							if (!bbox) return;
-							map.fitBounds(bbox, {
-								padding: {
-									top: 90,
-									bottom: 90,
-									left: 90,
-									right: 90
-								},
-								duration: 1500
-							});
-							selectedId = undefined;
-						} else {
-							map.flyTo({ center: [img.lng, img.lat], zoom: 13, speed: 2 });
-							selectedId = img.id;
-						}
-					}}
+					title="Show on map"
+					onclick={() => handleShowOnMapClick()}
 				>
 					<SVGIcon type="marker" stroke={img.id === selectedId ? 'lightgreen' : 'white'} />
 				</button>

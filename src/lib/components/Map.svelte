@@ -72,7 +72,7 @@
 		minZoom={1.5}
 		onzoom={() => (zoom = zoom)}
 		projection={{ type: 'globe' }}
-		class="map-canvas h-full w-full rounded-md"
+		class="map-canvas size-full rounded-md"
 		dragRotate={false}
 		zoomOnDoubleClick={false}
 		attributionControl={false}
@@ -111,7 +111,7 @@
 				/>
 				<Marker
 					lngLat={[journey.lng, journey.lat]}
-					class={`h-3 w-3 place-items-center rounded-full bg-${journey.color}`}
+					class={`size-3 place-items-center rounded-full bg-${journey.color}`}
 				/>
 			{/each}
 		{/if}
@@ -148,7 +148,7 @@
 								{#if img.lng && img.lat}
 									<Marker
 										lngLat={[img.lng, img.lat]}
-										class={'h-7 w-7 place-items-center rounded-full focus:outline-2 focus:outline-black'}
+										class={'size-7 place-items-center rounded-full focus:outline-2 focus:outline-black'}
 										onclick={() => {
 											if (previousElement) previousElement.style.border = '';
 											let bookpic = document.getElementById(`bookpic-${img.id}`);
