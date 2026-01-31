@@ -17,7 +17,7 @@
 	let journey = $derived(global.journeyData);
 </script>
 
-<div id="imageCard-{img.id}" class="relative block">
+<div id="imageCard-{img.id}" class="relative block size-full">
 	<div
 		id="imageControlOverlay"
 		class="group absolute inset-0 flex items-end rounded-md bg-transparent hover:bg-slate-900/30"
@@ -75,8 +75,7 @@
 		id="bookpic-{img.id}"
 		{src}
 		alt={img.fileName}
-		class="h-full w-full cursor-pointer rounded-md object-cover text-white
-												transition duration-100 ease-in-out hover:scale-105"
+		class="size-full cursor-pointer rounded-md object-cover transition duration-100 ease-in-out hover:scale-105"
 		loading="lazy"
 		onload={() =>
 			awaitImageRender(async () => {

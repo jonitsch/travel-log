@@ -38,8 +38,8 @@ export async function switchToJourneyMode(journeyId: string): Promise<{
     const journey = await getJourneyData(journeyId);
     const map = global.map;
     if (map && journey) {
-        map.setProjection({ type: 'mercator' })
-        const bbox = await getBBox(journey);
+        map.setProjection({ type: 'mercator' });
+        const bbox = getBBox(journey);
         if (bbox) {
             map.fitBounds(bbox, {
                 padding: {
