@@ -3,7 +3,7 @@
 	import FullImageModal from './FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, formattedDate, getBBox } from '../utils';
+	import { awaitImageRender, getBBox } from '../utils';
 	import { tick } from 'svelte';
 
 	interface Props {

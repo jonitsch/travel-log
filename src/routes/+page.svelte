@@ -8,6 +8,7 @@
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
+	import { formattedDate, timeRange } from '$src/lib/utils';
 
 	let { data }: PageProps = $props();
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -20,30 +21,6 @@
 	let dayOf = (date: Date) => {
 		return date.toISOString().slice(0, 10);
 	}; // DD//MM//YYYY
-
-	let timeRange = (journey: Journey) => {
-		if (journey.image.length === 0) return;
-		let end = new Date(journey.image[journey.image.length - 1].createdOn);
-		let start = new Date(journey.image[0].createdOn);
-		return `${start.toLocaleDateString('de-DE', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric'
-		})} - ${end.toLocaleDateString('de-DE', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric'
-		})}`;
-	};
-	const formattedDate = (imgDate: Date) => {
-		let date = new Date(imgDate);
-		return date.toLocaleDateString('de-DE', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric',
-			hour12: false
-		});
-	};
 
 	export async function getImages(journeyId: string): Promise<any> {
 		let response = await fetch(`/api/images?dir=${journeyId}`, {
@@ -69,7 +46,7 @@
 		{#if global.viewMode === 'journey'}
 			{@const journey = global.journeyData}
 			{#if journey}
-				<div class="animate-slide-left flex flex-col gap-0">
+				<div class="animate-slide-left flex flex-col gap-1">
 					<div
 						id="header"
 						class={[
@@ -135,7 +112,7 @@
 									{ 'mt-4': previousDate }
 								]}
 							>
-								{formattedDate(date)}
+								{formattedDate(date, 'dd/mm/yyyy')}
 							</div>
 						{/if}
 						{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
