@@ -13,6 +13,7 @@ type State = {
 		center: maplibregl.LngLatLike | undefined;
 		bounds: maplibregl.LngLatBoundsLike | undefined;
 	} | null;
+	selectedImageId: string | null;
 };
 
 export const global: State = $state({
@@ -22,4 +23,5 @@ export const global: State = $state({
 	map: null,
 	loadingJourney: false,
 	savedViewPort: null,
+	selectedImageId: null
 });

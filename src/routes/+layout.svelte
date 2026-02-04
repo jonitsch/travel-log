@@ -9,7 +9,7 @@
 	let { children } = $props();
 	let displayMode: string | undefined = $state('');
 	let headerStyle =
-		'oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50 shadow-xl';
+		'oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50';
 
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
