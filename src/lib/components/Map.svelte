@@ -2,15 +2,14 @@
 	import { MapLibre, Marker, GeoJSON, LineLayer, Control, ControlButton } from 'svelte-maplibre';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global } from '$lib/state.svelte';
-	import { getContext, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import type { Data } from '$lib/server/prisma';
 	import maplibregl from 'maplibre-gl';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
-	import { getImgProxyURL } from '$lib/imgproxy';
 	import { switchToJourneyMode, switchToOverview } from '$src/lib/utils';
-	import { slide } from 'svelte/transition';
 	import SVGIcon from './SVGIcon.svelte';
+	import ImageMarker from './ImageMarker.svelte';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
@@ -24,8 +23,6 @@
 		data = $bindable(),
 		createJourneyModal = $bindable()
 	}: Props = $props();
-
-	let previousElement = $state<HTMLElement | null>(null);
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		zoom = $state<number>(0),
@@ -72,7 +69,7 @@
 		minZoom={1.5}
 		onzoom={() => (zoom = zoom)}
 		projection={{ type: 'globe' }}
-		class="map-canvas h-full w-full rounded-md"
+		class="map-canvas size-full rounded-md"
 		dragRotate={false}
 		zoomOnDoubleClick={false}
 		attributionControl={false}
@@ -86,7 +83,9 @@
 					<div
 						class="animate-slide-right group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2"
 					>
-						<div class="text-1xl text-white hidden group-hover:block" id="addJourneyText">Add Journey</div>
+						<div class="text-1xl hidden text-white group-hover:block" id="addJourneyText">
+							Add Journey
+						</div>
 						<div id="addJourneyIcon" class="relative">
 							<SVGIcon type="globePlus" fill="white" hoverScale={false} />
 						</div>
@@ -111,7 +110,7 @@
 				/>
 				<Marker
 					lngLat={[journey.lng, journey.lat]}
-					class={`h-3 w-3 place-items-center rounded-full bg-${journey.color}`}
+					class={`size-3 place-items-center rounded-full bg-${journey.color}`}
 				/>
 			{/each}
 		{/if}
@@ -145,44 +144,7 @@
 						{/if}
 						{#if journey.image && !global.loadingJourney}
 							{#each journey.image as img}
-								{#if img.lng && img.lat}
-									<Marker
-										lngLat={[img.lng, img.lat]}
-										class={'h-7 w-7 place-items-center rounded-full focus:outline-2 focus:outline-black'}
-										onclick={() => {
-											if (previousElement) previousElement.style.border = '';
-											let bookpic = document.getElementById(`bookpic-${img.id}`);
-											if (bookpic) {
-												if (previousElement === bookpic) {
-													bookpic.style.border = '';
-													previousElement = null;
-													return;
-												}
-												bookpic.scrollIntoView({ behavior: 'smooth' });
-												bookpic.style.border = 'solid #475569 5px';
-												previousElement = bookpic;
-												window.addEventListener('click', () => {
-													if (previousElement) previousElement.style.border = '';
-													window.removeEventListener('click', () => {});
-												});
-											}
-										}}
-										ondblclick={() => {
-											let newZoom = (zoom ?? 0) + 5;
-											map.flyTo({ center: [img.lng!, img.lat!], zoom: newZoom });
-										}}
-									>
-										{#await getImgProxyURL(img.path, img.width * 0.05, img.height * 0.05)}
-											<div class="h-full w-full bg-{journey.color} rounded-lg"></div>
-										{:then response}
-											<img
-												src={response}
-												alt={img.fileName}
-												class="h-full w-full cursor-pointer rounded-lg hover:z-50 hover:scale-[110%]"
-											/>
-										{/await}
-									</Marker>
-								{/if}
+								<ImageMarker {img} color={journey.color} {zoom} />
 							{/each}
 						{/if}
 						{#if geoJSON}
@@ -263,5 +225,16 @@
 	.map-wrapper .map-canvas > :global(canvas) {
 		position: relative;
 		z-index: 1;
+	}
+
+	:global(.maplibregl-popup-content) {
+		background-color: transparent;
+		border-radius: 15px;
+		box-shadow: none;
+		font-size: var(--text-1xl);
+		padding: 0px;
+	}
+	:global(.maplibregl-popup .maplibregl-popup-tip) {
+		border-top-color: inherit;
 	}
 </style>

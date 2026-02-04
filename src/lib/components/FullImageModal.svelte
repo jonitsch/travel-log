@@ -3,7 +3,7 @@
 	import type { Image } from '$lib/server/prisma';
 	import { global } from '$lib/state.svelte';
 	import { slide } from 'svelte/transition';
-	import { awaitImageRender } from '../utils';
+	import { awaitImageRender, formattedDate } from '../utils';
 	import { tick } from 'svelte';
 
 	let modal = $state<HTMLButtonElement | undefined>();
@@ -16,19 +16,6 @@
 
 	let dateDisplay = $state<HTMLDivElement | undefined>();
 	let skeletonImg = $state<HTMLDivElement | undefined>();
-
-	const formattedDate = (imgDate: Date) => {
-		let date = new Date(imgDate);
-		return date.toLocaleDateString('de-DE', {
-			day: '2-digit',
-			month: '2-digit',
-			year: 'numeric',
-			hour: '2-digit',
-			minute: '2-digit',
-			second: '2-digit',
-			hour12: false
-		});
-	};
 
 	function getImageIndex(): number {
 		let index: number = -1;
@@ -150,7 +137,7 @@
 					id="dateDisplay"
 					class="invisible min-w-fit flex-none rounded-b-md bg-gray-900 p-2 py-1 text-3xl text-white"
 				>
-					{formattedDate(createdOn)}
+					{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
 				</div>
 			</div>
 		{/if}
