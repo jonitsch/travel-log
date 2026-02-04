@@ -82,7 +82,7 @@
 						const val: number = target.valueAsNumber;
 						console.log(val.toString());
 						if (val.toString() === 'NaN') target.setCustomValidity('Please enter a valid number!');
-						if (val > 180 || val < 0)
+						if (val > 180 || val < -180)
 							target.setCustomValidity('The longitude needs to be between 0-180!');
 						else target.setCustomValidity('');
 						target.reportValidity();
