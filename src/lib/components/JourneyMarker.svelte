@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Marker, Popup } from 'svelte-maplibre';
 	import { type LngLatLike } from 'maplibre-gl';
+	import { buildGeoJSON } from '../utils';
 
 	interface Props {
 		lngLat: LngLatLike;
@@ -28,14 +29,15 @@
 	{#if popupText}
 		<Popup
 			anchor="bottom"
-			offset={-15}
+			offset={7}
 			closeOnClickOutside={false}
 			closeButton={false}
+			popupClass="border-{color}/95"
 			{open}
 			{...rest}
 		>
 			<button
-				class={`rounded-md px-3 py-[1px] text-sm text-white opacity-95 bg-${color}`}
+				class={`items-center rounded-md px-3 py-[1px] text-sm text-white opacity-95 bg-${color}`}
 				onclick={() => onclick()}
 			>
 				<text class="oxygen-regular">
@@ -45,24 +47,3 @@
 		</Popup>
 	{/if}
 </Marker>
-
-<style>
-	:global(.maplibregl-popup-content) {
-		background-color: transparent;
-		border-radius: 15px;
-		box-shadow: none;
-		font-size: var(--text-1xl);
-	}
-	:global(.maplibregl-popup-anchor-bottom .maplibregl-popup-tip) {
-		border-top-color: transparent;
-	}
-	:global(.maplibregl-popup-anchor-left .maplibregl-popup-tip) {
-		border-right-color: transparent;
-	}
-	:global(.maplibregl-popup-anchor-right .maplibregl-popup-tip) {
-		border-left-color: transparent;
-	}
-	:global(.maplibregl-popup-anchor-top .maplibregl-popup-tip) {
-		border-bottom-color: transparent;
-	}
-</style>

@@ -226,4 +226,15 @@
 		position: relative;
 		z-index: 1;
 	}
+
+	:global(.maplibregl-popup-content) {
+		background-color: transparent;
+		border-radius: 15px;
+		box-shadow: none;
+		font-size: var(--text-1xl);
+		padding: 0px;
+	}
+	:global(.maplibregl-popup .maplibregl-popup-tip) {
+		border-top-color: inherit;
+	}
 </style>
