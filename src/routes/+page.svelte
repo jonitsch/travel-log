@@ -87,14 +87,18 @@
 		{@const journey = global.journeyData}
 		<div
 			id="book"
-			class="animate-slide-right grid pr-3 h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible"
+			class="animate-slide-right grid h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible pr-3"
 			bind:this={book}
 		>
 			{#if journey}
 				{@const images = journey.image}
 				{(previousDate = null)}
 				{#if global.loadingJourney}
-					<div class="col-span-full w-full rounded-md py-2 text-2xl text-[transparent] animate-pulse bg-slate-600">Placeholder</div>
+					<div
+						class="col-span-full w-full animate-pulse rounded-md bg-slate-600 py-2 text-2xl text-[transparent]"
+					>
+						Placeholder
+					</div>
 					{#each { length: images.length ?? 200 }}
 						<div
 							id="skeletonImage"
@@ -108,18 +112,20 @@
 						{#if previousDate != dayOf(date)}
 							<div
 								class={[
-									'col-span-full w-full rounded-md py-2 px-4 text-2xl text-white shadow-inner shadow-slate-400/60',
+									'col-span-full w-full rounded-md px-4 py-2 text-2xl text-white shadow-inner shadow-slate-400/60',
 									{ 'mt-4': previousDate }
 								]}
 							>
 								{formattedDate(date, 'dd/mm/yyyy')}
 							</div>
 						{/if}
-						{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
-							<div class="col-span-1">
+						<div class="col-span-1">
+							{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
 								<ImageCard {img} src={response} {fullImageModal} />
-							</div>
-						{/await}
+							{:catch error}
+								<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
+							{/await}
+						</div>
 						<div hidden>{(previousDate = dayOf(date))}</div>
 					{/each}
 				{:else}

@@ -5,6 +5,7 @@
 	import { slide } from 'svelte/transition';
 	import { awaitImageRender, formattedDate } from '../utils';
 	import { tick } from 'svelte';
+	import ErrorMessage from './ErrorMessage.svelte';
 
 	let modal = $state<HTMLButtonElement | undefined>();
 	let isModalOpen = $state<boolean>(false);
@@ -94,7 +95,7 @@
 	<button
 		type="button"
 		bind:this={modal}
-		class="fixed inset-0 z-[999] flex h-dvh w-dvw flex-col items-center justify-center bg-black/80"
+		class="cursor-default fixed inset-0 z-[9999] flex h-dvh w-dvw flex-col items-center justify-center bg-black/80"
 		onclick={() => close()}
 	>
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -102,8 +103,9 @@
 		{#if img}
 			{@const { width, height, path, id, fileName, createdOn } = img}
 			<div
+				id="imgCon"
 				bind:this={imgCon}
-				class="relative h-fit max-h-[75dvh] w-fit max-w-[70dvw] flex-1 flex-col justify-center rounded-lg shadow-xl"
+				class="relative h-fit max-h-[75dvh] w-fit max-w-[70dvw] justify-center rounded-lg shadow-xl"
 				onclick={(e) => e.stopPropagation()}
 			>
 				{#if !imageLoaded}
@@ -131,6 +133,10 @@
 							});
 						}}
 					/>
+				{:catch error}
+					<ErrorMessage {error}>
+						Image Failed To Load!
+					</ErrorMessage>
 				{/await}
 				<div
 					bind:this={dateDisplay}
@@ -143,3 +149,32 @@
 		{/if}
 	</button>
 {/if}
+
+<style>
+	#imgCon {
+		animation: modal-in 0.3s ease forwards;
+	}
+
+	@keyframes modal-in {
+		0% {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+		100% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+
+	/* Keyframes for modal exit (optional) */
+	@keyframes modal-out {
+		0% {
+			opacity: 1;
+			transform: translateY(0);
+		}
+		100% {
+			opacity: 0;
+			transform: translateY(-20px);
+		}
+	}
+</style>
