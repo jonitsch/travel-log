@@ -3,52 +3,6 @@ import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 
 import { type LngLatBoundsLike } from 'maplibre-gl';
 import { global } from '$lib/state.svelte';
 
-export const timeRange = (journey: Journey) => {
-    if (journey.image.length === 0) return;
-    let end = new Date(journey.image[journey.image.length - 1].createdOn);
-    let start = new Date(journey.image[0].createdOn);
-    return `${start.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })} - ${end.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })}`;
-};
-export const formattedDate = (imgDate: Date, format?: 'dd/mm/yyyy' | 'dd/mm/yyyy hh:mm' | 'dd/mm/yyyy hh:mm:ss') => {
-    let date = new Date(imgDate);
-    switch (format) {
-        default:
-            return date.toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour12: false
-            });
-        case "dd/mm/yyyy hh:mm":
-            return date.toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-        case "dd/mm/yyyy hh:mm:ss":
-            return date.toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-    }
-};
-
 export function switchToOverview() {
     const map = global.map;
     if (map) {
@@ -73,6 +27,7 @@ export function switchToOverview() {
     global.journeyData = null;
     global.journeyId = undefined;
     global.loadingJourney = false;
+    global.selectedImageId = null;
     global.viewMode = 'overview';
 }
 
@@ -219,3 +174,49 @@ export function awaitImageRender(onRender: () => void) {
     }
     loaded();
 }
+
+export const timeRange = (journey: Journey) => {
+    if (journey.image.length === 0) return;
+    let end = new Date(journey.image[journey.image.length - 1].createdOn);
+    let start = new Date(journey.image[0].createdOn);
+    return `${start.toLocaleDateString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    })} - ${end.toLocaleDateString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    })}`;
+};
+export const formattedDate = (imgDate: Date, format?: 'dd/mm/yyyy' | 'dd/mm/yyyy hh:mm' | 'dd/mm/yyyy hh:mm:ss') => {
+    let date = new Date(imgDate);
+    switch (format) {
+        default:
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour12: false
+            });
+        case "dd/mm/yyyy hh:mm":
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        case "dd/mm/yyyy hh:mm:ss":
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+    }
+};

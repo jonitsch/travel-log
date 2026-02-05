@@ -130,18 +130,19 @@
 				{@const journey = res?.journey}
 				{@const geoJSON = res?.geoJSON}
 				{#if journey}
-					{#if journey.marker.length > 0 || geoJSON}
-						{#if journey.marker.length > 0}
-							{#each journey.marker as marker}
-								<JourneyMarker
-									popupText={marker.name}
-									lngLat={[marker.lng, marker.lat]}
-									color={marker.color ?? journey.color}
-									onclick={() => switchToOverview()}
-									open
-								/>
-							{/each}
-						{/if}
+					{@const trackedImages = journey.image.filter((img) => {
+						return img.lng && img.lat;
+					})}
+					{#if !(trackedImages.length === 0 && journey.marker.length === 0)}
+						{#each journey.marker as marker}
+							<JourneyMarker
+								popupText={marker.name}
+								lngLat={[marker.lng, marker.lat]}
+								color={marker.color ?? journey.color}
+								onclick={() => switchToOverview()}
+								open
+							/>
+						{/each}
 						{#if journey.image && !global.loadingJourney}
 							{#each journey.image as img}
 								<ImageMarker {img} color={journey.color} {zoom} />
