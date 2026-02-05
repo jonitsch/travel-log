@@ -4,7 +4,6 @@
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$src/lib/imgproxy';
-	import type { Journey } from '$src/lib/server/prisma';
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';

@@ -56,7 +56,7 @@
 	tabindex="0"
 	onmouseenter={() => (hovered = true)}
 	onmouseleave={() => (hovered = false)}
-	class="relative block size-full rounded-md overflow-hidden"
+	class="relative block size-full overflow-hidden rounded-md"
 	class:highlighted={imgSelected}
 >
 	{#if imageError}
@@ -91,10 +91,7 @@
 				id="imageControlOverlay"
 				class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"
 			>
-				<div
-					id="bottomControl"
-					class="flex h-fit w-full flex-row flex-nowrap justify-evenly"
-				>
+				<div id="bottomControl" class="flex h-fit w-full flex-row flex-nowrap justify-evenly">
 					<button
 						id="viewFullImageButton-{img.id}"
 						title="View Full Image"
@@ -104,7 +101,7 @@
 					</button>
 					<button
 						id="showOnMapButton-{img.id}"
-						title="Show on map"
+						title={imgHasCoordinates ? "Show on map" : "Image has no coordinate data"}
 						onclick={() => handleShowOnMapClick()}
 						disabled={!imgHasCoordinates}
 					>
