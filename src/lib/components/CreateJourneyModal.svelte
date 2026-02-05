@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { global } from '$lib/state.svelte';
+
 	let isModalOpen = $state(false);
 
 	const twColors = ['red', 'yellow', 'green', 'blue', 'purple', 'pink'];
@@ -31,7 +33,7 @@
 	});
 </script>
 
-{#if isModalOpen}
+{#if isModalOpen && global.viewMode === 'overview'}
 	<!-- Modal container -->
 	<div
 		class="animate-slide w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"

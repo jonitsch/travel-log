@@ -79,7 +79,6 @@
 		bind:zoom
 		bind:center
 		minZoom={1.5}
-		onzoom={() => (zoom = zoom)}
 		projection={{ type: 'globe' }}
 		class="map-canvas size-full rounded-md"
 		dragRotate={false}
