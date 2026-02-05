@@ -112,7 +112,7 @@
 					<div
 						bind:this={skeletonImg}
 						id="skeletonImg"
-						class="absolute inset-0 z-[1000] animate-pulse bg-slate-600 object-contain"
+						class="absolute inset-0 z-[1000] skeleton object-contain"
 					></div>
 				{/if}
 				{#await getImgProxyURL(path, width / 3, height / 3) then response}

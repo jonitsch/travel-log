@@ -206,14 +206,6 @@
 		background: #030712;
 	}
 
-	.map-wrapper .map-canvas {
-		position: relative;
-		width: 100%;
-		height: 100%;
-		background: transparent;
-		border-radius: inherit;
-	}
-
 	/* Glow layer */
 	.map-wrapper::before {
 		content: '';
@@ -231,13 +223,6 @@
 		filter: blur(8px);
 		opacity: 0.9;
 		z-index: 0;
-	}
-
-	/* Make sure the actual canvas is above the glow */
-	.map-wrapper .map-canvas > :global(.maplibregl-canvas),
-	.map-wrapper .map-canvas > :global(canvas) {
-		position: relative;
-		z-index: 1;
 	}
 
 	:global(.maplibregl-popup-content) {

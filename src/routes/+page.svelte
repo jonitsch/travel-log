@@ -31,7 +31,7 @@
 	}
 </script>
 
-<div class="h flex h-full max-h-full w-full flex-row gap-4 overflow-hidden">
+<div class="flex size-full flex-row gap-4 overflow-hidden">
 	<div
 		class="items-top flex flex-col gap-4 {global.viewMode === 'overview'
 			? 'size-full'
@@ -51,7 +51,7 @@
 						id="header"
 						class={[
 							'flex h-fit w-full flex-row items-stretch gap-5',
-							{ 'animate-pulse rounded-lg bg-slate-600 [&>*]:invisible': global.loadingJourney }
+							{ 'skeleton [&>*]:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="oxygen-bold text-5xl text-white">
@@ -71,7 +71,7 @@
 					<div
 						class={[
 							'h-fit w-fit flex-none flex-col text-white',
-							{ 'animate-pulse rounded-lg bg-slate-600 [&>*]:invisible': global.loadingJourney }
+							{ 'skeleton [&>*]:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="flex text-2xl">
@@ -90,23 +90,15 @@
 			class="animate-slide-right grid h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible pr-3"
 			bind:this={book}
 		>
-			{#if journey}
+			{#if global.loadingJourney}
+				<div class="skeleton col-span-full py-2 text-2xl text-[transparent]">Placeholder</div>
+				{#each { length: 200 }}
+					<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
+				{/each}
+			{:else if journey}
 				{@const images = journey.image}
 				{(previousDate = null)}
-				{#if global.loadingJourney}
-					<div
-						class="col-span-full w-full animate-pulse rounded-md bg-slate-600 py-2 text-2xl text-[transparent]"
-					>
-						Placeholder
-					</div>
-					{#each { length: images.length ?? 200 }}
-						<div
-							id="skeletonImage"
-							class="animate-pulse rounded-md bg-slate-600"
-							style="width: 1fr; height: 300px;"
-						></div>
-					{/each}
-				{:else if images.length > 0}
+				{#if images.length > 0}
 					{#each images as img}
 						{@const date = new Date(img.createdOn)}
 						{#if previousDate != dayOf(date)}

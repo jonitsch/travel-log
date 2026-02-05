@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+@layer components {
+  .skeleton {
+    @apply animate-pulse bg-slate-600 rounded-md;
+  }
+}
+
 /* SCROLLBAR */
 /* Firefox */
 * {
