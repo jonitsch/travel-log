@@ -31,8 +31,6 @@
 
 	function handleDoubleClick() {
 		if (!map || !img.lng || !img.lat || !global.journeyData) return;
-		console.log('Double click detected, clearing timeout:', timeout);
-		clearTimeout(timeout);
 		if (
 			imgSelected &&
 			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&

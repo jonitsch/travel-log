@@ -19,7 +19,7 @@
 	let journey = global.journeyData;
 
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
-		imgSelected = $derived.by<boolean>(() => img.id === global.selectedImageId);
+		imgSelected = $derived<boolean>(img.id === global.selectedImageId);
 
 	let hovered = $state<boolean>(false);
 
@@ -56,14 +56,15 @@
 	tabindex="0"
 	onmouseenter={() => (hovered = true)}
 	onmouseleave={() => (hovered = false)}
-	class="relative block size-full"
+	class="relative block size-full rounded-md overflow-hidden"
+	class:highlighted={imgSelected}
 >
 	{#if imageError}
 		<div
 			class="flex h-full flex-col items-center rounded-md border-4 border-gray-900 bg-red-900 p-3"
 		>
 			<div class="text-white">{img.fileName}</div>
-			<div class="flex-1 flex items-center">
+			<div class="flex flex-1 items-center">
 				<ErrorMessage>
 					<div class="flex flex-col items-center justify-center break-words text-center">
 						Image failed to load!
@@ -77,8 +78,7 @@
 			id="bookpic-{img.id}"
 			{src}
 			alt={img.fileName}
-			class="size-full cursor-pointer rounded-md object-cover transition duration-100 ease-in-out"
-			class:highlighted={imgSelected}
+			class="size-full cursor-pointer object-cover transition duration-100 ease-in-out"
 			onload={() =>
 				awaitImageRender(async () => {
 					await tick();
@@ -86,16 +86,14 @@
 				})}
 			onerror={() => (imageError = true)}
 		/>
-		{#if hovered}
+		{#if hovered || imgSelected}
 			<div
 				id="imageControlOverlay"
-				class={[
-					'group absolute inset-0 flex flex-col justify-end rounded-md bg-transparent hover:bg-slate-900/10'
-				]}
+				class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"
 			>
 				<div
 					id="bottomControl"
-					class="invisible flex h-fit w-full flex-row flex-nowrap justify-evenly group-hover:visible"
+					class="flex h-fit w-full flex-row flex-nowrap justify-evenly"
 				>
 					<button
 						id="viewFullImageButton-{img.id}"
@@ -112,7 +110,7 @@
 					>
 						<SVGIcon
 							type="marker"
-							stroke={img.id === global.selectedImageId ? '#2dd4bf' : 'white'}
+							stroke={imgSelected ? '#2dd4bf' : 'white'}
 							disabled={!imgHasCoordinates}
 						/>
 					</button>
@@ -124,7 +122,7 @@
 
 <style>
 	.highlighted {
-		border: inset 5px var(--image-highlight-color);
+		border: inset 5px var(--img-highlight-color);
 	}
 
 	#bottomControl {

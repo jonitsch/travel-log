@@ -44,6 +44,18 @@
 			attributionControl._container.setAttribute('open', '');
 			attributionControl._container.classList.remove('maplibregl-compact-show');
 		}
+
+		// prevent non-critical styleimagemissing warnings in the browser
+		const emptyImage = {
+			width: 1,
+			height: 1,
+			data: new Uint8Array([0, 0, 0, 0])
+		};
+		map.on('styleimagemissing', (e) => {
+			if (!map.hasImage(e.id)) {
+				map.addImage(e.id, emptyImage);
+			}
+		});
 	});
 
 	$effect(() => {
