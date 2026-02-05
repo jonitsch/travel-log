@@ -109,6 +109,10 @@
 </div>
 
 <style>
+	.highlighted {
+		border: inset 5px var(--image-highlight-color);
+	}
+
 	#bottomControl {
 		transform-origin: bottom;
 		animation: growIn 120ms cubic-bezier(0.2, 0, 0.38, 0.9);

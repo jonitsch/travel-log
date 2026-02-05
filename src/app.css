@@ -11,6 +11,12 @@
   scrollbar-color: #202c47 transparent;
 }
 
+:root {
+  --img-highlight-color: rgb(45, 212, 190);
+}
+
+/* Global Animations */
+
 .animate-slide-right {
   animation: slide-right 0.2s ease-in-out;
 }

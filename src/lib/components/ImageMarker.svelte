@@ -53,3 +53,9 @@
 		{/await}
 	</Marker>
 {/if}
+
+<style>
+	.highlighted {
+		border: solid 3px var(--img-highlight-color);
+	}
+</style>
