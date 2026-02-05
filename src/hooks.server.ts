@@ -7,6 +7,7 @@ import exifr from 'exifr';
 import sharp from 'sharp';
 import { Prisma } from '$gen/prisma/client/client';
 import { stat } from "fs/promises";
+import { env } from '$env/dynamic/private';
 
 export const init: ServerInit = async () => {
     await initializeDatabase();
@@ -45,11 +46,11 @@ async function getImages(journeyId: string) {
     console.log('GetImages started: Getting Images for: ', journeyId);
     let images: Array<imgCreateBody> = [];
     try {
-        let dir = `pictures/${journeyId}`
+        let dir = `${env.IMAGE_FOLDER_PATH}/${journeyId}`
         if (!fs.existsSync(dir)) {
             return images;
         };
-        let entries = await fs.promises.readdir(`pictures/${journeyId}`, {
+        let entries = await fs.promises.readdir(dir, {
             withFileTypes: true,
             recursive: true,
         });
