@@ -50,7 +50,7 @@
 						id="header"
 						class={[
 							'flex h-fit w-full flex-row items-stretch gap-5',
-							{ 'skeleton [&>*]:invisible': global.loadingJourney }
+							{ 'skeleton *:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="oxygen-bold text-5xl text-white">
@@ -70,7 +70,7 @@
 					<div
 						class={[
 							'h-fit w-fit flex-none flex-col text-white',
-							{ 'skeleton [&>*]:invisible': global.loadingJourney }
+							{ 'skeleton *:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="flex text-2xl">
@@ -90,7 +90,7 @@
 			bind:this={book}
 		>
 			{#if global.loadingJourney}
-				<div class="skeleton col-span-full py-2 text-2xl text-[transparent]">Placeholder</div>
+				<div class="skeleton col-span-full py-2 text-2xl text-transparent">Placeholder</div>
 				{#each { length: 200 }}
 					<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
 				{/each}
