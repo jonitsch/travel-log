@@ -66,7 +66,7 @@
 			<div class="text-white">{img.fileName}</div>
 			<div class="flex flex-1 items-center">
 				<ErrorMessage>
-					<div class="flex flex-col items-center justify-center break-words text-center">
+					<div class="flex flex-col items-center justify-center wrap-break-word text-center">
 						Image failed to load!
 						<SVGIcon type="imageError" fill="white" scale={2.5} />
 					</div>

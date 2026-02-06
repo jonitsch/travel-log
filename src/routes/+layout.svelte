@@ -20,7 +20,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div id="main" class="inset-0 flex h-[100vh] w-[100vw] flex-col overflow-auto p-3 gap-3">
+<div id="main" class="inset-0 flex h-screen w-screen flex-col overflow-auto p-3 gap-3">
 	<div id="header" class="flex h-fit flex-row items-center bg-gray-950/50 rounded-md">
 		{#if true}
 			<div id="mainHeader" class="items-center bg-transparent">

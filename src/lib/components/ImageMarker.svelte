@@ -17,9 +17,9 @@
 		const selectedId = global.selectedImageId;
 		if (!thisMarker) return;
 		if (img.id === selectedId) {
-			thisMarker.addClassName('z-[9999]');
+			thisMarker.addClassName('z-9999');
 		} else {
-			thisMarker.removeClassName('z-[9999]');
+			thisMarker.removeClassName('z-9999');
 		}
 	});
 
@@ -72,7 +72,7 @@
 				alt={img.fileName}
 				class={[
 					'size-full cursor-pointer rounded-lg hover:z-50 hover:border-2 hover:border-black',
-					{ 'ring-4 ring-[var(--img-highlight-color)]': img.id === global.selectedImageId }
+					{ 'ring-4 ring-(--img-highlight-color)': img.id === global.selectedImageId }
 				]}
 			/>
 		{/await}

@@ -96,7 +96,7 @@
 	<button
 		type="button"
 		bind:this={modal}
-		class="fixed inset-0 z-[9999] flex h-dvh w-dvw cursor-default flex-col items-center bg-black/80 gap-5"
+		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default flex-col items-center bg-black/80 gap-5"
 		onclick={() => close()}
 	>
 		<div id="fileNameDisplay" class="h-fit py-5 text-white">{img?.fileName}</div>

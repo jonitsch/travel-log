@@ -11,3 +11,8 @@ export default {
   ],
 }
 
+module.exports = {
+  corePlugins: {
+    preflight: false,
+  },
+}
