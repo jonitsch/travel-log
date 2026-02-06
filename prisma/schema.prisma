@@ -9,6 +9,22 @@ datasource db {
   url      = "mysql://root:@localhost:3306/db"
 }
 
+/* MODELS */
+
+model User {
+    id         String      @id 
+    username      String @unique
+    password_hash   String
+    sessions Session[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
 model journey {
   journeyId String   @id @default(uuid())
   name      String
