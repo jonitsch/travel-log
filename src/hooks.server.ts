@@ -9,9 +9,9 @@ import { Prisma } from '$gen/prisma/client/client';
 import { stat } from "fs/promises";
 import { env } from '$env/dynamic/private';
 
-/* export const init: ServerInit = async () => {
+export const init: ServerInit = async () => {
     await initializeDatabase();
-} */
+}
 
 type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
 
