@@ -1,8 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@config '../tailwind.config.js';
 
 @custom-variant dark (&:where(.dark, .dark *));
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility skeleton {
+  @apply animate-pulse bg-slate-600 rounded-md;
+}
+
+@utility page-header-button {
+  @apply w-fit rounded-md p-3 leading-tight text-gray-50;
+}
 
 /* SCROLLBAR */
 /* Firefox */
@@ -10,6 +36,12 @@
   scrollbar-width: thick;
   scrollbar-color: #202c47 transparent;
 }
+
+:root {
+  --img-highlight-color: rgb(45, 212, 190);
+}
+
+/* Global Animations */
 
 .animate-slide-right {
   animation: slide-right 0.2s ease-in-out;
@@ -86,3 +118,25 @@
 .emoji {
   font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
+
+@source inline("bg-red-{50,{100..900..100},950}");
+@source inline("bg-red-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-red-{50,{100..900..100},950}");
+@source inline("bg-yellow-{50,{100..900..100},950}");
+@source inline("bg-yellow-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-yellow-{50,{100..900..100},950}");
+@source inline("bg-emerald-{50,{100..900..100},950}");
+@source inline("bg-emerald-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-emerald-{50,{100..900..100},950}");
+@source inline("bg-blue-{50,{100..900..100},950}");
+@source inline("bg-blue-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-blue-{50,{100..900..100},950}");
+@source inline("bg-purple-{50,{100..900..100},950}");
+@source inline("bg-purple-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-purple-{50,{100..900..100},950}");
+@source inline("bg-pink-{50,{100..900..100},950}");
+@source inline("bg-pink-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-pink-{50,{100..900..100},950}");
+@source inline("bg-gray-{50,{100..900..100},950}");
+@source inline("bg-gray-{50,{100..900..100},950}/{5,{10..90..5},100}");
+@source inline("border-gray-{50,{100..900..100},950}");

@@ -4,11 +4,11 @@
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$src/lib/imgproxy';
-	import type { Journey } from '$src/lib/server/prisma';
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$src/lib/utils';
+	import { enhance } from '$app/forms';
 
 	let { data }: PageProps = $props();
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -31,7 +31,7 @@
 	}
 </script>
 
-<div class="h flex h-full max-h-full w-full flex-row gap-4 overflow-hidden">
+<div class="flex size-full flex-row gap-4 overflow-hidden">
 	<div
 		class="items-top flex flex-col gap-4 {global.viewMode === 'overview'
 			? 'size-full'
@@ -51,7 +51,7 @@
 						id="header"
 						class={[
 							'flex h-fit w-full flex-row items-stretch gap-5',
-							{ 'animate-pulse rounded-lg bg-slate-600 [&>*]:invisible': global.loadingJourney }
+							{ 'skeleton *:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="oxygen-bold text-5xl text-white">
@@ -71,7 +71,7 @@
 					<div
 						class={[
 							'h-fit w-fit flex-none flex-col text-white',
-							{ 'animate-pulse rounded-lg bg-slate-600 [&>*]:invisible': global.loadingJourney }
+							{ 'skeleton *:invisible': global.loadingJourney }
 						]}
 					>
 						<text class="flex text-2xl">
@@ -87,39 +87,37 @@
 		{@const journey = global.journeyData}
 		<div
 			id="book"
-			class="animate-slide-right grid pr-3 h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible"
+			class="animate-slide-right grid h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible pr-3"
 			bind:this={book}
 		>
-			{#if journey}
+			{#if global.loadingJourney}
+				<div class="col-span-full skeleton py-2 text-2xl text-transparent">Placeholder</div>
+				{#each { length: 200 }}
+					<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
+				{/each}
+			{:else if journey}
 				{@const images = journey.image}
 				{(previousDate = null)}
-				{#if global.loadingJourney}
-					<div class="col-span-full w-full rounded-md py-2 text-2xl text-[transparent] animate-pulse bg-slate-600">Placeholder</div>
-					{#each { length: images.length ?? 200 }}
-						<div
-							id="skeletonImage"
-							class="animate-pulse rounded-md bg-slate-600"
-							style="width: 1fr; height: 300px;"
-						></div>
-					{/each}
-				{:else if images.length > 0}
+				{#if images.length > 0}
 					{#each images as img}
 						{@const date = new Date(img.createdOn)}
 						{#if previousDate != dayOf(date)}
 							<div
 								class={[
-									'col-span-full w-full rounded-md py-2 px-4 text-2xl text-white shadow-inner shadow-slate-400/60',
+									'col-span-full w-full rounded-md px-4 py-2 text-2xl text-white shadow-inner shadow-slate-400/60',
 									{ 'mt-4': previousDate }
 								]}
 							>
 								{formattedDate(date, 'dd/mm/yyyy')}
 							</div>
 						{/if}
-						{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
-							<div class="col-span-1">
+						<div class="col-span-1">
+							{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
 								<ImageCard {img} src={response} {fullImageModal} />
-							</div>
-						{/await}
+							{:catch error}
+								<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
+							{/await}
+						</div>
 						<div hidden>{(previousDate = dayOf(date))}</div>
 					{/each}
 				{:else}

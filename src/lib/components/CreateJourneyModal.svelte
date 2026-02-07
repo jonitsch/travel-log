@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { global } from '$lib/state.svelte';
+
 	let isModalOpen = $state(false);
 
-	const twColors = ['red', 'yellow', 'green', 'blue', 'purple', 'pink'];
+	const twColors = ['red', 'yellow', 'emerald', 'blue', 'purple', 'pink'];
 	const inputStyle =
-		'text-gray-900 w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500';
+		'text-gray-900 w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500';
 	const labelStyle = 'mb-1 block text-sm font-medium text-gray-200';
 
 	let selectedColorElement = $state<HTMLButtonElement>(),
@@ -31,7 +33,7 @@
 	});
 </script>
 
-{#if isModalOpen}
+{#if isModalOpen && global.viewMode === 'overview'}
 	<!-- Modal container -->
 	<div
 		class="animate-slide w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"
@@ -80,9 +82,8 @@
 					oninput={(e) => {
 						const target = e.currentTarget;
 						const val: number = target.valueAsNumber;
-						console.log(val.toString());
 						if (val.toString() === 'NaN') target.setCustomValidity('Please enter a valid number!');
-						if (val > 180 || val < 0)
+						if (val > 180 || val < -180)
 							target.setCustomValidity('The longitude needs to be between 0-180!');
 						else target.setCustomValidity('');
 						target.reportValidity();
@@ -146,13 +147,13 @@
 			<!-- Modal footer -->
 			<div class="flex justify-end space-x-3">
 				<button
-					class="rounded bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200"
+					class="rounded-sm bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200"
 					onclick={() => (isModalOpen = false)}
 					type="reset"
 				>
 					Cancel
 				</button>
-				<button class="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">
+				<button class="rounded-sm bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">
 					Confirm
 				</button>
 			</div>

@@ -5,6 +5,7 @@
 	import { global } from '$lib/state.svelte';
 	import { awaitImageRender, getBBox } from '../utils';
 	import { tick } from 'svelte';
+	import ErrorMessage from './ErrorMessage.svelte';
 
 	interface Props {
 		img: Image;
@@ -13,23 +14,20 @@
 	}
 	let { img, src, fullImageModal }: Props = $props();
 
-	let imageLoaded = $state<boolean>(false);
-	let imgHasCoordinateData = $derived.by<boolean>(() => {
-		if (img.lng && img.lat) {
-			return true;
-		} else {
-			return false;
-		}
-	});
-	let selectedId = $state<string>();
-	let journey = $derived(global.journeyData);
+	let imageLoaded = $state<boolean>(false),
+		imageError = $state<boolean>(false);
+	let journey = global.journeyData;
+
+	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
+		imgSelected = $derived<boolean>(img.id === global.selectedImageId);
+
 	let hovered = $state<boolean>(false);
 
 	function handleShowOnMapClick() {
 		if (!global.map || !img.lng || !img.lat) return;
 		const map = global.map;
 		if (
-			selectedId === img.id &&
+			imgSelected &&
 			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
 			map.getZoom() === 15
 		) {
@@ -44,11 +42,9 @@
 				},
 				duration: 1500
 			});
-			selectedId = undefined;
 			global.selectedImageId = null;
 		} else {
 			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-			selectedId = img.id;
 			global.selectedImageId = img.id;
 		}
 	}
@@ -60,55 +56,72 @@
 	tabindex="0"
 	onmouseenter={() => (hovered = true)}
 	onmouseleave={() => (hovered = false)}
-	class="relative block size-full"
+	class="relative block size-full overflow-hidden rounded-md"
+	class:highlighted={imgSelected}
 >
-	<img
-		id="bookpic-{img.id}"
-		{src}
-		alt={img.fileName}
-		class={[
-			'size-full cursor-pointer rounded-md object-cover transition duration-100 ease-in-out hover:scale-105'
-		]}
-		onload={() =>
-			awaitImageRender(async () => {
-				await tick();
-				imageLoaded = true;
-			})}
-	/>
-	{#if hovered}
+	{#if imageError}
 		<div
-			id="imageControlOverlay"
-			class="group absolute inset-0 flex flex-col justify-end rounded-md bg-transparent hover:bg-slate-900/10"
+			class="flex h-full flex-col items-center rounded-md border-4 border-gray-900 bg-red-900 p-3"
 		>
-			<div
-				id="bottomControl"
-				class="invisible flex h-fit w-full flex-row flex-nowrap justify-evenly group-hover:visible"
-			>
-				<button
-					id="viewFullImageButton-{img.id}"
-					title="View Full Image"
-					onclick={() => fullImageModal?.open(img)}
-				>
-					<SVGIcon type="fullscreen" />
-				</button>
-				<button
-					id="showOnMapButton-{img.id}"
-					title="Show on map"
-					onclick={() => handleShowOnMapClick()}
-					disabled={!imgHasCoordinateData}
-				>
-					<SVGIcon
-						type="marker"
-						stroke={img.id === global.selectedImageId ? '#2dd4bf' : 'white'}
-						disabled={!imgHasCoordinateData}
-					/>
-				</button>
+			<div class="text-white">{img.fileName}</div>
+			<div class="flex flex-1 items-center">
+				<ErrorMessage>
+					<div class="flex flex-col items-center justify-center wrap-break-word text-center">
+						Image failed to load!
+						<SVGIcon type="imageError" fill="white" scale={2.5} />
+					</div>
+				</ErrorMessage>
 			</div>
 		</div>
+	{:else}
+		<img
+			id="bookpic-{img.id}"
+			{src}
+			alt={img.fileName}
+			class="size-full cursor-pointer object-cover transition duration-100 ease-in-out"
+			onload={() =>
+				awaitImageRender(async () => {
+					await tick();
+					imageLoaded = true;
+				})}
+			onerror={() => (imageError = true)}
+		/>
+		{#if hovered || imgSelected}
+			<div
+				id="imageControlOverlay"
+				class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"
+			>
+				<div id="bottomControl" class="flex h-fit w-full flex-row flex-nowrap justify-evenly">
+					<button
+						id="viewFullImageButton-{img.id}"
+						title="View Full Image"
+						onclick={() => fullImageModal?.open(img)}
+					>
+						<SVGIcon type="fullscreen" />
+					</button>
+					<button
+						id="showOnMapButton-{img.id}"
+						title={imgHasCoordinates ? "Show on map" : "Image has no coordinate data"}
+						onclick={() => handleShowOnMapClick()}
+						disabled={!imgHasCoordinates}
+					>
+						<SVGIcon
+							type="marker"
+							stroke={imgSelected ? '#2dd4bf' : 'white'}
+							disabled={!imgHasCoordinates}
+						/>
+					</button>
+				</div>
+			</div>
+		{/if}
 	{/if}
 </div>
 
 <style>
+	.highlighted {
+		border: inset 5px var(--img-highlight-color);
+	}
+
 	#bottomControl {
 		transform-origin: bottom;
 		animation: growIn 120ms cubic-bezier(0.2, 0, 0.38, 0.9);
