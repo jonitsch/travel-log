@@ -87,7 +87,7 @@
 			</div>
 		{/if}
 	</div>
-	<div id="content" class="flex-auto overflow-visible">
+	<div id="content" class="flex-auto overflow-hidden">
 		{@render children?.()}
 	</div>
 	<div class="group ml-auto w-fit text-[9.5px] text-gray-500 -z-1">
