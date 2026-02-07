@@ -12,8 +12,6 @@
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
 
-	console.log(data.user);
-
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
 	}
