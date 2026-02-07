@@ -8,6 +8,22 @@ import sharp from 'sharp';
 import { Prisma } from '$gen/prisma/client/client';
 import { stat } from "fs/promises";
 import { env } from '$env/dynamic/private';
+import { auth } from "$lib/server/auth";
+import { svelteKitHandler } from "better-auth/svelte-kit";
+import { building } from "$app/environment";
+
+export async function handle({ event, resolve }) {
+    // Fetch current session from Better Auth
+    const session = await auth.api.getSession({
+        headers: event.request.headers,
+    });
+    // Make session and user available on server
+    if (session) {
+        event.locals.session = session;
+        event.locals.user = session.user;
+    }
+    return svelteKitHandler({ event, resolve, auth, building });
+}
 
 export const init: ServerInit = async () => {
     await initializeDatabase();

@@ -72,7 +72,6 @@
 
 <div class="map-wrapper">
 	<MapLibre
-		standardControls={false}
 		bind:map
 		bind:mapContainer
 		bind:bounds
@@ -82,6 +81,7 @@
 		projection={{ type: 'globe' }}
 		class="map-canvas size-full rounded-md"
 		dragRotate={false}
+		standardControls={false}
 		zoomOnDoubleClick={false}
 		attributionControl={false}
 		style="https://tiles.openfreemap.org/styles/liberty"
@@ -89,11 +89,18 @@
 		<!-------------------------------------------------- OVERVIEW MODE ---------------------------------------------------->
 
 		{#if global.viewMode === 'overview'}
-			<Control>
-				<ControlButton onclick={() => createJourneyModal?.toggle()}>
-					<div
-						class="animate-slide-right group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2"
-					>
+			<Control
+				class="animate-slide-right flex flex-col items-end gap-2"
+				position="top-right"
+				defaultStyling={true}
+			>
+				<ControlButton onclick={() => switchToOverview()} class="cursor-pointer">
+					<div id="resetButton" class="ml-auto w-fit items-center bg-transparent">
+						<div class="page-header-button bg-gray-900">Reset</div>
+					</div>
+				</ControlButton>
+				<ControlButton onclick={() => createJourneyModal?.toggle()} class="cursor-pointer">
+					<div class="group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2">
 						<div class="text-1xl hidden text-white group-hover:block" id="addJourneyText">
 							Add Journey
 						</div>

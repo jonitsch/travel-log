@@ -8,6 +8,7 @@
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$src/lib/utils';
+	import { enhance } from '$app/forms';
 
 	let { data }: PageProps = $props();
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -90,7 +91,7 @@
 			bind:this={book}
 		>
 			{#if global.loadingJourney}
-				<div class="skeleton col-span-full py-2 text-2xl text-transparent">Placeholder</div>
+				<div class="col-span-full skeleton py-2 text-2xl text-transparent">Placeholder</div>
 				{#each { length: 200 }}
 					<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
 				{/each}

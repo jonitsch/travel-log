@@ -2,8 +2,12 @@ import type { PageServerLoad, Actions } from './$types';
 import { prisma, type Journey } from '$src/lib/server/prisma';
 import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
+import { redirect } from "@sveltejs/kit";
+import { auth } from '$src/lib/server/auth';
 
-export const load = (async () => {
+export const load = (async (event) => {
+    const session = await auth.api.getSession({ headers: event.request.headers });
+    if (!session) throw redirect(302, '/login');
     const journeys: Journey[] = await prisma.journey.findMany({
         select: {
             journeyId: true,
@@ -15,7 +19,10 @@ export const load = (async () => {
             image: true,
         }
     })
-    return { journeys };
+    return {
+        user: session.user,
+        journeys: journeys
+    };
 }) satisfies PageServerLoad;
 
 export const actions = {
@@ -65,10 +72,12 @@ export const actions = {
             });
             await fs.rm(imageFolder, { recursive: true });
             console.log(`Journey \`${journeyId}\` was successfully deleted!`)
-            return { success: true, deletedJourney: {
-                journeyId: res.journeyId,
-                name: res.name,
-            } };
+            return {
+                success: true, deletedJourney: {
+                    journeyId: res.journeyId,
+                    name: res.name,
+                }
+            };
         } catch (err) {
             console.error(err);
             throw err;

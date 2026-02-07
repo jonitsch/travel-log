@@ -9,30 +9,44 @@ datasource db {
   url      = "mysql://root:@localhost:3306/db"
 }
 
-/* MODELS */
-
 model User {
-    id         String      @id 
-    username      String @unique
-    password_hash   String
-    sessions Session[]
+  id               String    @id @default(cuid())
+  name             String
+  email            String    @unique
+  emailVerified    Boolean   @default(false)
+  image            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  twoFactorEnabled Boolean   @default(false)
+  Account          Account[]
+  Session          Session[]
+
+  @@map("user")
 }
 
 model Session {
-  id        String   @id
+  id        String   @id @default(cuid())
   userId    String
   expiresAt DateTime
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
 }
 
 model journey {
   journeyId String   @id @default(uuid())
   name      String
   color     String   @default("bg-white")
-  lng       Float    @default(0)
   lat       Float    @default(0)
-  marker    marker[]
+  lng       Float    @default(0)
   image     image[]
+  marker    marker[]
 }
 
 model marker {
@@ -48,15 +62,49 @@ model marker {
 }
 
 model image {
-  id        String   @id @default(uuid())
   path      String
   fileName  String
-  fileType  String
-  createdOn DateTime
   width     Int
-  height    Int
   lng       Float?
   lat       Float?
   journeyId String
+  height    Int
+  id        String   @id @default(uuid())
+  createdOn DateTime
+  fileType  String
   journey   journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
+
+  @@index([journeyId], map: "Image_journeyId_fkey")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String   @db.Text
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier(length: 191)])
+  @@map("verification")
 }
