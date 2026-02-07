@@ -4,10 +4,9 @@ import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import { redirect } from "@sveltejs/kit";
 
-export const load: PageServerLoad = async ({parent, locals}) => {
-    await parent();
+export const load: PageServerLoad = async ({locals}) => {
     const user = locals.user;
-    if(!user) throw redirect(303, '/login');
+    if(!user) throw redirect(303, '/auth/login');
     const journeys: Journey[] = await prisma.journey.findMany({
         select: {
             journeyId: true,

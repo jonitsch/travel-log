@@ -40,7 +40,7 @@
 </svelte:head>
 
 <div id="main" class="inset-0 flex h-screen w-screen flex-col gap-3 overflow-auto p-3">
-	<div id="header" class="flex h-fit flex-row items-center gap-2 rounded-md bg-gray-950/50">
+	<div id="header" class="flex h-fit flex-row items-center gap-2 rounded-md bg-transparent">
 		{#if true}
 			<div id="mainHeader" class="items-center bg-transparent">
 				<button
@@ -69,7 +69,7 @@
 			</div>
 		{/if}
 		{#if user}
-			<div id="signOutButton" class="ml-auto w-fit items-center bg-transparent">
+			<div id="signOutButton" class="ml-auto w-fit items-center">
 				<form
 					onsubmit={(e) => {
 						e.preventDefault;
@@ -82,15 +82,15 @@
 				</form>
 			</div>
 		{:else}
-			<div id="loginButton" class="ml-auto w-fit items-center bg-transparent">
-				<a href="/login" class="oxygen-bold page-header-button bg-gray-900">Login</a>
+			<div id="loginButton" class="ml-auto w-fit items-center">
+				<a href="/auth/login" class="oxygen-bold page-header-button bg-gray-900">Login</a>
 			</div>
 		{/if}
 	</div>
-	<div id="content" class="flex-auto overflow-hidden">
+	<div id="content" class="flex-auto overflow-visible">
 		{@render children?.()}
 	</div>
-	<div class="group ml-auto w-fit text-[9.5px] text-gray-500">
+	<div class="group ml-auto w-fit text-[9.5px] text-gray-500 -z-1">
 		Für Tamina und Joni
 		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">
 			♥

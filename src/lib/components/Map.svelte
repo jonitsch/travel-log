@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { MapLibre, Marker, GeoJSON, LineLayer, Control, ControlButton } from 'svelte-maplibre';
+	import { innerWidth } from 'svelte/reactivity/window';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
@@ -25,8 +26,16 @@
 	}: Props = $props();
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
-		zoom = $state<number>(0),
 		center = $state<maplibregl.LngLatLike | undefined>([13.388, 52.517]);
+
+	let zoom = $derived.by(() => {
+		if(!map) return;
+		const currentZoom = map.getZoom();
+		if (innerWidth.current && currentZoom < 2.6) {
+			const newZoom = innerWidth.current * 0.002;
+			return newZoom < 1.7 ? newZoom : 1.7;
+		}
+	});
 
 	let attributionControl = $state<maplibregl.AttributionControl>(
 		new maplibregl.AttributionControl({
@@ -77,7 +86,6 @@
 		bind:bounds
 		bind:zoom
 		bind:center
-		minZoom={1.5}
 		projection={{ type: 'globe' }}
 		class="map-canvas size-full rounded-md"
 		dragRotate={false}

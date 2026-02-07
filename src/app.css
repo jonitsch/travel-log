@@ -13,6 +13,7 @@
   color utility to any element that depends on these defaults.
 */
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -46,6 +47,22 @@ button {
 }
 
 /* Global Animations */
+
+.animate-modal-in {
+  animation: modal-in 0.3s ease-in-out;
+}
+
+@keyframes modal-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 .animate-slide-right {
   animation: slide-right 0.2s ease-in-out;
@@ -262,6 +279,7 @@ button {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

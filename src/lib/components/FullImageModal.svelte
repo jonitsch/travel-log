@@ -107,7 +107,7 @@
 			<div
 				id="imgCon"
 				bind:this={imgCon}
-				class="relative rounded-lg shadow-xl"
+				class="relative rounded-lg shadow-xl animate-modal-in"
 				onclick={(e) => e.stopPropagation()}
 			>
 				{#await getImgProxyURL(path, width / 3, height / 3) then response}
@@ -144,21 +144,6 @@
 {/if}
 
 <style>
-	#imgCon {
-		animation: modal-in 0.3s ease forwards;
-	}
-
-	@keyframes modal-in {
-		0% {
-			opacity: 0;
-			transform: translateY(-20px);
-		}
-		100% {
-			opacity: 1;
-			transform: translateY(0);
-		}
-	}
-
 	/* Keyframes for modal exit (optional) */
 	@keyframes modal-out {
 		0% {

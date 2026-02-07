@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Map from '$lib/components/Map.svelte';
-	import type { PageProps } from '../protected/$types';
+	import type { PageProps } from './$types';
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$src/lib/imgproxy';
