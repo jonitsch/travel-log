@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
 
 	let email = $state<string>(''),
@@ -9,29 +9,34 @@
 	async function handleSignin() {
 		try {
 			await authClient.signIn.email({ email, password });
-			goto('/');
+			await invalidateAll();
+			goto('/map');
 		} catch (err: any) {
 			error = err.message || 'Login failed';
 		}
 	}
 </script>
 
-<h1>Sign in</h1>
-<form onsubmit={(e) => {
-	e.preventDefault();
-	handleSignin();
-}}>
-	<label for="email">email</label>
-	<input name="email" id="email" bind:value={email} /><br />
+<div id="main" class="inset-0 flex h-screen w-screen flex-col gap-3 overflow-auto p-3">
+	<h1>Sign in</h1>
+	<form
+		onsubmit={(e) => {
+			e.preventDefault();
+			handleSignin();
+		}}
+	>
+		<label for="email">email</label>
+		<input name="email" id="email" bind:value={email} /><br />
 
-	<label for="password">Password</label>
-	<input type="password" name="password" id="password" bind:value={password} /><br />
+		<label for="password">Password</label>
+		<input type="password" name="password" id="password" bind:value={password} /><br />
 
-	<button type="submit">Continue</button>
-	{#if error}<p>{error}</p>{/if}
-	<br>
-	<a href="/register">Don't have an account? Register</a>
-</form>
+		<button type="submit">Continue</button>
+		{#if error}<p>{error}</p>{/if}
+		<br />
+		<a href="/register">Don't have an account? Register</a>
+	</form>
+</div>
 
 <style>
 	* {

@@ -13,7 +13,7 @@
 
 	interface Props {
 		mapContainer: HTMLDivElement;
-		data: Data;
+		data?: Data;
 		map: maplibregl.Map;
 		createJourneyModal: CreateJourneyModal | undefined;
 	}
@@ -89,48 +89,51 @@
 		<!-------------------------------------------------- OVERVIEW MODE ---------------------------------------------------->
 
 		{#if global.viewMode === 'overview'}
-			<Control
-				class="animate-slide-right flex flex-col items-end gap-2"
-				position="top-right"
-				defaultStyling={true}
-			>
-				<ControlButton onclick={() => switchToOverview()} class="cursor-pointer">
-					<div id="resetButton" class="ml-auto w-fit items-center bg-transparent">
-						<div class="page-header-button bg-gray-900">Reset</div>
-					</div>
-				</ControlButton>
-				<ControlButton onclick={() => createJourneyModal?.toggle()} class="cursor-pointer">
-					<div class="group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2">
-						<div class="text-1xl hidden text-white group-hover:block" id="addJourneyText">
-							Add Journey
+			{#if data?.journeys}
+				<Control
+					class="animate-slide-right flex flex-col items-end gap-2"
+					position="top-right"
+					defaultStyling={true}
+				>
+					<ControlButton onclick={() => switchToOverview()} class="cursor-pointer">
+						<div id="resetButton" class="ml-auto w-fit items-center bg-transparent">
+							<div class="page-header-button bg-gray-900">Reset</div>
 						</div>
-						<div id="addJourneyIcon" class="relative">
-							<SVGIcon type="globePlus" fill="white" hoverScale={false} />
+					</ControlButton>
+					<ControlButton onclick={() => createJourneyModal?.toggle()} class="cursor-pointer">
+						<div class="group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2">
+							<div class="text-1xl hidden text-white group-hover:block" id="addJourneyText">
+								Add Journey
+							</div>
+							<div id="addJourneyIcon" class="relative">
+								<SVGIcon type="globePlus" fill="white" hoverScale={false} />
+							</div>
 						</div>
-					</div>
-				</ControlButton>
-			</Control>
-			{#each data.journeys as journey}
-				<JourneyMarker
-					popupText={journey.name}
-					lngLat={[journey.lng, journey.lat]}
-					color={journey.color ?? 'black'}
-					onclick={() => {
-						global.savedViewPort = {
-							center: center,
-							zoom: zoom,
-							bounds: bounds
-						};
-						global.journeyId = journey.journeyId;
-						global.viewMode = 'journey';
-					}}
-					open={true}
-				/>
-				<Marker
-					lngLat={[journey.lng, journey.lat]}
-					class={`size-3 place-items-center rounded-full bg-${journey.color}`}
-				/>
-			{/each}
+					</ControlButton>
+				</Control>
+
+				{#each data.journeys as journey}
+					<JourneyMarker
+						popupText={journey.name}
+						lngLat={[journey.lng, journey.lat]}
+						color={journey.color ?? 'black'}
+						onclick={() => {
+							global.savedViewPort = {
+								center: center,
+								zoom: zoom,
+								bounds: bounds
+							};
+							global.journeyId = journey.journeyId;
+							global.viewMode = 'journey';
+						}}
+						open={true}
+					/>
+					<Marker
+						lngLat={[journey.lng, journey.lat]}
+						class={`size-3 place-items-center rounded-full bg-${journey.color}`}
+					/>
+				{/each}
+			{/if}
 		{/if}
 
 		<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->

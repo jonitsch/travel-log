@@ -1,9 +1,8 @@
-import { auth } from "$src/lib/server/auth";
+import type { PageServerLoad } from "./protected/$types";
 
-export async function load(event) {
-    const session = await auth.api.getSession({ headers: event.request.headers });
-    if (!session) return
+export const load: PageServerLoad = (async ({locals}) => {
+    const user = locals.user;
     return {
-        user: session.user
+        user: user,
     };
-}
+})

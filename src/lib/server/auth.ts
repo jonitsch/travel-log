@@ -13,6 +13,7 @@ export const auth = betterAuth({
         minPasswordLength: 8,
         maxPasswordLength: 128,
         autoSignIn: false,
+        revokeSessionsOnPasswordReset: true,
     },
     database: prismaAdapter(prisma, {
         provider: "mysql",

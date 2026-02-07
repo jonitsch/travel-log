@@ -1,16 +1,18 @@
 <script lang="ts">
-	import '../app.css';
+	import '$src/app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { browser } from '$app/environment';
 	import { global } from '$lib/state.svelte';
 	import { switchToJourneyMode, switchToOverview } from '$src/lib/utils';
 	import type { PageData } from './$types';
-	import type { Snippet } from 'svelte';
-	import { authClient } from '$src/lib/auth-client';
-	import { goto } from '$app/navigation';
+	import { type Snippet } from 'svelte';
+	import { authClient } from '$lib/auth-client';
+	import { goto, invalidateAll } from '$app/navigation';
+	import type { User } from 'better-auth';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
+	let user = $derived<User | null>(data.user);
 
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
@@ -18,12 +20,19 @@
 
 	async function handleSignOut() {
 		try {
-			await authClient.signOut();
-			goto('/login');
+			await authClient.signOut({
+				fetchOptions: {
+					onSuccess: async () => {
+						await invalidateAll();
+						goto('/');
+					}
+				}
+			});
 		} catch (err) {
 			throw err;
 		}
 	}
+	$inspect(user);
 </script>
 
 <svelte:head>
@@ -37,7 +46,7 @@
 				<button
 					id="headerText"
 					class="oxygen-bold page-header-button bg-gray-900"
-					onclick={() => switchToOverview()}
+					onclick={() => user ? switchToOverview() : goto('/')}
 				>
 					<text class="">Travel Log</text>
 				</button>
@@ -59,7 +68,7 @@
 				</button>
 			</div>
 		{/if}
-		{#if data.user}
+		{#if user}
 			<div id="signOutButton" class="ml-auto w-fit items-center bg-transparent">
 				<form
 					onsubmit={(e) => {
@@ -73,7 +82,7 @@
 				</form>
 			</div>
 		{:else}
-			<div id="Login" class="ml-auto w-fit items-center bg-transparent">
+			<div id="loginButton" class="ml-auto w-fit items-center bg-transparent">
 				<a href="/login" class="oxygen-bold page-header-button bg-gray-900">Login</a>
 			</div>
 		{/if}

@@ -37,6 +37,10 @@
   scrollbar-color: #202c47 transparent;
 }
 
+button {
+  cursor: pointer;
+}
+
 :root {
   --img-highlight-color: rgb(45, 212, 190);
 }

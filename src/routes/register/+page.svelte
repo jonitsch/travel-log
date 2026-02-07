@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { authClient } from '$lib/auth-client';
 
 	let name = $state<string>(''),
@@ -9,12 +9,13 @@
 
 	async function handleSignup() {
 		try {
-			const res = await authClient.signUp.email({
+			await authClient.signUp.email({
 				email,
 				password,
 				name
 			});
-			goto('/');
+			await invalidateAll();
+			goto('/login');
 		} catch (err: any) {
 			error = err.message || 'Signup failed';
 		}
