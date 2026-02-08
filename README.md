@@ -3,18 +3,16 @@
 
 ## Development
 ### Enviroment Variables
-| Variable | Description |
-| ----------- | ----------- |
-| `DATABASE_URL` | Your Database URL |
+| Variable | Description | Example (Generation) |
+| ----------- | ----------- | ----------- |
+| `DATABASE_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
 | `DATABASE_PASSWORD` | Your Database Password |
-| `IMAGE_FOLDER_PATH` | The folder that will store your images |
-| `IMGPROXY_KEY` | Your ImgProxy Key (HEX-Format) |
-| `IMGPROXY_SALT` | Your ImgProxy Salt (HEX-Format) |
-| `IMGPROXY_URL` | Your ImgProxy Base URL |
-
-### Generate Key and Salt
-KEY: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`  
-SALT: `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+| `IMAGE_FOLDER_PATH` | The folder that will store your images | `C:/git/travel-log-data/pictures` |
+| `IMGPROXY_URL` | Your ImgProxy Base URL | http://localhost:8080 |
+| `IMGPROXY_KEY` | Your ImgProxy Key | `crypto.randomBytes(32).toString('hex')` |
+| `IMGPROXY_SALT` | Your ImgProxy Salt | `crypto.randomBytes(16).toString('hex')` |
+| `BETTER_AUTH_URL` | Your Servers Base URL | http://localhost:5173 |
+| `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32`
 
 ### Run ImgProxy-Container locally
 Windows

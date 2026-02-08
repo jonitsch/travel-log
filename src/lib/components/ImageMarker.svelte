@@ -1,15 +1,14 @@
 <script lang="ts">
-	import { Marker, Popup } from 'svelte-maplibre';
+	import { Marker } from 'svelte-maplibre';
 	import type { Image } from '$lib/server/prisma';
 	import { global } from '$lib/state.svelte';
 	import { getImgProxyURL } from '../imgproxy';
 	import { getBBox } from '../utils';
 
-	let { img, color, zoom = $bindable() }: { img: Image; color: string; zoom: number } = $props();
+	let { img, color }: { img: Image; color: string; } = $props();
 
 	let map: maplibregl.Map | null = global.map;
 	let thisMarker = $state<maplibregl.Marker>();
-	let timeout = $state<NodeJS.Timeout>();
 
 	let imgSelected = $derived.by<boolean>(() => img.id === global.selectedImageId);
 

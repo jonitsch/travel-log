@@ -1,20 +1,13 @@
 <script lang="ts">
 	interface Props {
-		type: 'fullscreen' | 'marker' | 'globePlus' | 'imageError';
+		type: 'fullscreen' | 'marker' | 'globePlus' | 'imageError' | 'signOut';
 		fill?: string;
 		scale?: number;
 		stroke?: string;
 		hoverScale?: boolean;
 		disabled?: boolean;
 	}
-	let {
-		type,
-		fill,
-		scale = 1,
-		stroke = 'white',
-		hoverScale = true,
-		disabled
-	}: Props = $props();
+	let { type, fill, scale = 1, stroke = 'white', hoverScale = true, disabled }: Props = $props();
 
 	if (disabled) {
 		stroke = 'grey';
@@ -90,7 +83,13 @@
 {/if}
 
 {#if type === 'imageError'}
-	<svg width={36 * scale} height={36 * scale} viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg
+		width={36 * scale}
+		height={36 * scale}
+		viewBox="0 0 36 36"
+		fill="none"
+		xmlns="http://www.w3.org/2000/svg"
+	>
 		<g clip-path="url(#clip0_0_1)">
 			<path
 				d="M22 25L17.238 16.27L21 10L29 25H22ZM14 14L20 25H8L14 14ZM11.5 12C10.837 12 10.2011 11.7366 9.73223 11.2678C9.26339 10.7989 9 10.163 9 9.5C9 8.83696 9.26339 8.20107 9.73223 7.73223C10.2011 7.26339 10.837 7 11.5 7C12.163 7 12.7989 7.26339 13.2678 7.73223C13.7366 8.20107 14 8.83696 14 9.5C14 10.163 13.7366 10.7989 13.2678 11.2678C12.7989 11.7366 12.163 12 11.5 12Z"
@@ -116,5 +115,22 @@
 				<rect width={24 * scale} height={24 * scale} {fill} transform="translate(6 4)" />
 			</clipPath>
 		</defs>
+	</svg>
+{/if}
+{#if type === 'signOut'}
+	<svg
+		class={hoverScale ? 'hover:scale-[120%]' : ''}
+		width={24 * scale}
+		height={24 * scale}
+		{fill}
+		viewBox="0 0 24 24"
+		xmlns="http://www.w3.org/2000/svg"
+		id="sign-out-alt-2"
+	>
+		<path
+			d="M13,15a1,1,0,0,0-1,1v4H4V4h8V8a1,1,0,0,0,2,0V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2V16A1,1,0,0,0,13,15Z"
+		></path><path
+			d="M21.92,11.62a1.15,1.15,0,0,0-.21-.33h0l-4-4a1,1,0,1,0-1.42,1.42L18.59,11H8a1,1,0,0,0,0,2H18.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4h0a1.15,1.15,0,0,0,.21-.33.94.94,0,0,0,0-.76Z"
+		></path>
 	</svg>
 {/if}

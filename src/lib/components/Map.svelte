@@ -8,7 +8,12 @@
 	import maplibregl from 'maplibre-gl';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
-	import { switchToJourneyMode, switchToOverview } from '$src/lib/utils';
+	import {
+		calculateInitialZoom,
+		defaultMapCenter,
+		switchToJourneyMode,
+		switchToOverview
+	} from '$src/lib/utils';
 	import SVGIcon from './SVGIcon.svelte';
 	import ImageMarker from './ImageMarker.svelte';
 
@@ -26,16 +31,10 @@
 	}: Props = $props();
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
-		center = $state<maplibregl.LngLatLike | undefined>([13.388, 52.517]);
+		center = $state<maplibregl.LngLatLike | undefined>(defaultMapCenter);
 
-	let zoom = $derived.by(() => {
-		if(!map) return;
-		const currentZoom = map.getZoom();
-		if (innerWidth.current && currentZoom < 2.6) {
-			const newZoom = innerWidth.current * 0.002;
-			return newZoom < 1.7 ? newZoom : 1.7;
-		}
-	});
+	let initialZoom = calculateInitialZoom(innerWidth.current ?? 0);
+	let zoom = $state<number>(initialZoom);
 
 	let attributionControl = $state<maplibregl.AttributionControl>(
 		new maplibregl.AttributionControl({
@@ -174,7 +173,7 @@
 						{/each}
 						{#if journey.image && !global.loadingJourney}
 							{#each journey.image as img}
-								<ImageMarker {img} color={journey.color} {zoom} />
+								<ImageMarker {img} color={journey.color} />
 							{/each}
 						{/if}
 						{#if geoJSON}
@@ -231,7 +230,7 @@
 		border-radius: inherit;
 		pointer-events: none;
 		background: radial-gradient(
-			circle 800px at center,
+			circle 700px at center,
 			rgba(56, 189, 248, 0.65) 0%,
 			rgba(56, 189, 248, 0.25) 30%,
 			rgba(56, 189, 248, 0.05) 55%,

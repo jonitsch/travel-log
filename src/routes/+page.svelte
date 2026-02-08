@@ -1,38 +1,41 @@
 <script lang="ts">
 	import { Button } from '$src/lib/components/shadcn/button';
+	import { calculateInitialZoom, defaultMapCenter } from '$src/lib/utils';
+	import { getContext, onMount, setContext } from 'svelte';
 	import { MapLibre } from 'svelte-maplibre';
 	import { innerWidth } from 'svelte/reactivity/window';
 
 	let map = $state<maplibregl.Map>();
+	let zoom = $state<number>(calculateInitialZoom(innerWidth.current ?? 0));
 
-	let zoom = $derived.by(() => {
-		if (!map) return;
-		if (innerWidth.current) {
-			const newZoom = innerWidth.current * 0.0025;
-			return newZoom < 1.7 ? newZoom : 1.7;
-		}
-	});
+	onMount(() => {
+		setContext('initialZoom', calculateInitialZoom(window.innerWidth));
+	})
 </script>
 
 <div class="flex size-full flex-col items-center bg-transparent">
-	<div class="oxygen-bold h-fit w-full text-center text-gray-300 mb-5 xl:text-7xl lg:text-7xl md:text-6xl sm:text-5xl text-[28px]">
+	<div
+		class="oxygen-bold mb-7 h-fit w-full text-center text-[28px] text-gray-300 sm:text-5xl md:text-6xl lg:text-7xl xl:text-7xl"
+	>
 		Welcome to Travel-Log!
 	</div>
 	<Button
 		variant="default"
-		class="h-fit w-fit bg-emerald-500 xl:text-3xl lg:text-3xl md:text-2xl sm:text-xl text-sm hover:-translate-y-1 hover:bg-emerald-400"
+		class="h-fit w-fit bg-emerald-500 text-sm hover:-translate-y-1 hover:bg-emerald-400 sm:text-xl md:text-2xl lg:text-3xl xl:text-3xl"
 		href="/auth/login">Sign in to create your first Journey!</Button
 	>
-	<div class="flex-1 size-full">
-		<div class="map-wrapper overflow-visible">
+	<div class="size-full flex-1">
+		<div class="map-wrapper overflow-visible transition-all duration-200 group-hover:scale-105">
 			<div id="mapContainer" class="size-full">
 				<MapLibre
 					bind:map
 					bind:zoom
-					center={[13.388, 0.517]}
+					center={defaultMapCenter}
 					projection={{ type: 'globe' }}
 					class="map-canvas size-full rounded-md"
-					interactive={true}
+					maxZoom={1.45}
+					dragPan={false}
+					pitchWithRotate={false}
 					standardControls={false}
 					style="https://tiles.openfreemap.org/styles/liberty"
 				/>

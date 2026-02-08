@@ -1,6 +1,6 @@
-import type { PageServerLoad } from "./protected/$types";
+import type { LayoutServerLoad } from "./$types";
 
-export const load: PageServerLoad = (async ({locals}) => {
+export const load: LayoutServerLoad = (async ({locals}) => {
     const user = locals.user;
     return {
         user: user,

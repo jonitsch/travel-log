@@ -1,7 +1,8 @@
+import { dev } from "$app/environment";
 import { createAuthClient } from "better-auth/svelte";
 
 export const authClient = createAuthClient({
-    baseURL: "http://localhost:5173",
+    baseURL: dev ? "http://localhost:5173" : "https://travel-log.app",
 });
 
 export const {
