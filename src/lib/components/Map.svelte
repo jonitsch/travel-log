@@ -2,7 +2,7 @@
 	import { MapLibre, Marker, GeoJSON, LineLayer, Control, ControlButton } from 'svelte-maplibre';
 	import { innerWidth } from 'svelte/reactivity/window';
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
-	import { global } from '$lib/state.svelte';
+	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import type { Data } from '$lib/server/prisma';
 	import maplibregl from 'maplibre-gl';
@@ -41,17 +41,20 @@
 			compact: true
 		})
 	);
+	function setAttributionControl(viewMode: ViewMode) {
+		if (viewMode === 'overview') {
+			attributionControl._container.classList.add('maplibregl-compact-show');
+		} else if (viewMode === 'journey') {
+			attributionControl._container.setAttribute('open', '');
+			attributionControl._container.classList.remove('maplibregl-compact-show');
+		}
+	}
 
 	onMount(async () => {
 		global.map = map;
 		map.addControl(attributionControl);
-		let currentMode = global.viewMode;
-		if (currentMode === 'overview') {
-			attributionControl._container.classList.add('maplibregl-compact-show');
-		} else if (currentMode === 'journey') {
-			attributionControl._container.setAttribute('open', '');
-			attributionControl._container.classList.remove('maplibregl-compact-show');
-		}
+		attributionControl._container.classList.add('sm:text-[16px]','text-[12px]');
+		setAttributionControl(global.viewMode);
 
 		// prevent non-critical styleimagemissing warnings in the browser
 		const emptyImage = {
@@ -69,12 +72,7 @@
 	$effect(() => {
 		// close or open attributionControl whenever global.viewMode changes
 		let currentMode = global.viewMode;
-		if (currentMode === 'overview') {
-			attributionControl._container.classList.add('maplibregl-compact-show');
-		} else if (currentMode === 'journey') {
-			attributionControl._container.setAttribute('open', '');
-			attributionControl._container.classList.remove('maplibregl-compact-show');
-		}
+		setAttributionControl(currentMode);
 	});
 </script>
 

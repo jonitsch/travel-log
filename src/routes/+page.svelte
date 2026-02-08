@@ -1,16 +1,11 @@
 <script lang="ts">
 	import { Button } from '$src/lib/components/shadcn/button';
 	import { calculateInitialZoom, defaultMapCenter } from '$src/lib/utils';
-	import { getContext, onMount, setContext } from 'svelte';
 	import { MapLibre } from 'svelte-maplibre';
 	import { innerWidth } from 'svelte/reactivity/window';
 
 	let map = $state<maplibregl.Map>();
 	let zoom = $state<number>(calculateInitialZoom(innerWidth.current ?? 0));
-
-	onMount(() => {
-		setContext('initialZoom', calculateInitialZoom(window.innerWidth));
-	})
 </script>
 
 <div class="flex size-full flex-col items-center bg-transparent">
