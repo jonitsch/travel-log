@@ -1,21 +1,20 @@
 import type { PageServerLoad, Actions } from './$types';
-import { prisma, type Journey } from '$src/lib/server/prisma';
+import { prisma } from '$src/lib/server/prisma';
 import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import { redirect } from "@sveltejs/kit";
+import type { Journey } from '$gen/prisma/client/client';
 
-export const load: PageServerLoad = async ({locals}) => {
+export const load: PageServerLoad = async ({ locals }) => {
     const user = locals.user;
-    if(!user) throw redirect(303, '/auth/login');
+    if (!user) throw redirect(303, '/auth/login');
     const journeys: Journey[] = await prisma.journey.findMany({
-        select: {
-            journeyId: true,
-            name: true,
-            color: true,
-            lng: true,
-            lat: true,
+        include: {
             marker: true,
             image: true,
+        },
+        where: {
+            userId: user.id,
         }
     })
     return {
@@ -25,14 +24,18 @@ export const load: PageServerLoad = async ({locals}) => {
 }
 
 export const actions = {
-    addJourney: async ({ request }) => {
+    addJourney: async ({ request, locals }) => {
         try {
+            const user = locals.user;
+            if (!user) throw redirect(303, '/auth/login');
+
             const data = await request.formData();
             const name: string = `${data.get('name')}`;
             const lng: number = parseFloat(`${data.get('lng')}`);
             const lat: number = parseFloat(`${data.get('lat')}`);
             const color: string = `${data.get('color')}`;
             const journeyId: string = `${name.toLowerCase().slice(0, 4)}-${crypto.randomUUID()}`;
+            const userId: string = user.id;
             console.log(`Attempting to create new Journey \`${journeyId}\`...`);
 
             const res = await prisma.journey.create({
@@ -42,6 +45,7 @@ export const actions = {
                     lat: lat,
                     color: color,
                     journeyId: journeyId,
+                    userId: userId,
                 }
             });
             const journey = {
@@ -58,8 +62,11 @@ export const actions = {
             throw err;
         }
     },
-    deleteJourney: async ({ request }) => {
+    deleteJourney: async ({ request, locals }) => {
         try {
+            const user = locals.user;
+            if (!user) throw redirect(303, '/auth/login');
+            
             const data = await request.formData();
             const journeyId: string = `${data.get('journeyId')}`;
             const imageFolder: string = `${env.IMAGE_FOLDER_PATH}/${journeyId}`;
