@@ -7,7 +7,6 @@
 | ----------- | ----------- | ----------- |
 | `DATABASE_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
 | `DATABASE_HOST` | Your Database Hostname | `localhost` |
-| `DATABASE_PORT` | Your Database Port | 3306 |
 | `MYSQL_DATABASE` | Your Database Name | `my-database` |
 | `MYSQL_USER` | Your Database User (for Prisma) | `prisma` |
 | `MYSQL_PASSWORD` | Your Database User`s Password |

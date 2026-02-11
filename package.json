@@ -40,6 +40,7 @@
 		"prisma": "^7.3.0",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
+		"sveltekit-superforms": "^2.29.1",
 		"tailwind-merge": "^3.4.0",
 		"tailwind-variants": "^3.2.2",
 		"tailwindcss": "^4.1.18",
@@ -67,6 +68,7 @@
 		"maplibre-gl": "^5.9.0",
 		"mysql": "^2.18.1",
 		"sharp": "^0.34.5",
-		"svelte-maplibre": "^1.2.3"
+		"svelte-maplibre": "^1.2.3",
+		"zod": "^4.3.6"
 	}
 }

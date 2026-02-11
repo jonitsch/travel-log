@@ -5,7 +5,7 @@
 
 	const twColors = ['red', 'yellow', 'emerald', 'blue', 'purple', 'pink'];
 	const inputStyle =
-		'text-gray-900 w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500';
+		'text-gray-900 bg-white w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500';
 	const labelStyle = 'mb-1 block text-sm font-medium text-gray-200';
 
 	let selectedColorElement = $state<HTMLButtonElement>(),

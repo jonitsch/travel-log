@@ -22,7 +22,7 @@
 </script>
 
 <form
-	class="flex size-full flex-row items-center justify-center gap-4 animate-modal-in"
+	class="animate-modal-in flex size-full flex-row items-center justify-center gap-4"
 	onsubmit={(e) => {
 		e.preventDefault();
 		handleSignin();
@@ -34,33 +34,33 @@
 			<Card.Description>Enter your email below to login to your account</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<form>
-				<div class="flex flex-col gap-6">
-					<div class="grid gap-2">
-						<Label for="email">Email</Label>
-						<Input
-							id="email"
-							type="email"
-							placeholder="example@example.com"
-							bind:value={email}
-							required
-						/>
-					</div>
-					<div class="grid gap-2">
-						<div class="flex items-center">
-							<Label for="password">Password</Label>
-							<a href="##" class="ms-auto inline-block text-sm underline-offset-4 hover:underline">
-								Forgot your password?
-							</a>
-						</div>
-						<Input id="password" type="password" bind:value={password} required />
-					</div>
+			<div class="flex flex-col gap-6">
+				<div class="grid gap-2">
+					<Label for="email">Email</Label>
+					<Input
+						id="email"
+						type="email"
+						placeholder="example@example.com"
+						bind:value={email}
+						required
+					/>
 				</div>
-			</form>
+				<div class="grid gap-2">
+					<div class="flex items-center">
+						<Label for="password">Password</Label>
+						<a href="##" class="ms-auto inline-block text-sm underline-offset-4 hover:underline">
+							Forgot your password?
+						</a>
+					</div>
+					<Input id="password" type="password" bind:value={password} required />
+				</div>
+			</div>
 		</Card.Content>
 		<Card.Footer class="flex-col gap-2">
 			<Button type="submit" class="w-full">Login</Button>
-			<Button variant="link" href="/auth/register" class="w-full">Dont have an account? Sign up</Button>
+			<Button variant="link" href="/auth/register" class="w-full"
+				>Dont have an account? Sign up</Button
+			>
 		</Card.Footer>
 	</Card.Root>
 </form>
