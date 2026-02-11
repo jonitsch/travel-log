@@ -1,16 +1,20 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import type { Journey } from '$lib/server/prisma';
 import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
-import { global } from '$lib/state.svelte';
+import { global, type JourneyData } from '$lib/state.svelte';
 
 export const defaultMapCenter: LngLatLike = [13.388, 52.517];
 
-export function calculateInitialZoom(innerWidth: number): number {
-    const zoom = innerWidth * 0.0023;
-    return zoom < 1.45 ? zoom : 1.45;
+export function calculateInitialZoom(width: number): number {
+    let zoom = width * 0.002;
+    const MIN_ZOOM = 0.6;
+    const MAX_ZOOM = 1.2;
+
+    zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+    return zoom;
 }
+
 
 export function switchToOverview(): void {
     const map = global.map;
@@ -41,7 +45,7 @@ export function switchToOverview(): void {
 }
 
 export async function switchToJourneyMode(journeyId: string): Promise<{
-    journey: Journey | null;
+    journey: JourneyData;
     bbox: maplibregl.LngLatBoundsLike | null;
     geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
 } | null> {
@@ -86,7 +90,7 @@ function waitForStyle(map: maplibregl.Map): Promise<void> {
     });
 }
 
-export async function getJourneyData(journeyId: string): Promise<Journey | null> {
+export async function getJourneyData(journeyId: string): Promise<JourneyData> {
     try {
         const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
         global.journeyData = await res.json();
@@ -107,12 +111,12 @@ export async function getJourneyData(journeyId: string): Promise<Journey | null>
         throw err;
     }
 }
-export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection | null> {
+export async function buildGeoJSON(journey: JourneyData): Promise<FeatureCollection | null> {
     let geoJSON: FeatureCollection = {
         type: 'FeatureCollection',
         features: []
     };
-    if (journey.image) {
+    if (journey?.image) {
         const images = journey.image.filter((img) => {
             return img.lat && img.lng;
         });
@@ -134,7 +138,7 @@ export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection 
     }
     return null;
 }
-export function getBBox(journey: Journey): LngLatBoundsLike | null {
+export function getBBox(journey: JourneyData): LngLatBoundsLike | null {
     if (journey.image.length === 0) return null;
     let lngs: Array<number> = [];
     let lats: Array<number> = [];
@@ -184,7 +188,7 @@ export function awaitImageRender(onRender: () => void) {
     loaded();
 }
 
-export const timeRange = (journey: Journey) => {
+export const timeRange = (journey: JourneyData) => {
     if (journey.image.length === 0) return;
     let end = new Date(journey.image[journey.image.length - 1].createdOn);
     let start = new Date(journey.image[0].createdOn);
