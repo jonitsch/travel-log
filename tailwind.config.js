@@ -5,10 +5,6 @@ export default {
     extend: {},
   },
   plugins: [],
-  safelist: [
-    { pattern: /bg-.+/ },
-    { pattern: /border-.+/ },
-  ],
 }
 
 module.exports = {

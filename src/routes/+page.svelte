@@ -60,7 +60,7 @@
 		border-radius: inherit;
 		pointer-events: none;
 		background: radial-gradient(
-			circle 500px at center,
+			circle 45vw at center,
 			rgba(56, 189, 248, 0.65) 0%,
 			rgba(56, 189, 248, 0.25) 30%,
 			rgba(56, 189, 248, 0.05) 55%,
