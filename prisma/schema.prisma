@@ -19,6 +19,7 @@ model User {
   twoFactorEnabled Boolean   @default(false)
   Account          Account[]
   Session          Session[]
+  Journey          Journey[]
 
   @@map("user")
 }
@@ -38,29 +39,34 @@ model Session {
   @@map("session")
 }
 
-model journey {
+model Journey {
   journeyId String   @id @default(uuid())
   name      String
   color     String   @default("bg-white")
   lat       Float    @default(0)
   lng       Float    @default(0)
-  image     image[]
-  marker    marker[]
+  image     Image[]
+  marker    Marker[]
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("journey")
 }
 
-model marker {
+model Marker {
   id        Int     @id @default(autoincrement())
   name      String
   lng       Float
   lat       Float
   color     String?
   journeyId String
-  journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
+  Journey   Journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
 
   @@index([journeyId], map: "Marker_journeyId_fkey")
+  @@map("marker")
 }
 
-model image {
+model Image {
   path      String
   fileName  String
   width     Int
@@ -71,9 +77,10 @@ model image {
   id        String   @id @default(uuid())
   createdOn DateTime
   fileType  String
-  journey   journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
+  Journey   Journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
 
   @@index([journeyId], map: "Image_journeyId_fkey")
+  @@map("image")
 }
 
 model Account {

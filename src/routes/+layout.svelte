@@ -113,7 +113,7 @@
 	<div id="content" class="flex-auto overflow-hidden">
 		{@render children?.()}
 	</div>
-	<div class="group -z-1 ml-auto w-fit text-[9.5px] text-gray-500">
+	<div class="group ml-auto w-fit text-[9.5px] text-gray-500">
 		Für Tamina und Joni
 		<text id="heart" class="invisible ml-0.5 cursor-pointer text-red-400 group-hover:visible">
 			♥

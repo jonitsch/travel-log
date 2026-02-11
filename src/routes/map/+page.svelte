@@ -8,7 +8,6 @@
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$src/lib/utils';
-	import { enhance } from '$app/forms';
 
 	let { data }: PageProps = $props();
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -21,14 +20,6 @@
 	let dayOf = (date: Date) => {
 		return date.toISOString().slice(0, 10);
 	}; // DD//MM//YYYY
-
-	export async function getImages(journeyId: string): Promise<any> {
-		let response = await fetch(`/api/images?dir=${journeyId}`, {
-			method: 'GET'
-		});
-		let images = await response.json();
-		return images;
-	}
 </script>
 
 <div class="flex size-full flex-row gap-4 overflow-hidden">

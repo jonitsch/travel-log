@@ -1,14 +1,17 @@
-import { json } from '@sveltejs/kit';
+import { json, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { createHmac } from 'node:crypto';
 
 
-export async function GET(req) {
-    const { searchParams } = new URL(req.url);
+export async function GET({ url, locals }) {
+    const user = locals.user;
+    if (!user) throw redirect(303, '/auth/login');
+    
+    const { searchParams } = new URL(url);
     const src: string | undefined =
         searchParams.get("src")
-        ?.replace(/\\/g, "/")
-        .replace(`${env.IMAGE_FOLDER_PATH}/`, '');
+            ?.replace(/\\/g, "/")
+            .replace(`${env.IMAGE_FOLDER_PATH}/`, '');
     if (!src) throw new Error('ImgProxy API called without specifying image source!');
 
     // optional parameters with default values
