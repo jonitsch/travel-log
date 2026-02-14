@@ -1,42 +1,21 @@
 <script lang="ts">
-	import { goto, invalidateAll } from '$app/navigation';
-	import { authClient } from '$lib/auth-client';
 	import { Button } from '$src/lib/components/shadcn/button';
 	import * as Card from '$src/lib/components/shadcn/card';
 	import { Input } from '$src/lib/components/shadcn/input';
 	import { Label } from '$src/lib/components/shadcn/label';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
 	const { form, errors, constraints, message, enhance } = superForm(data.form);
-
-	let name = $state<string>(''),
-		email = $state<string>(''),
-		password = $state<string>(''),
-		error = $state();
-
-	async function handleSignup() {
-		try {
-			await authClient.signUp.email({
-				email,
-				password,
-				name
-			});
-			await invalidateAll();
-			goto('/auth/login');
-		} catch (err: any) {
-			error = err.message || 'Signup failed';
-		}
-	}
 </script>
 
 {#if $message}<h3>{$message}</h3>{/if}
 
 <form
 	id="main"
-	class="animate-modal-in flex size-full flex-row items-start mt-4 justify-center gap-4"
+	class="animate-modal-in flex size-full flex-row items-start mt-15 justify-center gap-4"
 	method="POST"
 	use:enhance
 >
@@ -77,7 +56,7 @@
 					{#if $errors.email}
 						<small class="text-red-600 flex justify-between"
 							>{$errors.email}
-							{#if $errors.email.join() === 'Email is already in use'}
+							{#if $errors.email.join().includes('Email is already in use')}
 								<a href="/auth/login" class="text-white ml-3 underline"> Login instead?</a>
 							{/if}
 						</small>

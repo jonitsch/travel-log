@@ -26,8 +26,13 @@ export async function handle({ event, resolve }) {
 }
 
 export const init: ServerInit = async () => {
-    await prisma.$connect();
-    
+    try {
+        await prisma.$connect();
+        console.log('Database connection successful!');
+    } catch (err) {
+        console.error('Database connection failed!', err);
+    }
+
     await initializeDatabase();
 }
 

@@ -1,4 +1,4 @@
-import { fail } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -44,6 +44,6 @@ export const actions = {
             return fail(400, { form });
         }
 
-        return { form };
+        redirect(300, '/auth/login');
     }
 };

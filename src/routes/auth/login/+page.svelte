@@ -22,7 +22,7 @@
 </script>
 
 <form
-	class="animate-modal-in flex size-full flex-row items-center justify-center gap-4"
+	class="animate-modal-in flex size-full flex-row items-start mt-15 justify-center gap-4"
 	onsubmit={(e) => {
 		e.preventDefault();
 		handleSignin();
