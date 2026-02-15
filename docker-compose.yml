@@ -18,6 +18,8 @@ services:
       retries: 5
       start_period: 30s
       timeout: 10s
+    volumes:
+      - mysql_data:/var/lib/mysql
 
   # -------------------
   # phpMyAdmin Web UI
@@ -53,4 +55,4 @@ services:
     tty: true
 
 volumes:
-  mysql_data:
+  - mysql_data:

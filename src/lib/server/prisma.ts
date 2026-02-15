@@ -8,6 +8,7 @@ const prisma = new PrismaClient({
         user: env.MYSQL_USER,
         password: env.MYSQL_PASSWORD,
         database: env.MYSQL_DATABASE,
+        allowPublicKeyRetrieval: true,
     })
 });
 

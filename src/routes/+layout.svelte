@@ -22,6 +22,7 @@
 
 	async function handleSignOut() {
 		try {
+            global.viewMode = 'overview';
 			await authClient.signOut({
 				fetchOptions: {
 					onSuccess: async () => {
