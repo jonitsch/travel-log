@@ -11,8 +11,6 @@
 	const { form, errors, constraints, message, enhance } = superForm(data.form);
 </script>
 
-{#if $message}<h3>{$message}</h3>{/if}
-
 <form
 	id="main"
 	class="animate-modal-in flex size-full flex-row items-start mt-15 justify-center gap-4"

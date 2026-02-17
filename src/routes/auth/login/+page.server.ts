@@ -1,0 +1,43 @@
+import { fail, redirect } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import { message, superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+import { z } from 'zod';
+import { auth } from '$src/lib/server/auth';
+import { prisma } from '$lib/server/prisma';
+
+const schema = z.object({
+    email: z.string(),
+    password: z.string().min(8),
+});
+
+export const load: PageServerLoad = (async () => {
+    const form = await superValidate(zod4(schema));
+    return { form };
+});
+
+export const actions = {
+    default: async ({ request }) => {
+        const form = await superValidate(request, zod4(schema));
+        const { email, password } = form.data;
+
+        if (!form.valid) {
+            return fail(400, { form });
+        }
+        try {
+            await auth.api.signInEmail({
+                body: {
+                    email,
+                    password,
+                },
+            });
+        } catch (e: any) {
+            if (e?.body?.code === 'INVALID_EMAIL_OR_PASSWORD') {
+                return message(form, e.body.message );
+            }
+
+            return fail(500, { message: 'Login failed' });
+        }
+        redirect(300, '/map');
+    }
+};

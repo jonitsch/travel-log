@@ -10,7 +10,7 @@
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { User } from 'better-auth';
 	import SVGIcon from '$src/lib/components/SVGIcon.svelte';
-	import { fade, slide } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
@@ -121,3 +121,16 @@
 		</text>
 	</div>
 </div>
+
+<style>
+	:global(.maplibregl-popup-content) {
+		background-color: transparent;
+		border-radius: 15px;
+		box-shadow: none;
+		font-size: var(--text-1xl);
+		padding: 0px;
+	}
+	:global(.maplibregl-popup .maplibregl-popup-tip) {
+		border-top-color: inherit;
+	}
+</style>
