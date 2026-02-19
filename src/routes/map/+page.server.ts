@@ -7,7 +7,8 @@ import type { Journey } from '$gen/prisma/client/client';
 
 export const load: PageServerLoad = async ({ locals }) => {
     const user = locals.user;
-    if (!user) throw redirect(303, '/auth/login');
+    if (!user) {
+        throw redirect(303, '/auth/login');}
     const journeys: Journey[] = await prisma.journey.findMany({
         include: {
             marker: true,
