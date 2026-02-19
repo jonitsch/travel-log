@@ -1,0 +1,58 @@
+services:
+  # -------------------
+  # MySQL Database
+  # -------------------
+  mysql:
+    image: mysql:lts
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # -------------------
+  # phpMyAdmin Web UI
+  # -------------------
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+
+  # -------------------
+  # Imgproxy
+  # -------------------
+  imgproxy:
+    image: ghcr.io/imgproxy/imgproxy:latest
+    container_name: imgproxy
+    ports:
+      - "8080:8080"
+    environment:
+      IMGPROXY_LOCAL_FILESYSTEM_ROOT: /pictures
+      IMGPROXY_KEY: ${IMGPROXY_KEY}
+      IMGPROXY_SALT: ${IMGPROXY_SALT}
+    volumes:
+      - ${IMAGE_FOLDER_PATH}:/pictures:ro
+    restart: unless-stopped
+    tty: true
+
+volumes:
+  - mysql_data:

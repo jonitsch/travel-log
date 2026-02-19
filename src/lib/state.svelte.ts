@@ -1,10 +1,11 @@
-import type { Journey } from "./server/prisma";
+import type { Journey, Marker, Image } from "$gen/prisma/client/client";
 
 export type ViewMode = 'overview' | 'journey' | null;
+export type JourneyData = Journey & { marker: Marker[], image: Image[] } | null;
 
 type State = {
 	viewMode: ViewMode;
-	journeyData: Journey | null;
+	journeyData: JourneyData;
 	journeyId: string | undefined;
 	map: maplibregl.Map | null;
 	loadingJourney: boolean;

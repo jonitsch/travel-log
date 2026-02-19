@@ -3,14 +3,14 @@
 
 import "$lib/client/styles.css"
 import type { PrismaClient } from "@prisma/client";
+import type { Session, User } from "$lib/auth-client";
 
 declare global {
 	namespace App {
-		// interface Error {}
-		// interface Locals {}
-		// interface PageData {}
-		// interface PageState {}
-		// interface Platform {}
+		interface Locals {
+			session: Session | null;
+			user: User | null;
+		}
 	}
 	var prisma: PrismaClient;
 }

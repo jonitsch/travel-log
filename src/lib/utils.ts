@@ -1,55 +1,22 @@
-import type { Journey } from '$lib/server/prisma';
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
-import { type LngLatBoundsLike } from 'maplibre-gl';
-import { global } from '$lib/state.svelte';
+import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
+import { global, type JourneyData } from '$lib/state.svelte';
 
-export const timeRange = (journey: Journey) => {
-    if (journey.image.length === 0) return;
-    let end = new Date(journey.image[journey.image.length - 1].createdOn);
-    let start = new Date(journey.image[0].createdOn);
-    return `${start.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })} - ${end.toLocaleDateString('de-DE', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    })}`;
-};
-export const formattedDate = (imgDate: Date, format?: 'dd/mm/yyyy' | 'dd/mm/yyyy hh:mm' | 'dd/mm/yyyy hh:mm:ss') => {
-    let date = new Date(imgDate);
-    switch (format) {
-        default:
-            return date.toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour12: false
-            });
-        case "dd/mm/yyyy hh:mm":
-            return date.toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-        case "dd/mm/yyyy hh:mm:ss":
-            return date.toLocaleDateString('de-DE', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-    }
-};
+export const defaultMapCenter: LngLatLike = [13.388, 52.517];
 
-export function switchToOverview() {
+export function calculateInitialZoom(width: number): number {
+    let zoom = width * 0.002;
+    const MIN_ZOOM = 0.6;
+    const MAX_ZOOM = 1.2;
+
+    zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+    return zoom;
+}
+
+
+export function switchToOverview(): void {
     const map = global.map;
     if (map) {
         map.setProjection({ type: 'globe' })
@@ -73,11 +40,12 @@ export function switchToOverview() {
     global.journeyData = null;
     global.journeyId = undefined;
     global.loadingJourney = false;
+    global.selectedImageId = null;
     global.viewMode = 'overview';
 }
 
 export async function switchToJourneyMode(journeyId: string): Promise<{
-    journey: Journey | null;
+    journey: JourneyData;
     bbox: maplibregl.LngLatBoundsLike | null;
     geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
 } | null> {
@@ -122,7 +90,7 @@ function waitForStyle(map: maplibregl.Map): Promise<void> {
     });
 }
 
-export async function getJourneyData(journeyId: string): Promise<Journey | null> {
+export async function getJourneyData(journeyId: string): Promise<JourneyData> {
     try {
         const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
         global.journeyData = await res.json();
@@ -143,12 +111,12 @@ export async function getJourneyData(journeyId: string): Promise<Journey | null>
         throw err;
     }
 }
-export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection | null> {
+export async function buildGeoJSON(journey: JourneyData): Promise<FeatureCollection | null> {
     let geoJSON: FeatureCollection = {
         type: 'FeatureCollection',
         features: []
     };
-    if (journey.image) {
+    if (journey?.image) {
         const images = journey.image.filter((img) => {
             return img.lat && img.lng;
         });
@@ -170,7 +138,7 @@ export async function buildGeoJSON(journey: Journey): Promise<FeatureCollection 
     }
     return null;
 }
-export function getBBox(journey: Journey): LngLatBoundsLike | null {
+export function getBBox(journey: JourneyData): LngLatBoundsLike | null {
     if (journey.image.length === 0) return null;
     let lngs: Array<number> = [];
     let lats: Array<number> = [];
@@ -219,3 +187,62 @@ export function awaitImageRender(onRender: () => void) {
     }
     loaded();
 }
+
+export const timeRange = (journey: JourneyData) => {
+    if (journey.image.length === 0) return;
+    let end = new Date(journey.image[journey.image.length - 1].createdOn);
+    let start = new Date(journey.image[0].createdOn);
+    return `${start.toLocaleDateString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    })} - ${end.toLocaleDateString('de-DE', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    })}`;
+};
+export const formattedDate = (imgDate: Date, format?: 'dd/mm/yyyy' | 'dd/mm/yyyy hh:mm' | 'dd/mm/yyyy hh:mm:ss') => {
+    let date = new Date(imgDate);
+    switch (format) {
+        default:
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour12: false
+            });
+        case "dd/mm/yyyy hh:mm":
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        case "dd/mm/yyyy hh:mm:ss":
+            return date.toLocaleDateString('de-DE', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+    }
+};
+
+// shadcn
+
+export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, "child"> : T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, "children"> : T;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };

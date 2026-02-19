@@ -6,41 +6,111 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:@localhost:3306/db"
 }
 
-model journey {
+model User {
+  id               String    @id @default(cuid())
+  name             String
+  email            String    @unique
+  emailVerified    Boolean   @default(false)
+  image            String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+  twoFactorEnabled Boolean   @default(false)
+  Account          Account[]
+  Session          Session[]
+  Journey          Journey[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Journey {
   journeyId String   @id @default(uuid())
   name      String
   color     String   @default("bg-white")
-  lng       Float    @default(0)
   lat       Float    @default(0)
-  marker    marker[]
-  image     image[]
+  lng       Float    @default(0)
+  image     Image[]
+  marker    Marker[]
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("journey")
 }
 
-model marker {
+model Marker {
   id        Int     @id @default(autoincrement())
   name      String
   lng       Float
   lat       Float
   color     String?
   journeyId String
-  journey   journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
+  Journey   Journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
 
   @@index([journeyId], map: "Marker_journeyId_fkey")
+  @@map("marker")
 }
 
-model image {
-  id        String   @id @default(uuid())
+model Image {
   path      String
   fileName  String
-  fileType  String
-  createdOn DateTime
   width     Int
-  height    Int
   lng       Float?
   lat       Float?
   journeyId String
-  journey   journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
+  height    Int
+  id        String   @id @default(uuid())
+  createdOn DateTime
+  fileType  String
+  Journey   Journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
+
+  @@index([journeyId], map: "Image_journeyId_fkey")
+  @@map("image")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String    @db.Text
+  providerId            String    @db.Text
+  userId                String
+  accessToken           String?   @db.Text
+  refreshToken          String?   @db.Text
+  idToken               String?   @db.Text
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?   @db.Text
+  password              String?   @db.Text
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String   @db.Text
+  value      String   @db.Text
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier(length: 191)])
+  @@map("verification")
 }

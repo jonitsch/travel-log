@@ -1,14 +1,38 @@
 import fs from 'fs';
 import path from "path";
 import { prisma } from '$src/lib/server/prisma.js';
-import type { ServerInit } from '@sveltejs/kit';
+import { redirect, type ServerInit } from '@sveltejs/kit';
 import { fileTypeFromFile, type FileTypeResult } from 'file-type';
 import exifr from 'exifr';
 import sharp from 'sharp';
 import { Prisma } from '$gen/prisma/client/client';
 import { stat } from "fs/promises";
+import { env } from '$env/dynamic/private';
+import { auth } from "$lib/server/auth";
+import { svelteKitHandler } from "better-auth/svelte-kit";
+import { building } from "$app/environment";
+
+export async function handle({ event, resolve }) {
+    // Fetch current session from Better Auth
+    const session = await auth.api.getSession({
+        headers: event.request.headers,
+    });
+    // Make session and user available on server
+    if (session) {
+        event.locals.session = session;
+        event.locals.user = session.user;
+    }
+    return svelteKitHandler({ event, resolve, auth, building });
+}
 
 export const init: ServerInit = async () => {
+    try {
+        await prisma.$connect();
+        console.log('Database connection successful!');
+    } catch (err) {
+        console.error('Database connection failed!', err);
+    }
+
     await initializeDatabase();
 }
 
@@ -45,11 +69,11 @@ async function getImages(journeyId: string) {
     console.log('GetImages started: Getting Images for: ', journeyId);
     let images: Array<imgCreateBody> = [];
     try {
-        let dir = `pictures/${journeyId}`
+        let dir = `${env.IMAGE_FOLDER_PATH}/${journeyId}`
         if (!fs.existsSync(dir)) {
             return images;
         };
-        let entries = await fs.promises.readdir(`pictures/${journeyId}`, {
+        let entries = await fs.promises.readdir(dir, {
             withFileTypes: true,
             recursive: true,
         });

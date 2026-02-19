@@ -3,38 +3,31 @@
 
 ## Development
 ### Enviroment Variables
-| Variable | Description |
-| ----------- | ----------- |
-| `DATABASE_URL` | Your Database URL |
-| `DATABASE_PASSWORD` | Your Database Password |
-| `IMGPROXY_KEY` | Your ImgProxy Key (HEX-Format) |
-| `IMGPROXY_SALT` | Your ImgProxy Salt (HEX-Format) |
-| `IMGPROXY_URL` | Your ImgProxy Base URL |
+| Variable | Description | Example (Generation) |
+| ----------- | ----------- | ----------- |
+| `DATABASE_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
+| `DATABASE_HOST` | Your Database Hostname | `localhost` |
+| `MYSQL_DATABASE` | Your Database Name | `my-database` |
+| `MYSQL_USER` | Your Database User (for Prisma) | `prisma` |
+| `MYSQL_PASSWORD` | Your Database User`s Password |
+| `MYSQL_ROOT_PASSWORD` | Your Database`s Root Password |
+| `IMAGE_FOLDER_PATH` | The folder that will store your images (absolute path) | `C:/git/travel-log-data/pictures` |
+| `IMGPROXY_URL` | Your ImgProxy Base URL | http://localhost:8080 |
+| `IMGPROXY_KEY` | Your ImgProxy Key | `crypto.randomBytes(32).toString('hex')` |
+| `IMGPROXY_SALT` | Your ImgProxy Salt | `crypto.randomBytes(16).toString('hex')` |
+| `BETTER_AUTH_URL` | Your Servers Base URL | http://localhost:5173 |
+| `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32`
 
-### Generate Key and Salt
-KEY: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`  
-SALT: `node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"`
+### Run ImgProxy-, MySQL- and PHPMyAdmin-Container locally
 
-### Run ImgProxy-Container locally
-Windows
-```docker
-docker run 
-    -p 8080:8080 ^
-    -v {PATH_TO_IMAGE_FOLDER}/pictures:/pictures:ro ^
-    -e IMGPROXY_LOCAL_FILESYSTEM_ROOT=/pictures ^
-    -e IMGPROXY_KEY={YOUR_KEY} -e IMGPROXY_SALT={YOUR_SALT} ^
-    -it ghcr.io/imgproxy/imgproxy:latest ^
+Use the provided `docker-compose.yml` file or to setup both the ImgProxy and MySQL Server + phpmyadmin as an Admin Panel  
+
+```cmd
+docker compose up -d
 ```
-Linux  
-```docker
-docker run
-    -p 8080:8080 \
-    -v {PATH_TO_IMAGE_FOLDER}/pictures:/pictures:ro \
-    -e IMGPROXY_LOCAL_FILESYSTEM_ROOT=/pictures \
-    -e IMGPROXY_KEY={YOUR_KEY} -e IMGPROXY_SALT={YOUR_SALT} \
-    -it ghcr.io/imgproxy/imgproxy:latest \
-```
-Any Image Path that you try to sign and fetch with the **getImgProxyURL()** function must be relative to **{PATH_TO_IMAGE_FOLDER}**!
+
+### Notes
+Any Image Path that you try to sign and fetch with the **getImgProxyURL()** function must be relative to **{IMAGE_FOLDER_PATH}**!
 ```typescript
 import { getImgProxyURL } from '$src/lib/imgproxy';
 ```

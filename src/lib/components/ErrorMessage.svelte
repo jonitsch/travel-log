@@ -1,11 +1,15 @@
 <script lang="ts">
-	let { children, error } = $props();
+	import type { Snippet } from 'svelte';
+
+	let { children, error }: { children: Snippet; error?: any } = $props();
 </script>
 
-<div class="items-start h-fit w-fit rounded-md bg-red-950 p-3 text-white whitespace-nowrap">
-	<text class="text-2xl oxygen-bold">
+<div class="align-middle items-center rounded-md bg-red-950 p-3 text-white">
+	<div class="oxygen-bold text-2xl">
 		{@render children?.()}
-	</text>
+	</div>
 	<br />
-	<text class="text-1xl oxygen-light">{error}</text>
+	{#if error}
+		<text class="text-1xl oxygen-light">{error}</text>
+	{/if}
 </div>

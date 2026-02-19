@@ -32,12 +32,12 @@
 			offset={7}
 			closeOnClickOutside={false}
 			closeButton={false}
-			popupClass="border-{color}/95"
+			popupClass="border-{color}"
 			{open}
 			{...rest}
 		>
 			<button
-				class={`items-center rounded-md px-3 py-[1px] text-sm text-white opacity-95 bg-${color}`}
+				class={`items-center rounded-md px-3 py-px text-sm text-white opacity-95 bg-${color} transition-all duration-200 hover:scale-105`}
 				onclick={() => onclick()}
 			>
 				<text class="oxygen-regular">
