@@ -4,7 +4,6 @@
 	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
-	import type { Data } from '$lib/server/prisma';
 	import maplibregl from 'maplibre-gl';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
@@ -16,17 +15,19 @@
 	} from '$src/lib/utils';
 	import SVGIcon from './SVGIcon.svelte';
 	import ImageMarker from './ImageMarker.svelte';
+	import HoverButton from './HoverButton.svelte';
+	import type { Journey } from '$gen/prisma/client/client';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
-		data?: Data;
+		journeys: Journey[];
 		map: maplibregl.Map;
 		createJourneyModal: CreateJourneyModal | undefined;
 	}
 	let {
 		map = $bindable(),
 		mapContainer = $bindable(),
-		data = $bindable(),
+		journeys = $bindable(),
 		createJourneyModal = $bindable()
 	}: Props = $props();
 
@@ -53,7 +54,7 @@
 	onMount(async () => {
 		global.map = map;
 		map.addControl(attributionControl);
-		attributionControl._container.classList.add('sm:text-[16px]','text-[12px]');
+		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
 		setAttributionControl(global.viewMode);
 
 		// prevent non-critical styleimagemissing warnings in the browser
@@ -94,30 +95,31 @@
 		<!-------------------------------------------------- OVERVIEW MODE ---------------------------------------------------->
 
 		{#if global.viewMode === 'overview'}
-			{#if data?.journeys}
+			{#if journeys}
 				<Control
 					class="animate-slide-right flex flex-col items-end gap-2"
 					position="top-right"
 					defaultStyling={true}
 				>
-					<ControlButton onclick={() => switchToOverview()} class="cursor-pointer">
-						<div id="resetButton" class="ml-auto w-fit items-center bg-transparent">
-							<div class="page-header-button bg-gray-900">Reset</div>
-						</div>
-					</ControlButton>
-					<ControlButton onclick={() => createJourneyModal?.toggle()} class="cursor-pointer">
-						<div class="group flex flex-row items-center gap-1 rounded-md bg-gray-900 p-2">
-							<div class="text-1xl hidden text-white group-hover:block" id="addJourneyText">
-								Add Journey
-							</div>
-							<div id="addJourneyIcon" class="relative">
-								<SVGIcon type="globePlus" fill="white" hoverScale={false} />
-							</div>
-						</div>
-					</ControlButton>
+					<HoverButton anchor="right" onclick={() => switchToOverview()} class="cursor-pointer">
+						{#snippet content()}
+							<SVGIcon type="reset" fill="white" hoverScale={false} scale={1.25} />
+						{/snippet}
+						{#snippet hoveredContent()}
+							<div class="text-xl text-white" id="addJourneyText">Reset View</div>
+						{/snippet}
+					</HoverButton>
+					<HoverButton anchor="right" onclick={() => createJourneyModal?.toggle()}>
+						{#snippet content()}
+							<SVGIcon type="globePlus" fill="white" hoverScale={false} scale={1.25} />
+						{/snippet}
+						{#snippet hoveredContent()}
+							<div class="text-xl text-white" id="addJourneyText">Add Journey</div>
+						{/snippet}
+					</HoverButton>
 				</Control>
 
-				{#each data.journeys as journey}
+				{#each journeys as journey}
 					<JourneyMarker
 						popupText={journey.name}
 						lngLat={[journey.lng, journey.lat]}
@@ -215,7 +217,13 @@
 		font-size: var(--text-1xl);
 		padding: 0px;
 	}
+	/* needed to prevent maplibre from overwriting border color for popup tip */
 	:global(.maplibregl-popup .maplibregl-popup-tip) {
 		border-top-color: inherit;
+	}
+
+	/* needed to prevent maplibre from overwriting bg-color for control buttons */
+	:global(.maplibregl-ctrl button.custom-hover-btn:hover) {
+		background-color: rgb(17 24 39);
 	}
 </style>

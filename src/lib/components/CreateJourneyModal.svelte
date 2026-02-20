@@ -36,7 +36,7 @@
 {#if isModalOpen && global.viewMode === 'overview'}
 	<!-- Modal container -->
 	<div
-		class="animate-slide w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"
+		class="animate-slide-right w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"
 	>
 		<div class="mb-4 flex flex-row">
 			<!-- Modal header -->

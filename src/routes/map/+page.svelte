@@ -8,8 +8,10 @@
 	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$src/lib/utils';
+	import type { Journey } from '$gen/prisma/client/client';
 
 	let { data }: PageProps = $props();
+	let journeys = $state<Journey[]>(data.journeys);
 	let createJourneyModal = $state<CreateJourneyModal>();
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
@@ -30,7 +32,7 @@
 	>
 		<!------------------- MAP CONTAINER --------------------->
 		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:data bind:createJourneyModal />
+			<Map bind:map={map!} bind:mapContainer bind:journeys bind:createJourneyModal />
 		</div>
 
 		<!------------------- JOURNEY HEADER --------------------->
@@ -76,49 +78,53 @@
 
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<div
-			id="book"
-			class="animate-slide-right grid h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible pr-3"
-			bind:this={book}
-		>
-			{#if global.loadingJourney}
-				<div class="col-span-full skeleton py-2 text-2xl text-transparent">Placeholder</div>
-				{#each { length: 200 }}
-					<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
-				{/each}
-			{:else if journey}
-				{@const images = journey.image}
-				{(previousDate = null)}
-				{#if images.length > 0}
-					{#each images as img}
-						{@const date = new Date(img.createdOn)}
-						{#if previousDate != dayOf(date)}
-							<div
-								class={[
-									'col-span-full w-full rounded-md px-4 py-2 text-2xl text-white shadow-inner shadow-slate-400/60',
-									{ 'mt-4': previousDate }
-								]}
-							>
-								{formattedDate(date, 'dd/mm/yyyy')}
-							</div>
+		<div class="flex h-screen flex-col w-[75dvw] animate-slide-right overflow-y-auto">
+			<div class="min-h-0 flex-1">
+				<div
+					id="book"
+					class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden pr-3"
+					bind:this={book}
+				>
+					{#if global.loadingJourney}
+						<div class="col-span-full skeleton py-2 text-2xl text-transparent">Placeholder</div>
+						{#each { length: 200 }}
+							<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
+						{/each}
+					{:else if journey}
+						{@const images = journey.image}
+						{(previousDate = null)}
+						{#if images.length > 0}
+							{#each images as img}
+								{@const date = new Date(img.createdOn)}
+								{#if previousDate != dayOf(date)}
+									<div
+										class={[
+											'col-span-full h-fit w-full rounded-md px-4 py-2 text-2xl text-white shadow-inner shadow-slate-400/60',
+											{ 'mt-4': previousDate }
+										]}
+									>
+										{formattedDate(date, 'dd/mm/yyyy')}
+									</div>
+								{/if}
+								<div class="col-span-1">
+									{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
+										<ImageCard {img} src={response} {fullImageModal} />
+									{:catch error}
+										<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
+									{/await}
+								</div>
+								<div hidden>{(previousDate = dayOf(date))}</div>
+							{/each}
+						{:else}
+							<div class="h-full w-full text-2xl text-white">No images yet</div>
 						{/if}
-						<div class="col-span-1">
-							{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
-								<ImageCard {img} src={response} {fullImageModal} />
-							{:catch error}
-								<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
-							{/await}
-						</div>
-						<div hidden>{(previousDate = dayOf(date))}</div>
-					{/each}
-				{:else}
-					<div class="h-full w-full text-2xl text-white">No images yet</div>
-				{/if}
-			{:else}
-				{@const error = new Error('Images failed to load - no image data received')}
-				<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
-			{/if}
-			<FullImageModal bind:this={fullImageModal} />
+					{:else}
+						{@const error = new Error('Images failed to load - no image data received')}
+						<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
+					{/if}
+					<FullImageModal bind:this={fullImageModal} />
+				</div>
+			</div>
 		</div>
 	{/if}
 	<!------------------- CREATE JOURNEY MODAL --------------------->

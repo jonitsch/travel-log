@@ -67,7 +67,7 @@ async function initializeDatabase() {
 
 async function getImages(journeyId: string) {
     console.log('GetImages started: Getting Images for: ', journeyId);
-    let images: Array<imgCreateBody> = [];
+    let images: imgCreateBody[] = [];
     try {
         let dir = `${env.IMAGE_FOLDER_PATH}/${journeyId}`
         if (!fs.existsSync(dir)) {
