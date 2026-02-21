@@ -17,25 +17,22 @@
 	import ImageMarker from './ImageMarker.svelte';
 	import HoverButton from './HoverButton.svelte';
 	import type { Journey } from '$gen/prisma/client/client';
+	import CreateJourneyModal2 from './CreateJourneyModal2.svelte';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
 		journeys: Journey[];
 		map: maplibregl.Map;
-		createJourneyModal: CreateJourneyModal | undefined;
 	}
-	let {
-		map = $bindable(),
-		mapContainer = $bindable(),
-		journeys = $bindable(),
-		createJourneyModal = $bindable()
-	}: Props = $props();
+	let { map = $bindable(), mapContainer = $bindable(), journeys = $bindable() }: Props = $props();
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		center = $state<maplibregl.LngLatLike | undefined>(defaultMapCenter);
 
 	let initialZoom = calculateInitialZoom(innerWidth.current ?? 0);
 	let zoom = $state<number>(initialZoom);
+
+	let createJourneyModal = $state<CreateJourneyModal2>();
 
 	let attributionControl = $state<maplibregl.AttributionControl>(
 		new maplibregl.AttributionControl({
@@ -206,8 +203,26 @@
 				<ErrorMessage {error}>Failed To Load Journey Data</ErrorMessage>
 			{/await}
 		{/if}
+
+		<!------------------------------------------------- CREATE JOURNEY MODE -------------------------------------------------->
+
+		{#if global.viewMode === 'createJourney'}
+			<button class="fixed z-9999 flex page-header-button flex-col gap-2 bg-gray-900" onclick={() => {
+				global.viewMode = 'overview';
+			}}
+				>Cancel</button
+			>
+			<button class="fixed z-9999 flex page-header-button flex-col gap-2 bg-gray-900" onclick={() => {
+				createJourneyModal?.handleSubmit();
+			}}
+				>Submit</button
+			>
+		{/if}
 	</MapLibre>
 </div>
+
+<!------------------- CREATE JOURNEY MODAL --------------------->
+<CreateJourneyModal2 bind:this={createJourneyModal} />
 
 <style>
 	:global(.maplibregl-popup-content) {

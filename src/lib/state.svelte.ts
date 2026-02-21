@@ -1,6 +1,6 @@
 import type { Journey, Marker, Image } from "$gen/prisma/client/client";
 
-export type ViewMode = 'overview' | 'journey' | null;
+export type ViewMode = 'overview' | 'journey' | 'createJourney' | null;
 export type JourneyData = Journey & { marker: Marker[], image: Image[] } | null;
 
 type State = {

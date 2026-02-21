@@ -1,11 +1,10 @@
 <script lang="ts">
 	import { getImgProxyURL } from '$lib/imgproxy';
-	import type { Image } from '$lib/server/prisma';
 	import { global } from '$lib/state.svelte';
-	import { slide } from 'svelte/transition';
 	import { awaitImageRender, formattedDate } from '../utils';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
+	import type { Image } from '$gen/prisma/client/client';
 
 	let modal = $state<HTMLButtonElement | undefined>();
 	let isModalOpen = $state<boolean>(false);
@@ -142,17 +141,3 @@
 		</div>
 	</button>
 {/if}
-
-<style>
-	/* Keyframes for modal exit (optional) */
-	@keyframes modal-out {
-		0% {
-			opacity: 1;
-			transform: translateY(0);
-		}
-		100% {
-			opacity: 0;
-			transform: translateY(-20px);
-		}
-	}
-</style>
