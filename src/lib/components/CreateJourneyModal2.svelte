@@ -47,7 +47,7 @@
 	});
 
 	export function handleSubmit() {
-		console.log('handleSubmit')
+		console.log('handleSubmit');
 		if (currentStep === 'Name') {
 			currentStep = 'Color';
 		} else if (currentStep === 'Color') {
@@ -66,7 +66,10 @@
 		}
 	}
 
-	$inspect(currentStep);
+	$effect(() => {
+		// focus nameInput whenever its rendered on screen
+		if (nameInput) nameInput.focus();
+	});
 </script>
 
 {#if isModalOpen && global.viewMode === 'overview'}
@@ -83,13 +86,12 @@
 				onsubmit={(e) => {
 					e.preventDefault();
 					handleSubmit();
-					if (currentStep === 'Submit') e.currentTarget.submit();
 				}}
 				action="?/addJourney"
 				method="POST"
 				class="flex h-full flex-col items-center"
 			>
-				<div class="flex h-full flex-col items-center justify-center p-10">
+				<div class="flex h-full flex-col items-center justify-center p-8">
 					<div class="animate-slide-right w-full overflow-auto rounded-md px-6 py-4 text-white">
 						<!-- Modal body -->
 						<div class="mb-10 flex flex-col items-center">
@@ -103,17 +105,26 @@
 											required
 											name="name"
 											type="text"
+											maxlength={25}
 											autocomplete="off"
 											placeholder="Start with a name..."
-											class="w-fit rounded-md border-b-4 border-b-slate-700 bg-slate-900 px-3 py-2 text-center text-6xl text-white opacity-75"
+											class="field-sizing-content rounded-md border-b-4 border-b-black/40 bg-{color ??
+												'slate-900'}
+													px-3 py-2 text-center text-6xl text-white opacity-75"
 											oninput={(e) => {
+												const target = e.currentTarget as HTMLInputElement;
 												if (e.currentTarget.value.length > 0) {
+													target.style.width = '0px';
+													target.style.width = `${Math.max(target.scrollWidth, 130)}px`;
+												} else {
+													target.style.width = 'auto';
 												}
 											}}
 											onsubmit={() => (currentStep = 'Color')}
 										/>
 										<div
-											class="border-t-36 border-r-36 border-l-36 border-t-slate-700 border-r-transparent border-l-transparent opacity-75"
+											class="border-t-[oklch(1 0 0 / 10%)] border-t-36 border-r-36 border-l-36
+													border-r-transparent border-l-transparent"
 										></div>
 									</div>
 									<button
@@ -124,18 +135,20 @@
 									>
 								</div>
 							{:else if currentStep === 'Color'}
-								{console.log('test')}
 								<!-- Color -->
 								<div class="flex flex-col items-center gap-10">
 									<div class="flex flex-col items-center gap-5">
 										<div class="flex flex-col items-center">
 											<div
-												class="w-fit rounded-md border-b-4 border-b-{color ??
-													'slate-900'} bg-{color ??
+												class="w-fit rounded-md border-b-4 border-b-black/40 bg-{color ??
 													'slate-900'} px-3 py-2 text-center text-6xl text-white opacity-75"
 											>
 												{name}
 											</div>
+											<div
+												class="border-t-[oklch(1 0 0 / 10%)] border-t-36 border-r-36 border-l-36
+													border-r-transparent border-l-transparent"
+											></div>
 										</div>
 
 										<input
@@ -169,7 +182,13 @@
 										<button type="button" onclick={() => (currentStep = 'Name')} class={buttonStyle}
 											>Edit Name
 										</button>
-										<button type="submit" class={buttonStyle}>Choose Location</button>
+										<button
+											type="submit"
+											class={buttonStyle}
+											class:disabled={!color}
+											title={!color ? 'Choose a color first!' : ''}
+											disabled={!color}>Choose Location</button
+										>
 									</div>
 								</div>
 							{/if}
@@ -188,8 +207,8 @@
 		translate: none;
 	}
 	.selected {
-		border: solid 3px #000000;
-		transform: scale(130%);
+		box-shadow: inset 0px 0px 0px 4px #0000009e;
+		transform: scale(1.4);
 	}
 
 	input:focus {
