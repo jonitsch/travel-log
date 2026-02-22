@@ -203,21 +203,6 @@
 				<ErrorMessage {error}>Failed To Load Journey Data</ErrorMessage>
 			{/await}
 		{/if}
-
-		<!------------------------------------------------- CREATE JOURNEY MODE -------------------------------------------------->
-
-		{#if global.viewMode === 'createJourney'}
-			<button class="fixed z-9999 flex page-header-button flex-col gap-2 bg-gray-900" onclick={() => {
-				global.viewMode = 'overview';
-			}}
-				>Cancel</button
-			>
-			<button class="fixed z-9999 flex page-header-button flex-col gap-2 bg-gray-900" onclick={() => {
-				createJourneyModal?.handleSubmit();
-			}}
-				>Submit</button
-			>
-		{/if}
 	</MapLibre>
 </div>
 

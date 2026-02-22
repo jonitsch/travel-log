@@ -18,7 +18,10 @@
 	let name = $state(''),
 		lng = $state<number>(),
 		lat = $state<number>(),
-		color = $state<string>();
+		color = $state<string>(),
+		topBorderColor = $derived(color ? `border-t-${color} opacity-30` : 'border-t-slate-900');
+
+	$inspect(topBorderColor);
 
 	export async function toggle() {
 		isModalOpen = !isModalOpen;
@@ -60,8 +63,10 @@
 			});
 			close();
 		} else if (currentStep === 'Coordinates') {
-			console.log('sumbitted');
 			currentStep = 'Submit';
+			open();
+		} else if (currentStep === 'Submit') {
+			console.log('requestSubmit');
 			form?.requestSubmit();
 		}
 	}
@@ -77,10 +82,10 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default justify-center gap-5 bg-black/90 p-5"
+		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default items-center justify-center gap-5 bg-black/90 p-5"
 		onclick={() => close()}
 	>
-		<div id="modal" bind:this={modal} class="h-full w-fit" onclick={(e) => e.stopPropagation()}>
+		<div id="modal" bind:this={modal} class="h-fit w-fit" onclick={(e) => e.stopPropagation()}>
 			<form
 				bind:this={form}
 				onsubmit={(e) => {
@@ -91,7 +96,7 @@
 				method="POST"
 				class="flex h-full flex-col items-center"
 			>
-				<div class="flex h-full flex-col items-center justify-center p-8">
+				<div class="flex h-full flex-col items-center justify-center rounded-md p-8">
 					<div class="animate-slide-right w-full overflow-auto rounded-md px-6 py-4 text-white">
 						<!-- Modal body -->
 						<div class="mb-10 flex flex-col items-center">
@@ -108,9 +113,10 @@
 											maxlength={25}
 											autocomplete="off"
 											placeholder="Start with a name..."
-											class="field-sizing-content rounded-md border-b-4 border-b-black/40 bg-{color ??
-												'slate-900'}
-													px-3 py-2 text-center text-6xl text-white opacity-75"
+											class="field-sizing-content rounded-md border-b-4 border-b-black/80 {color
+												? `bg-${color}`
+												: 'bg-slate-900'}
+													px-3 py-2 text-center text-6xl text-white opacity-100"
 											oninput={(e) => {
 												const target = e.currentTarget as HTMLInputElement;
 												if (e.currentTarget.value.length > 0) {
@@ -120,10 +126,9 @@
 													target.style.width = 'auto';
 												}
 											}}
-											onsubmit={() => (currentStep = 'Color')}
 										/>
 										<div
-											class="border-t-[oklch(1 0 0 / 10%)] border-t-36 border-r-36 border-l-36
+											class="{topBorderColor} border-t-36 border-r-36 border-l-36
 													border-r-transparent border-l-transparent"
 										></div>
 									</div>
@@ -146,7 +151,7 @@
 												{name}
 											</div>
 											<div
-												class="border-t-[oklch(1 0 0 / 10%)] border-t-36 border-r-36 border-l-36
+												class="{topBorderColor} border-t-36 border-r-36 border-l-36
 													border-r-transparent border-l-transparent"
 											></div>
 										</div>
@@ -190,6 +195,17 @@
 											disabled={!color}>Choose Location</button
 										>
 									</div>
+								</div>
+							{:else if currentStep === 'Submit'}
+								<!-- Submit -->
+								<div class="flex flex-row gap-2">
+									<button
+										type="submit"
+										class={buttonStyle}
+										class:disabled={!color}
+										title={!color ? 'Choose a color first!' : ''}
+										disabled={!color}>Choose Location</button
+									>
 								</div>
 							{/if}
 						</div>

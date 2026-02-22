@@ -2,6 +2,16 @@
 #### This Web-Project is designed to document all of your Journeys in one place! 🌍
 
 ## Development
+
+### Recommended Extensions (VSCode)
+- [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
+- [Svelte for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
+- [Container Tools](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-containers)
+- [PostCSS Language Support](https://marketplace.visualstudio.com/items?itemName=csstools.postcss)
+- [Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
+- [Tailwind Docs](https://marketplace.visualstudio.com/items?itemName=austenc.tailwind-docs)
+- [vscode-icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
+
 ### Enviroment Variables
 | Variable | Description | Example (Generation) |
 | ----------- | ----------- | ----------- |
