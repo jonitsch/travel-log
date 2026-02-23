@@ -10,13 +10,13 @@
 
 <div class="flex size-full flex-col items-center bg-transparent">
 	<div
-		class="oxygen-bold mb-7 h-fit w-full text-center text-[28px] text-gray-300 sm:text-5xl md:text-6xl lg:text-7xl xl:text-7xl"
+		class="oxygen-bold h-fit w-full text-center text-[28px] text-gray-300 mb-2 sm:mb-4 lg:mb-7 sm:text-5xl md:text-6xl lg:text-7xl"
 	>
 		Welcome to Travel-Log!
 	</div>
 	<Button
 		variant="default"
-		class="h-fit w-fit bg-emerald-500 text-sm hover:-translate-y-1 hover:bg-emerald-400 sm:text-xl md:text-2xl lg:text-3xl xl:text-3xl"
+		class="h-fit w-fit bg-emerald-500 text-sm hover:-translate-y-1 hover:bg-emerald-400 sm:text-xl md:text-2xl lg:text-3xl"
 		href="/auth/login">Sign in to create your first Journey!</Button
 	>
 	<div class="size-full flex-1">
