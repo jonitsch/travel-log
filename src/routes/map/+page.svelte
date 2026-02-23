@@ -76,7 +76,7 @@
 
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<div class="flex h-screen flex-col w-[75dvw] animate-slide-right overflow-y-auto">
+		<div class="animate-slide-right flex h-screen w-[75dvw] flex-col overflow-y-auto">
 			<div class="min-h-0 flex-1">
 				<div
 					id="book"

@@ -3,7 +3,7 @@
 	import favicon from '$lib/assets/favicon.svg';
 	import { browser } from '$app/environment';
 	import { global } from '$lib/state.svelte';
-	import { switchToJourneyMode, switchToOverview } from '$src/lib/utils';
+	import { switchToJourney, switchToOverview } from '$src/lib/utils';
 	import type { PageData } from './$types';
 	import { type Snippet } from 'svelte';
 	import { authClient } from '$lib/auth-client';
@@ -69,7 +69,7 @@
                     id="headerText"
                     class="oxygen-bold animate-slide-left page-header-button bg-{global.journeyData
                         ?.color ?? 'bg-black'}/70 whitespace-nowrap truncate"
-                    onclick={() => switchToJourneyMode(journey?.journeyId ?? '')}
+                    onclick={() => switchToJourney(journey?.journeyId ?? '')}
                 >
                     {global.journeyData?.name}
                 </button>
