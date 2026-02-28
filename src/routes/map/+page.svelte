@@ -9,6 +9,7 @@
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$src/lib/utils';
 	import type { Journey } from '$gen/prisma/client/client';
+	import SVGIcon from '$src/lib/components/SVGIcon.svelte';
 
 	let { data }: PageProps = $props();
 	let journeys = $state<Journey[]>(data.journeys);
@@ -78,7 +79,7 @@
 
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<div class="flex h-screen flex-col w-[75dvw] animate-slide-right overflow-y-auto">
+		<div class="animate-slide-right flex h-full w-[75dvw] flex-col overflow-y-auto">
 			<div class="min-h-0 flex-1">
 				<div
 					id="book"
@@ -99,11 +100,11 @@
 								{#if previousDate != dayOf(date)}
 									<div
 										class={[
-											'col-span-full h-fit w-full rounded-md px-4 py-2 text-2xl text-white shadow-inner shadow-slate-400/60',
+											'col-span-full h-fit w-full rounded-md border-b-2 border-black/60 bg-gray-900/70 px-4 py-2',
 											{ 'mt-4': previousDate }
 										]}
 									>
-										{formattedDate(date, 'dd/mm/yyyy')}
+										<div class="text-2xl text-white">{formattedDate(date, 'dd/mm/yyyy')}</div>
 									</div>
 								{/if}
 								<div class="col-span-1">
@@ -116,7 +117,18 @@
 								<div hidden>{(previousDate = dayOf(date))}</div>
 							{/each}
 						{:else}
-							<div class="h-full w-full text-2xl text-white">No images yet</div>
+							<div
+								class="col-span-full h-fit w-full rounded-md border-b-2 border-black/60 bg-gray-900/70 px-4 py-2 text-2xl text-white"
+							>
+								No images yet!
+							</div>
+							<div
+								id="addImagePlaceholder"
+								class="flex items-center justify-center rounded-md bg-slate-800 col-span-full"
+								style="width: 1fr; height: 300px;"
+							>
+								<SVGIcon type="addImage" fill="white" scale={2.5} />
+							</div>
 						{/if}
 					{:else}
 						{@const error = new Error('Images failed to load - no image data received')}

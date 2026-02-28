@@ -78,7 +78,7 @@
     </div>
 
     <!-- Center: Welcome -->
-    {#if user}
+    {#if user && global.viewMode === 'overview'}
         <div class="flex flex-1 items-center justify-center" transition:fade={{duration: 150}}>
             <div class="text-center">Welcome, {user.name}!</div>
         </div>

@@ -101,7 +101,7 @@
 					position="top-right"
 					defaultStyling={true}
 				>
-					<HoverButton anchor="right" onclick={() => switchToOverview()} class="cursor-pointer">
+					<HoverButton anchor="left" onclick={() => switchToOverview()} class="cursor-pointer">
 						{#snippet content()}
 							<SVGIcon type="reset" fill="white" hoverScale={false} scale={1.25} />
 						{/snippet}
@@ -109,7 +109,7 @@
 							<div class="text-xl text-white" id="addJourneyText">Reset View</div>
 						{/snippet}
 					</HoverButton>
-					<HoverButton anchor="right" onclick={() => createJourneyModal?.toggle()}>
+					<HoverButton anchor="left" onclick={() => createJourneyModal?.toggle()}>
 						{#snippet content()}
 							<SVGIcon type="globePlus" fill="white" hoverScale={false} scale={1.25} />
 						{/snippet}

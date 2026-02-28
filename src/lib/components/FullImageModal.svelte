@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { getImgProxyURL } from '$lib/imgproxy';
-	import type { Image } from '$lib/server/prisma';
 	import { global } from '$lib/state.svelte';
 	import { slide } from 'svelte/transition';
 	import { awaitImageRender, formattedDate } from '../utils';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
+	import type { Image } from '$gen/prisma/client/client';
 
-	let modal = $state<HTMLButtonElement | undefined>();
+	let modal = $state<HTMLDivElement | undefined>();
 	let isModalOpen = $state<boolean>(false);
 	let imageLoaded = $state<boolean>(false);
 
@@ -93,54 +93,51 @@
 
 {#if isModalOpen && img}
 	{@const { width, height, path, id, fileName, createdOn } = img}
-	<button
-		type="button"
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
 		bind:this={modal}
-		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default flex-col items-center bg-black/80 gap-5"
+		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default flex-col items-center justify-between gap-5 bg-black/90 p-5"
 		onclick={() => close()}
 	>
-		<div id="fileNameDisplay" class="h-fit py-5 text-white">{img?.fileName}</div>
+		<div id="fileNameDisplay" class="h-fit text-white">{img?.fileName}</div>
 
-		<div class="flex w-full flex-1 items-start justify-center">
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<div
-				id="imgCon"
-				bind:this={imgCon}
-				class="relative rounded-lg shadow-xl animate-modal-in"
-				onclick={(e) => e.stopPropagation()}
-			>
-				{#await getImgProxyURL(path, width / 3, height / 3) then response}
-					<img
-						bind:this={imgElement}
-						id="fullpic-{id}"
-						src={response}
-						alt={fileName}
-						class="block h-auto max-h-[70dvh] max-w-[70dvw] object-contain"
-						class:opacity-0={!imageLoaded}
-						class:opacity-100={imageLoaded}
-						loading="eager"
-						onload={() => {
-							awaitImageRender(async () => {
-								await tick();
-								imageLoaded = true;
-								if (dateDisplay) dateDisplay.classList.remove('invisible');
-							});
-						}}
-					/>
-				{:catch error}
-					<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
-				{/await}
-				<div
-					bind:this={dateDisplay}
-					id="dateDisplay"
-					class="invisible min-w-fit rounded-b-md bg-gray-900 p-2 py-1 text-3xl text-white"
-				>
-					{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
-				</div>
-			</div>
+		<div
+			id="imgCon"
+			bind:this={imgCon}
+			class="animate-modal-in relative rounded-lg shadow-xl"
+			onclick={(e) => e.stopPropagation()}
+		>
+			{#await getImgProxyURL(path, width / 3, height / 3) then response}
+				<img
+					bind:this={imgElement}
+					id="fullpic-{id}"
+					src={response}
+					alt={fileName}
+					class="block h-auto max-h-[85dvh] max-w-[85dvw] min-w-[15dvw]"
+					class:opacity-0={!imageLoaded}
+					class:opacity-100={imageLoaded}
+					loading="eager"
+					onload={() => {
+						awaitImageRender(async () => {
+							await tick();
+							imageLoaded = true;
+							if (dateDisplay) dateDisplay.classList.remove('invisible');
+						});
+					}}
+				/>
+			{:catch error}
+				<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
+			{/await}
 		</div>
-	</button>
+		<div
+			bind:this={dateDisplay}
+			id="dateDisplay"
+			class="invisible min-w-fit text-2xl text-white"
+		>
+			{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
+		</div>
+	</div>
 {/if}
 
 <style>
