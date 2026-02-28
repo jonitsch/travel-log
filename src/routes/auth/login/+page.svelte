@@ -12,7 +12,7 @@
 
 	async function handleSignin() {
 		try {
-			const {error} = await authClient.signIn.email({ email, password });
+			const { error } = await authClient.signIn.email({ email, password });
 			if (error) errorMessage = error.message;
 			await invalidateAll();
 			goto('/map');
@@ -54,21 +54,16 @@
 							Forgot your password?
 						</a>
 					</div>
-					<Input
-						type="password"
-						name="password"
-						bind:value={password}
-						required
-					/>
+					<Input type="password" name="password" bind:value={password} required />
 				</div>
 			</div>
 		</Card.Content>
 		<Card.Footer class="flex-col gap-2">
 			<Button type="submit" class="w-full">Login</Button>
-			{#if errorMessage}<div class="text-red-600 text-sm">{errorMessage}</div>{/if}
+			{#if errorMessage}<div class="text-sm text-red-600">{errorMessage}</div>{/if}
 			<Button variant="link" class="w-full" href="/auth/register"
-				>Dont have an acccount? Create One!</Button
-			>
+				>Dont have an acccount? Create One!
+			</Button>
 		</Card.Footer>
 	</Card.Root>
 </form>

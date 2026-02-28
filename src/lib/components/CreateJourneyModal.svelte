@@ -1,20 +1,30 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
+	import { MapLibre } from 'svelte-maplibre';
+	import JourneyMarker from './JourneyMarker.svelte';
 
-	let isModalOpen = $state(false);
+	let modal = $state<HTMLDivElement>(),
+		form = $state<HTMLFormElement>(),
+		map = $state<maplibregl.Map>();
+
+	let isModalOpen = $state(false),
+		currentStep = $state<'Name' | 'Color' | 'Coordinates' | 'Submit'>('Name');
 
 	const twColors = ['red', 'yellow', 'emerald', 'blue', 'purple', 'pink'];
-	const inputStyle =
-		'text-gray-900 bg-white w-full rounded-md border border-gray-300 px-3 py-1 focus:border-blue-500 focus:outline-hidden focus:ring-2 focus:ring-blue-500';
-	const labelStyle = 'mb-1 block text-sm font-medium text-gray-200';
+	const buttonStyle =
+		'rounded-md border-b-4 border-b-gray-700 bg-gray-900 p-5 sm:text-4xl transition hover:-translate-y-1';
 
 	let selectedColorElement = $state<HTMLButtonElement>(),
+		nameInput = $state<HTMLInputElement>(),
 		colorInput = $state<HTMLInputElement>();
 
 	let name = $state(''),
 		lng = $state<number>(),
 		lat = $state<number>(),
-		color = $state<string>();
+		color = $state<string>(),
+		topBorderColor = $derived(
+			color ? `border-t-${color} opacity-30` : 'border-t-slate-900 opacity-80'
+		);
 
 	export async function toggle() {
 		isModalOpen = !isModalOpen;
@@ -27,146 +37,234 @@
 		}
 	}
 
+	export async function close() {
+		isModalOpen = false;
+	}
+	export function reset() {
+		name = '';
+		lng = undefined;
+		lat = undefined;
+		color = undefined;
+	}
+
 	$effect(() => {
 		color;
 		setPreviewColor();
 	});
+
+	export function handleSubmit() {
+		console.log('handleSubmit');
+		if (currentStep === 'Name') {
+			currentStep = 'Color';
+		} else if (currentStep === 'Color') {
+			currentStep = 'Coordinates';
+		} else if (currentStep === 'Coordinates') {
+			currentStep = 'Submit';
+		}
+	}
+
+	$effect(() => {
+		// focus nameInput whenever its rendered on screen
+		if (nameInput) nameInput.focus();
+	});
 </script>
 
 {#if isModalOpen && global.viewMode === 'overview'}
-	<!-- Modal container -->
+	<!-- Modal Backdrop -->
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="animate-slide-right w-full max-w-sm overflow-auto rounded-md bg-gray-900 px-6 py-4 text-white"
+		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default items-center justify-center gap-5 bg-black/90 p-5"
+		onclick={() => close()}
 	>
-		<div class="mb-4 flex flex-row">
-			<!-- Modal header -->
-			<h2 class="flex-1 text-xl font-semibold">Create new Journey</h2>
-			<!-- Close button -->
-			<button
-				class="text-xl text-gray-400 hover:text-gray-600"
-				aria-label="Close"
-				onclick={() => (isModalOpen = false)}
+		<div id="modal" bind:this={modal} class="h-fit w-fit" onclick={(e) => e.stopPropagation()}>
+			<div
+				onsubmit={(e) => {
+					if (currentStep !== 'Submit') {
+						e.preventDefault();
+						handleSubmit();
+					}
+				}}
+				class="flex h-full flex-col items-center"
 			>
-				✕
-			</button>
+				<div class="flex h-full flex-col items-center justify-center rounded-md p-8">
+					<div class="animate-slide-right w-full overflow-auto rounded-md px-6 py-4 text-white">
+						<!-- Modal body -->
+						<div class="mb-10 flex flex-col items-center">
+							{#if currentStep === 'Name'}
+								<!-- Name -->
+								<div class="flex flex-col items-center gap-30">
+									<div class="flex flex-col items-center">
+										<input
+											bind:this={nameInput}
+											bind:value={name}
+											required
+											type="text"
+											maxlength={25}
+											autocomplete="off"
+											placeholder="Start with a name..."
+											class="field-sizing-content rounded-md border-b-4 border-b-black/80 {color
+												? `bg-${color}`
+												: 'bg-slate-900'}
+													px-3 py-2 text-center text-6xl text-white opacity-100"
+											oninput={(e) => {
+												const target = e.currentTarget as HTMLInputElement;
+												if (e.currentTarget.value.length > 0) {
+													target.style.width = '0px';
+													target.style.width = `${Math.max(target.scrollWidth, 130)}px`;
+												} else {
+													target.style.width = 'auto';
+												}
+											}}
+											onkeydown={(e) => {
+												if (e.key === 'Enter') handleSubmit();
+											}}
+										/>
+										<div
+											class="{topBorderColor} border-t-36 border-r-36 border-l-36
+													border-r-transparent border-l-transparent"
+										></div>
+									</div>
+									<button
+										type="button"
+										onclick={() => handleSubmit()}
+										class={buttonStyle}
+										class:disabled={name.length === 0}
+										disabled={name.length === 0}>Confirm</button
+									>
+								</div>
+							{:else if currentStep === 'Color'}
+								<!-- Color -->
+								<div class="flex flex-col items-center gap-10">
+									<div class="flex flex-col items-center gap-5">
+										<div class="flex flex-col items-center">
+											<div
+												class="w-fit rounded-md border-b-4 border-b-black/40 bg-{color ??
+													'slate-900'} px-3 py-2 text-center text-6xl text-white opacity-75"
+											>
+												{name}
+											</div>
+											<div
+												class="{topBorderColor} border-t-36 border-r-36 border-l-36
+													border-r-transparent border-l-transparent"
+											></div>
+										</div>
+									</div>
+									<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
+										{#each twColors as twColor}
+											{#each { length: 5 } as el, i}
+												{@const currentColor = `${twColor}-${900 - i * 100}`}
+												<button
+													id={currentColor}
+													class="bg-{currentColor} size-12 rounded-full transition duration-100 ease-in-out hover:scale-[120%]"
+													aria-label="Select color {currentColor}"
+													class:selected={currentColor === color}
+													onclick={(e) => {
+														color = currentColor;
+													}}
+													type="button"
+													title={currentColor}
+												></button>
+											{/each}
+										{/each}
+									</div>
+									<div class="flex flex-row gap-2">
+										<button type="button" onclick={() => (currentStep = 'Name')} class={buttonStyle}
+											>Edit Name
+										</button>
+										<button
+											type="button"
+											onclick={() => handleSubmit()}
+											class={buttonStyle}
+											class:disabled={!color}
+											title={!color ? 'Choose a color first!' : ''}
+											disabled={!color}
+										>
+											Choose Location
+										</button>
+									</div>
+								</div>
+							{:else if currentStep === 'Coordinates'}
+								<!-- Submit -->
+								<div class="flex max-h-[80dvh] w-[70dvw] flex-col items-center gap-2">
+									<input name="lng" bind:value={lng} type="hidden" />
+									<input name="lng" bind:value={lat} type="hidden" />
+									<MapLibre
+										bind:map
+										style="https://tiles.openfreemap.org/styles/liberty"
+										class="map-canvas aspect-9/16 size-full rounded-md"
+										onclick={(e) => {
+											if (!map) throw Error('Click on CreateJourneyModal-Map: Map not defined!');
+											lng = e.lngLat.lng;
+											lat = e.lngLat.lat;
+										}}
+										center={[0,30]}
+									>
+										{#if lng && lat && color}
+											<JourneyMarker lngLat={[lng, lat]} popupText={name} {color} open />
+										{/if}
+									</MapLibre>
+									<div class="flex w-full justify-between gap-2 whitespace-nowrap">
+										<button
+											type="button"
+											onclick={() => (currentStep = 'Color')}
+											class="{buttonStyle} flex-1"
+										>
+											Change Color
+										</button>
+										<button
+											type="button"
+											onclick={() => handleSubmit()}
+											class="{buttonStyle} flex-1"
+											class:disabled={!lng || !lat}
+											title={!color ? 'Choose a color first!' : ''}
+											disabled={!color}>Submit</button
+										>
+									</div>
+								</div>
+							{:else if currentStep === 'Submit'}
+								<form
+									bind:this={form}
+									action="?/addJourney"
+									method="POST"
+									class="flex h-full flex-col items-center"
+								>
+									<input name="name" value={name} type="hidden" />
+									<input name="color" value={color} type="hidden" />
+									<input name="lng" value={lng} type="hidden" />
+									<input name="lat" value={lat} type="hidden" />
+									<button
+										type="submit"
+										class="{buttonStyle} flex-1"
+										class:disabled={!name || !color || !lng || !lat}
+										disabled={!color}>Submit</button
+									>
+								</form>
+							{/if}
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
-
-		<!-- Modal body -->
-		<form class="space-y-4" method="POST" action="?/addJourney">
-			<!-- Name -->
-			<div>
-				<label for="name" class={labelStyle}> Name </label>
-				<input
-					bind:value={name}
-					required
-					name="name"
-					type="text"
-					placeholder="Enter location name"
-					class={inputStyle}
-				/>
-			</div>
-
-			<!-- Longitude -->
-			<div>
-				<label for="lng" class={labelStyle}> Longitude </label>
-				<input
-					bind:value={lng}
-					required
-					name="lng"
-					type="number"
-					step={0.01}
-					min={-180}
-					max={180}
-					placeholder="e.g. 120.9822"
-					class={inputStyle}
-					oninput={(e) => {
-						const target = e.currentTarget;
-						const val: number = target.valueAsNumber;
-						if (val.toString() === 'NaN') target.setCustomValidity('Please enter a valid number!');
-						if (val > 180 || val < -180)
-							target.setCustomValidity('The longitude needs to be between 0-180!');
-						else target.setCustomValidity('');
-						target.reportValidity();
-					}}
-				/>
-			</div>
-
-			<!-- Latitude -->
-			<div>
-				<label for="lat" class={labelStyle}> Latitude </label>
-				<input
-					bind:value={lat}
-					required
-					name="lat"
-					type="number"
-					step={0.01}
-					min={-90}
-					max={90}
-					placeholder="e.g. 14.6042"
-					class={inputStyle}
-				/>
-			</div>
-
-			<!-- Color -->
-			<div>
-				<label for="color" class={labelStyle}> Color </label>
-				<input
-					bind:value={color}
-					bind:this={colorInput}
-					name="color"
-					placeholder="Select a color"
-					type="text"
-					readonly
-					required
-					class="pointer-events-none w-full rounded-md border border-gray-300 bg-{color ?? 'gray-200'} px-3 py-1 text-gray-900"
-					onload={() => setPreviewColor()}
-				/>
-			</div>
-			<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
-				{#each twColors as twColor}
-					{#each { length: 5 } as el, i}
-						{@const currentColor = `${twColor}-${900 - i * 100}`}
-						<button
-							id={currentColor}
-							class="bg-{currentColor} size-8 cursor-pointer rounded-full transition duration-100 ease-in-out hover:scale-[120%]"
-							aria-label="Select color {currentColor}"
-							onclick={(e) => {
-								if (selectedColorElement) selectedColorElement.classList.remove('selected');
-								selectedColorElement = e.currentTarget;
-								console.log(selectedColorElement.style.background);
-								selectedColorElement.classList.add('selected');
-								color = currentColor;
-							}}
-							type="button"
-							title={currentColor}
-						></button>
-					{/each}
-				{/each}
-			</div>
-
-			<!-- Modal footer -->
-			<div class="flex justify-end space-x-3">
-				<button
-					class="rounded-sm bg-gray-100 px-4 py-2 text-gray-900 hover:bg-gray-200"
-					onclick={() => (isModalOpen = false)}
-					type="reset"
-				>
-					Cancel
-				</button>
-				<button class="rounded-sm bg-blue-600 px-4 py-2 text-white hover:bg-blue-700" type="submit">
-					Confirm
-				</button>
-			</div>
-		</form>
 	</div>
 {/if}
 
 <style>
-	input:invalid {
-		border: red 2px solid;
+	.disabled {
+		filter: grayscale(90%);
+		color: rgb(87, 87, 87);
+		translate: none;
 	}
 	.selected {
-		border: solid 3px #000000;
-		transform: scale(130%);
+		box-shadow: inset 0px 0px 0px 4px #0000009e;
+		transform: scale(1.4);
+	}
+
+	input:focus {
+		outline: none !important;
+		box-shadow: none !important; /* emerald focus ring */
+	}
+	input:focus-visible {
+		outline: none !important;
 	}
 </style>

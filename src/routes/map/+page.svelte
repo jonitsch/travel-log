@@ -5,7 +5,6 @@
 	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$src/lib/imgproxy';
 	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
-	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
 	import ImageCard from '$src/lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$src/lib/utils';
 	import type { Journey } from '$gen/prisma/client/client';
@@ -13,7 +12,6 @@
 
 	let { data }: PageProps = $props();
 	let journeys = $state<Journey[]>(data.journeys);
-	let createJourneyModal = $state<CreateJourneyModal>();
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
 	let fullImageModal = $state<FullImageModal>();
@@ -27,13 +25,13 @@
 
 <div class="flex size-full flex-row gap-4 overflow-hidden">
 	<div
-		class="items-top flex flex-col gap-4 {global.viewMode === 'overview'
+		class="items-top flex flex-col gap-4 {!(global.viewMode === 'journey')
 			? 'size-full'
 			: 'h-full w-[40dvw]'}"
 	>
 		<!------------------- MAP CONTAINER --------------------->
 		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:journeys bind:createJourneyModal />
+			<Map bind:map={map!} bind:mapContainer bind:journeys />
 		</div>
 
 		<!------------------- JOURNEY HEADER --------------------->
@@ -139,6 +137,4 @@
 			</div>
 		</div>
 	{/if}
-	<!------------------- CREATE JOURNEY MODAL --------------------->
-	<CreateJourneyModal bind:this={createJourneyModal} />
 </div>

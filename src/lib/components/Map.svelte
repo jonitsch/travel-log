@@ -1,41 +1,32 @@
 <script lang="ts">
-	import { MapLibre, Marker, GeoJSON, LineLayer, Control, ControlButton } from 'svelte-maplibre';
+	import { MapLibre, Marker, GeoJSON, LineLayer, Control } from 'svelte-maplibre';
+	import maplibregl from 'maplibre-gl';
 	import { innerWidth } from 'svelte/reactivity/window';
-	import CreateJourneyModal from './CreateJourneyModal.svelte';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
-	import maplibregl from 'maplibre-gl';
+	import { calcInitZoom, defaultMapCenter, switchToJourney, switchToOverview } from '$lib/utils';
+	import SVGIcon from './SVGIcon.svelte';
+	import type { Journey } from '$gen/prisma/client/client';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
-	import {
-		calculateInitialZoom,
-		defaultMapCenter,
-		switchToJourneyMode,
-		switchToOverview
-	} from '$src/lib/utils';
-	import SVGIcon from './SVGIcon.svelte';
 	import ImageMarker from './ImageMarker.svelte';
 	import HoverButton from './HoverButton.svelte';
-	import type { Journey } from '$gen/prisma/client/client';
+	import CreateJourneyModal from './CreateJourneyModal.svelte';
 
 	interface Props {
 		mapContainer: HTMLDivElement;
 		journeys: Journey[];
 		map: maplibregl.Map;
-		createJourneyModal: CreateJourneyModal | undefined;
 	}
-	let {
-		map = $bindable(),
-		mapContainer = $bindable(),
-		journeys = $bindable(),
-		createJourneyModal = $bindable()
-	}: Props = $props();
+	let { map = $bindable(), mapContainer = $bindable(), journeys = $bindable() }: Props = $props();
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		center = $state<maplibregl.LngLatLike | undefined>(defaultMapCenter);
 
-	let initialZoom = calculateInitialZoom(innerWidth.current ?? 0);
-	let zoom = $state<number>(initialZoom);
+	let initialZoom = calcInitZoom(innerWidth.current ?? 0),
+		zoom = $state<number>(initialZoom);
+
+	let createJourneyModal = $state<CreateJourneyModal>();
 
 	let attributionControl = $state<maplibregl.AttributionControl>(
 		new maplibregl.AttributionControl({
@@ -43,8 +34,9 @@
 		})
 	);
 	function setAttributionControl(viewMode: ViewMode) {
-		if (viewMode === 'overview') {
+		if (viewMode === 'overview' || viewMode === 'createJourney') {
 			attributionControl._container.classList.add('maplibregl-compact-show');
+			attributionControl._container.setAttribute('open', 'true');
 		} else if (viewMode === 'journey') {
 			attributionControl._container.setAttribute('open', '');
 			attributionControl._container.classList.remove('maplibregl-compact-show');
@@ -135,10 +127,6 @@
 						}}
 						open={true}
 					/>
-					<Marker
-						lngLat={[journey.lng, journey.lat]}
-						class={`size-3 place-items-center rounded-full bg-${journey.color}`}
-					/>
 				{/each}
 			{/if}
 		{/if}
@@ -146,7 +134,7 @@
 		<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->
 
 		{#if global.viewMode === 'journey' && global.journeyId}
-			{#await switchToJourneyMode(global.journeyId)}
+			{#await switchToJourney(global.journeyId)}
 				<div hidden>{(global.loadingJourney = true)}</div>
 				<div class="text-white">Loading Journey Data...</div>
 			{:then res}
@@ -208,6 +196,9 @@
 		{/if}
 	</MapLibre>
 </div>
+
+<!------------------- CREATE JOURNEY MODAL --------------------->
+<CreateJourneyModal bind:this={createJourneyModal} />
 
 <style>
 	:global(.maplibregl-popup-content) {
