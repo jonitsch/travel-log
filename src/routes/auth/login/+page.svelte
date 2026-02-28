@@ -32,8 +32,8 @@
 >
 	<Card.Root class="-my-4 w-full max-w-sm">
 		<Card.Header>
-			<Card.Title>Create a new Account</Card.Title>
-			<Card.Description>Enter your name, email and password to create an account!</Card.Description>
+			<Card.Title>Login</Card.Title>
+			<Card.Description>Enter your email and password to login to your account!</Card.Description>
 		</Card.Header>
 		<Card.Content>
 			<div class="flex flex-col gap-6">
