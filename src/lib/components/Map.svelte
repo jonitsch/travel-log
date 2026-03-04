@@ -11,7 +11,7 @@
 	import JourneyMarker from './JourneyMarker.svelte';
 	import ImageMarker from './ImageMarker.svelte';
 	import HoverButton from './HoverButton.svelte';
-	import CreateJourneyModal from './CreateJourneyModal.svelte';
+	import CreateJourneyModal from './modal/CreateJourneyModal.svelte';
 
 	interface Props {
 		mapContainer: HTMLDivElement;

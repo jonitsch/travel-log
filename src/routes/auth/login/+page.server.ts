@@ -4,7 +4,6 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import { auth } from '$lib/server/auth';
-import { prisma } from '$lib/server/prisma';
 
 const schema = z.object({
 	email: z.string(),
@@ -28,10 +27,10 @@ export const actions = {
 			await auth.api.signInEmail({
 				body: {
 					email,
-					password
+					password,
 				},
 				headers: request.headers,
-				method: 'POST'
+				method: 'POST',
 			});
 		} catch (err: any) {
 			if (err?.body?.code === 'INVALID_EMAIL_OR_PASSWORD') {

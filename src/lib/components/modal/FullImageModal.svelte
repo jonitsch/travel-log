@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { getImgProxyURL } from '$lib/imgproxy';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, formattedDate } from '../utils/client';
+	import { awaitImageRender, formattedDate } from '../../utils/client';
 	import { tick } from 'svelte';
-	import ErrorMessage from './ErrorMessage.svelte';
+	import ErrorMessage from '../ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
 	import Modal from './Modal.svelte';
 
@@ -101,7 +101,6 @@
 				id="imgCon"
 				bind:this={imgCon}
 				class="animate-modal-in relative rounded-lg shadow-xl"
-				onclick={(e) => e.stopPropagation()}
 			>
 				{#await getImgProxyURL(path, width / 3, height / 3) then response}
 					{#if !imgLoaded}
@@ -112,7 +111,7 @@
 						id="fullpic-{id}"
 						src={response}
 						alt={fileName}
-						class="block h-auto max-h-[85dvh] max-w-[85dvw] min-w-[15dvw] animate-modal-in"
+						class="block h-[75dvh] max-w-[85dvw] min-w-[15dvw] animate-modal-in"
 						class:opacity-0={!imgLoaded}
 						class:opacity-100={imgLoaded}
 						loading="eager"

@@ -7,11 +7,20 @@ import type { Journey } from '$gen/prisma/client/client';
 import { dev } from '$app/environment';
 import { existsSync, writeFileSync } from 'fs';
 import { getImageData, type imgCreateBody } from '$lib/utils/server';
+import z from 'zod';
+import { superValidate } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+
+const addImageSchema = z.object({
+    journeyId: z.string(),
+    files: z.file(),
+});
 
 export const load: PageServerLoad = async ({ locals }) => {
     const user = locals.user;
     if (!user) {
-        throw redirect(303, '/auth/login');}
+        throw redirect(303, '/auth/login');
+    }
     const journeys: Journey[] = await prisma.journey.findMany({
         include: {
             marker: true,
@@ -69,7 +78,7 @@ export const actions = {
         try {
             const user = locals.user;
             if (!user) throw redirect(303, '/auth/login');
-            
+
             const data = await request.formData();
             const journeyId: string = `${data.get('journeyId')}`;
             const imageFolder: string = env.IMAGE_FOLDER_PATH + journeyId;
@@ -92,6 +101,8 @@ export const actions = {
         }
     },
     addImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(addImageSchema));
+        console.log(form);
         try {
             const data = await request.formData();
             const journeyId = `${data.get('journeyId')}`;
@@ -99,19 +110,25 @@ export const actions = {
 
             let path = env.IMAGE_FOLDER_PATH + journeyId + '/';
             console.log(`Attempting to add Images at ${path}`)
-            if(!existsSync(path)) throw Error('404: Image Directory not found!');
+            if (!existsSync(path)) {
+                fs.mkdir(path);
+                console.warn(`Image Folder did not exist at addImage action call and was has now been created!`);
+            }
 
             for (const file of files) {
                 const id = crypto.randomUUID();
-                writeFileSync(path + id, Buffer.from(await file.arrayBuffer()));
-                let imgData = await getImageData(file.name, path + id, journeyId);
-                await prisma.image.create({data: {
-                    id: id,
-                    ...imgData,
-                }});
+                const imgPath = path + id;
+                writeFileSync(imgPath, Buffer.from(await file.arrayBuffer()));
+                let imgData = await getImageData(file.name, imgPath, journeyId);
+                await prisma.image.create({
+                    data: {
+                        id: id,
+                        ...imgData,
+                    }
+                });
             }
-            console.log('Images added successfully!', files);
-        } catch(err) {
+            console.log('Images added successfully!', files.map((f) => f.name));
+        } catch (err) {
             throw err;
         }
     }

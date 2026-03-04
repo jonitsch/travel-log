@@ -1,5 +1,5 @@
 <script lang="ts">
-	import FullImageModal from './FullImageModal.svelte';
+	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
 	import { awaitImageRender, handleShowOnMapClick } from '../utils/client';

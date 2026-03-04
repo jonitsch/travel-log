@@ -1,9 +1,18 @@
 import { prisma } from '$lib/server/prisma.js';
 import type { JourneyData } from '$lib/state.svelte.js';
-import { json } from '@sveltejs/kit';
+import { error, json, redirect } from '@sveltejs/kit';
 
-export async function GET(journeyId) {
-  let journeyIdString = journeyId.url.search.split('=')[1]
+export async function GET({ url, locals }) {
+  const user = locals.user;
+  if (!user) {
+    throw redirect(302, '/auth/login');
+  }
+
+  const journeyId = url.searchParams.get('journeyId');
+  if (!journeyId) {
+    throw error(400, 'Missing journeyId');
+  }
+
   const journey: JourneyData =
     await prisma.journey.findUnique({
       include: {
@@ -11,7 +20,7 @@ export async function GET(journeyId) {
         image: true,
       },
       where: {
-        journeyId: journeyIdString
+        journeyId: journeyId
       }
     })
   return json(journey);
