@@ -2,25 +2,32 @@
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
 	import { global } from '$lib/state.svelte';
-	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
-	import { getImgProxyURL } from '$src/lib/imgproxy';
-	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
-	import ImageCard from '$src/lib/components/ImageCard.svelte';
-	import { formattedDate, timeRange } from '$src/lib/utils';
+	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
+	import { getImgProxyURL } from '$lib/imgproxy';
+	import FullImageModal from '$lib/components/FullImageModal.svelte';
+	import ImageCard from '$lib/components/ImageCard.svelte';
+	import { formattedDate, timeRange } from '$lib/utils/client';
 	import type { Journey } from '$gen/prisma/client/client';
-	import SVGIcon from '$src/lib/components/SVGIcon.svelte';
+	import SVGIcon from '$lib/components/SVGIcon.svelte';
+	import Input from '$lib/components/shadcn/input/input.svelte';
+	import AddImageModal from '$lib/components/AddImageModal.svelte';
+	import { Button } from '$lib/components/shadcn/button';
 
 	let { data }: PageProps = $props();
 	let journeys = $state<Journey[]>(data.journeys);
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
-	let fullImageModal = $state<FullImageModal>();
+
+	let fullImageModal = $state<FullImageModal>(),
+		addImageModal = $state<AddImageModal>();
+
 	let book = $state<HTMLDivElement>();
 	// svelte-ignore non_reactive_update
 	let previousDate: string | null = null;
 	let dayOf = (date: Date) => {
 		return date.toISOString().slice(0, 10);
 	}; // DD//MM//YYYY
+	let imgInputFiles = $state<FileList>();
 </script>
 
 <div class="flex size-full flex-row gap-4 overflow-hidden">
@@ -49,15 +56,6 @@
 						<text class="oxygen-bold text-5xl text-white">
 							{journey.name ?? 'Loading Name'}
 						</text>
-						<!-- 						<form method="POST" action="?/deleteJourney" class="mr-0">
-							<button
-								class="oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50 shadow-xl bg-gray-900"
-								aria-label="Delete Journey"
-								name="journeyId"
-								value={journey.journeyId}
-								type="submit">Delete</button
-							>
-						</form> -->
 					</div>
 					<!-------------------    INFO BOX     --------------------->
 					<div
@@ -120,19 +118,39 @@
 							>
 								No images yet!
 							</div>
-							<div
-								id="addImagePlaceholder"
-								class="flex items-center justify-center rounded-md bg-slate-800 col-span-full"
-								style="width: 1fr; height: 300px;"
+							<form
+								id="addImageForm"
+								action="?/addImage"
+								method="POST"
+								enctype="multipart/form-data"
+								class="col-span-full flex h-75 flex-col items-center justify-center gap-5 rounded-md bg-slate-800 text-2xl"
 							>
-								<SVGIcon type="addImage" fill="white" scale={2.5} />
-							</div>
+								<div class="flex flex-row items-center gap-1">
+									Add your first images!
+									<SVGIcon type="addImage" fill="white" scale={1.5} hoverScale={false} />
+								</div>
+								<div class="flex flex-row gap-2">
+									<Input
+										name="files"
+										type="file"
+										class="w-sm cursor-pointer hover:ring-2 hover:ring-white"
+										bind:files={imgInputFiles}
+										accept="image/*"
+										multiple
+									/>
+									<Button type="submit" class="bg-green-600" disabled={!imgInputFiles?.length}
+										>Upload</Button
+									>
+								</div>
+								<input type="hidden" value={journey.journeyId} name="journeyId" />
+							</form>
 						{/if}
 					{:else}
 						{@const error = new Error('Images failed to load - no image data received')}
 						<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
 					{/if}
 					<FullImageModal bind:this={fullImageModal} />
+					<AddImageModal bind:this={addImageModal} />
 				</div>
 			</div>
 		</div>

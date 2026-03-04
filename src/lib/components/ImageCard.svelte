@@ -1,53 +1,26 @@
 <script lang="ts">
-	import type { Image } from '../server/prisma';
 	import FullImageModal from './FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, getBBox } from '../utils';
+	import { awaitImageRender, handleShowOnMapClick } from '../utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
+	import type { Image } from '$gen/prisma/client/client';
 
 	interface Props {
 		img: Image;
 		src: string;
-		fullImageModal: FullImageModal | undefined;
+		fullImageModal?: FullImageModal | undefined;
 	}
 	let { img, src, fullImageModal }: Props = $props();
 
 	let imageLoaded = $state<boolean>(false),
 		imageError = $state<boolean>(false);
-	let journey = global.journeyData;
 
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
 		imgSelected = $derived<boolean>(img.id === global.selectedImageId);
 
 	let hovered = $state<boolean>(false);
-
-	function handleShowOnMapClick() {
-		if (!global.map || !img.lng || !img.lat) return;
-		const map = global.map;
-		if (
-			imgSelected &&
-			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-			map.getZoom() === 15
-		) {
-			const bbox = getBBox(journey!);
-			if (!bbox) return;
-			map.fitBounds(bbox, {
-				padding: {
-					top: 90,
-					bottom: 90,
-					left: 90,
-					right: 90
-				},
-				duration: 1500
-			});
-			global.selectedImageId = null;
-		} else {
-			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-			global.selectedImageId = img.id;
-		}
-	}
 </script>
 
 <div
@@ -66,7 +39,7 @@
 			<div class="text-white">{img.fileName}</div>
 			<div class="flex flex-1 items-center">
 				<ErrorMessage>
-					<div class="flex flex-col items-center justify-center wrap-break-word text-center">
+					<div class="flex flex-col items-center justify-center text-center wrap-break-word">
 						Image failed to load!
 						<SVGIcon type="imageError" fill="white" scale={2.5} />
 					</div>
@@ -95,14 +68,14 @@
 					<button
 						id="viewFullImageButton-{img.id}"
 						title="View Full Image"
-						onclick={() => fullImageModal?.open(img)}
+						onclick={() => fullImageModal?.openModal(img)}
 					>
 						<SVGIcon type="fullscreen" />
 					</button>
 					<button
 						id="showOnMapButton-{img.id}"
-						title={imgHasCoordinates ? "Show on map" : "Image has no coordinate data"}
-						onclick={() => handleShowOnMapClick()}
+						title={imgHasCoordinates ? 'Show on map' : 'Image has no coordinate data'}
+						onclick={() => handleShowOnMapClick(img)}
 						disabled={!imgHasCoordinates}
 					>
 						<SVGIcon

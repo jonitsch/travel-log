@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Marker, Popup } from 'svelte-maplibre';
 	import { type LngLatLike } from 'maplibre-gl';
-	import { buildGeoJSON } from '../utils';
+	import { buildGeoJSON } from '../utils/client';
 
 	type Props = {
 		lngLat: LngLatLike;
@@ -30,7 +30,7 @@
 			{open}
 		>
 			<button
-				class={`items-center rounded-md px-3 py-px opacity-95 bg-${color} border-b-2 border-b-black/30 transition duration-200 hover:scale-105`}
+				class={`items-center rounded-md px-3 py-px opacity-95 bg-${color} border-b-3 border-b-black/30 transition duration-200 hover:scale-105`}
 				onclick={() => onclick()}
 			>
 				<text class="oxygen-regular text-sm text-white">

@@ -3,17 +3,9 @@ import { twMerge } from 'tailwind-merge';
 import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData } from '$lib/state.svelte';
+import type { Image } from '$gen/prisma/client/client';
 
 export const defaultMapCenter: LngLatLike = [13.388, 52.517];
-
-export function calcInitZoom(width: number): number {
-	let zoom = width * 0.002;
-	const MIN_ZOOM = 0.6;
-	const MAX_ZOOM = 1.2;
-
-	zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
-	return zoom;
-}
 
 export function switchToOverview(): void {
 	const map = global.map;
@@ -165,6 +157,36 @@ export function getBBox(journey: JourneyData): LngLatBoundsLike | null {
 		return bbox;
 	}
 	return null;
+}
+
+export function calcInitZoom(width: number): number {
+	let zoom = width * 0.002;
+	const MIN_ZOOM = 0.6;
+	const MAX_ZOOM = 1.2;
+
+	zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+	return zoom;
+}
+export function handleShowOnMapClick(img: Image) {
+	if (!global.map || !img.lng || !img.lat) return;
+	const map = global.map;
+	const imgSelected = img.id === global.selectedImageId;
+	if (
+		imgSelected &&
+		map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
+		map.getZoom() === 15
+	) {
+		const bbox = getBBox(global.journeyData);
+		if (!bbox) return;
+		map.fitBounds(bbox, {
+			padding: 90,
+			duration: 1000,
+		});
+		global.selectedImageId = null;
+	} else {
+		map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
+		global.selectedImageId = img.id;
+	}
 }
 
 /**

@@ -1,5 +1,5 @@
 import type { Image } from '$gen/prisma/client/client';
-import { prisma } from '$src/lib/server/prisma';
+import { prisma } from '$lib/server/prisma';
 import { json } from '@sveltejs/kit';
 
 export async function GET(journeyId) {

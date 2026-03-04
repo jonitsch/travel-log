@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types';
 import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
-import { auth } from '$src/lib/server/auth';
+import { auth } from '$lib/server/auth';
 import { prisma } from '$lib/server/prisma';
 
 const schema = z.object({

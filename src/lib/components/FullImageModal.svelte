@@ -1,21 +1,20 @@
 <script lang="ts">
 	import { getImgProxyURL } from '$lib/imgproxy';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, formattedDate } from '../utils';
+	import { awaitImageRender, formattedDate } from '../utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
+	import Modal from './Modal.svelte';
 
-	let modal = $state<HTMLDivElement | undefined>();
-	let isModalOpen = $state<boolean>(false);
-	let imageLoaded = $state<boolean>(false);
+	let open = $state(false);
+	let imgLoaded = $state(false);
 
 	let img = $state<Image | undefined>(),
 		imgCon = $state<HTMLDivElement | undefined>(),
 		imgElement = $state<HTMLImageElement | undefined>();
 
 	let dateDisplay = $state<HTMLDivElement | undefined>();
-	let skeletonImg = $state<HTMLDivElement | undefined>();
 
 	function getImageIndex(): number {
 		let index: number = -1;
@@ -39,32 +38,31 @@
 			if (!img) throw new Error('Image is undefined!');
 		}
 		if (index + crement >= 0 && index + crement <= images.length - 1) {
-			document.getElementById(`fullpic-${img.id}`)?.remove();
-			open(images[index + crement]);
+			openModal(images[index + crement]);
 		}
 	}
 
-	export async function open(image: Image) {
+	export async function openModal(image: Image) {
 		reset();
-		isModalOpen = true;
+		open = true;
 		img = image;
 	}
-	export async function close() {
+	export async function closeModal() {
 		reset();
-		isModalOpen = false;
+		open = false;
 	}
 	function reset() {
 		imgCon = undefined;
 		imgElement = undefined;
-		imageLoaded = false;
+		imgLoaded = false;
 		img = undefined;
 		if (dateDisplay) dateDisplay.classList.add('invisible');
 	}
 
 	$effect(() => {
-		if (!isModalOpen) return;
+		if (!open) return;
 		function handleKey(e: KeyboardEvent) {
-			if (img && imageLoaded) {
+			if (img && imgLoaded) {
 				switch (e.key) {
 					case 'ArrowRight':
 						e.preventDefault();
@@ -76,7 +74,7 @@
 						break;
 					case 'Escape':
 						e.preventDefault();
-						close();
+						closeModal();
 						break;
 					case 'ArrowDown':
 						e.preventDefault();
@@ -90,51 +88,54 @@
 	});
 </script>
 
-{#if isModalOpen && img}
-	{@const { width, height, path, id, fileName, createdOn } = img}
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div
-		bind:this={modal}
-		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default flex-col items-center justify-between gap-5 bg-black/90 p-5"
-		onclick={() => close()}
-	>
-		<div id="fileNameDisplay" class="h-fit text-white">{img?.fileName}</div>
-
-		<div
-			id="imgCon"
-			bind:this={imgCon}
-			class="animate-modal-in relative rounded-lg shadow-xl"
-			onclick={(e) => e.stopPropagation()}
-		>
-			{#await getImgProxyURL(path, width / 3, height / 3) then response}
-				<img
-					bind:this={imgElement}
-					id="fullpic-{id}"
-					src={response}
-					alt={fileName}
-					class="block h-auto max-h-[85dvh] max-w-[85dvw] min-w-[15dvw]"
-					class:opacity-0={!imageLoaded}
-					class:opacity-100={imageLoaded}
-					loading="eager"
-					onload={() => {
-						awaitImageRender(async () => {
-							await tick();
-							imageLoaded = true;
-							if (dateDisplay) dateDisplay.classList.remove('invisible');
-						});
-					}}
-				/>
-			{:catch error}
-				<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
-			{/await}
-		</div>
-		<div
-			bind:this={dateDisplay}
-			id="dateDisplay"
-			class="invisible min-w-fit text-2xl text-white"
-		>
-			{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
-		</div>
+<Modal bind:open>
+	<div class="flex flex-col items-center justify-between gap-5">
+		{#if img}
+			{@const { width, height, path, id, fileName, createdOn } = img}
+			{#if imgLoaded}
+				<div id="fileNameDisplay" class="animate-modal-in h-fit text-white">{img.fileName}</div>
+			{/if}
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+				id="imgCon"
+				bind:this={imgCon}
+				class="animate-modal-in relative rounded-lg shadow-xl"
+				onclick={(e) => e.stopPropagation()}
+			>
+				{#await getImgProxyURL(path, width / 3, height / 3) then response}
+					{#if !imgLoaded}
+						<div class="w-xl skeleton"></div>
+					{/if}
+					<img
+						bind:this={imgElement}
+						id="fullpic-{id}"
+						src={response}
+						alt={fileName}
+						class="block h-auto max-h-[85dvh] max-w-[85dvw] min-w-[15dvw] animate-modal-in"
+						class:opacity-0={!imgLoaded}
+						class:opacity-100={imgLoaded}
+						loading="eager"
+						onload={() => {
+							awaitImageRender(async () => {
+								await tick();
+								imgLoaded = true;
+							});
+						}}
+					/>
+				{:catch error}
+					<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
+				{/await}
+			</div>
+			{#if imgLoaded}
+				<div
+					bind:this={dateDisplay}
+					id="dateDisplay"
+					class="animate-modal-in min-w-fit text-xl text-white"
+				>
+					{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
+				</div>
+			{/if}
+		{/if}
 	</div>
-{/if}
+</Modal>

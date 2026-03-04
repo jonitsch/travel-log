@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$src/lib/components/shadcn/button';
-	import * as Card from '$src/lib/components/shadcn/card';
-	import { Input } from '$src/lib/components/shadcn/input';
-	import { Label } from '$src/lib/components/shadcn/label';
+	import { Button } from '$lib/components/shadcn/button';
+	import * as Card from '$lib/components/shadcn/card';
+	import { Input } from '$lib/components/shadcn/input';
+	import { Label } from '$lib/components/shadcn/label';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageData } from './$types';
 

@@ -1,5 +1,5 @@
-import { prisma } from '$src/lib/server/prisma.js';
-import type { JourneyData } from '$src/lib/state.svelte.js';
+import { prisma } from '$lib/server/prisma.js';
+import type { JourneyData } from '$lib/state.svelte.js';
 import { json } from '@sveltejs/kit';
 
 export async function GET(journeyId) {

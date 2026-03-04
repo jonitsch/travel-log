@@ -14,7 +14,6 @@ const config = {
 		adapter: adapter(),
 		alias: {
 			'$gen': './src/generated',
-			'$src': './src'
 		}
 	}
 };

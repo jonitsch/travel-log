@@ -11,7 +11,7 @@ export async function GET({ url, locals }) {
     const src: string | undefined =
         searchParams.get("src")
             ?.replace(/\\/g, "/")
-            .replace(`${env.IMAGE_FOLDER_PATH}/`, '');
+            .replace(env.IMAGE_FOLDER_PATH, '');
     if (!src) throw new Error('ImgProxy API called without specifying image source!');
 
     // optional parameters with default values

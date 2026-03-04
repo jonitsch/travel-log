@@ -2,7 +2,7 @@
 	import { Marker } from 'svelte-maplibre';
 	import { global } from '$lib/state.svelte';
 	import { getImgProxyURL } from '../imgproxy';
-	import { getBBox } from '../utils';
+	import { getBBox, handleShowOnMapClick } from '../utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 
 	let { img, color }: { img: Image; color: string } = $props();
@@ -10,8 +10,7 @@
 	let map: maplibregl.Map | null = global.map;
 	let thisMarker = $state<maplibregl.Marker>();
 
-	let imgSelected = $derived.by<boolean>(() => img.id === global.selectedImageId),
-		imageError = $state<boolean>(false);
+	let imageError = $state<boolean>(false);
 
 	$effect(() => {
 		const selectedId = global.selectedImageId;
@@ -30,28 +29,7 @@
 	}
 
 	function handleDoubleClick() {
-		if (!map || !img.lng || !img.lat || !global.journeyData) return;
-		if (
-			imgSelected &&
-			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-			map.getZoom() === 15
-		) {
-			const bbox = getBBox(global.journeyData);
-			if (!bbox) return;
-			map.fitBounds(bbox, {
-				padding: {
-					top: 90,
-					bottom: 90,
-					left: 90,
-					right: 90
-				},
-				duration: 1500
-			});
-			global.selectedImageId = null;
-		} else {
-			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-			global.selectedImageId = img.id;
-		}
+		handleShowOnMapClick(img);
 	}
 </script>
 
@@ -75,7 +53,7 @@
 						'size-full cursor-pointer rounded-lg hover:z-50 hover:border-2 hover:border-black',
 						{ 'ring-4 ring-(--img-highlight-color)': img.id === global.selectedImageId }
 					]}
-					onerror={() => (thisMarker?.remove())}
+					onerror={() => thisMarker?.remove()}
 				/>
 			{/await}
 		</Marker>

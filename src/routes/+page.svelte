@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Button } from '$src/lib/components/shadcn/button';
-	import { calcInitZoom, defaultMapCenter } from '$src/lib/utils';
+	import { Button } from '$lib/components/shadcn/button';
+	import { calcInitZoom, defaultMapCenter } from '$lib/utils/client';
 	import { MapLibre } from 'svelte-maplibre';
 	import { innerWidth } from 'svelte/reactivity/window';
 

@@ -4,7 +4,7 @@
 	import { innerWidth } from 'svelte/reactivity/window';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
-	import { calcInitZoom, defaultMapCenter, switchToJourney, switchToOverview } from '$lib/utils';
+	import { calcInitZoom, defaultMapCenter, switchToJourney, switchToOverview } from '$lib/utils/client';
 	import SVGIcon from './SVGIcon.svelte';
 	import type { Journey } from '$gen/prisma/client/client';
 	import ErrorMessage from './ErrorMessage.svelte';
@@ -101,7 +101,7 @@
 							<div class="text-xl text-white" id="addJourneyText">Reset View</div>
 						{/snippet}
 					</HoverButton>
-					<HoverButton anchor="left" onclick={() => createJourneyModal?.toggle()}>
+					<HoverButton anchor="left" onclick={() => createJourneyModal?.openModal()}>
 						{#snippet content()}
 							<SVGIcon type="globePlus" fill="white" hoverScale={false} scale={1.25} />
 						{/snippet}

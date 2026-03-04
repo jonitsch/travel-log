@@ -23,6 +23,7 @@
 		stroke = 'grey';
 		hoverScale = false;
 	}
+	fill = fill ? fill : 'none';
 </script>
 
 <div class={hoverScale ? 'hover:scale-[120%]' : ''} {...rest}>

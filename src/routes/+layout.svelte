@@ -1,15 +1,15 @@
 <script lang="ts">
-	import '$src/app.css';
+	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
 	import { browser } from '$app/environment';
 	import { global } from '$lib/state.svelte';
-	import { switchToJourney, switchToOverview } from '$src/lib/utils';
+	import { switchToJourney, switchToOverview } from '$lib/utils/client';
 	import type { PageData } from './$types';
 	import { type Snippet } from 'svelte';
 	import { authClient } from '$lib/auth-client';
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { User } from 'better-auth';
-	import SVGIcon from '$src/lib/components/SVGIcon.svelte';
+	import SVGIcon from '$lib/components/SVGIcon.svelte';
 	import { fade } from 'svelte/transition';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
@@ -52,7 +52,7 @@
             <div id="mainHeader" class="items-center bg-transparent">
                 <button
                     id="headerText"
-                    class="oxygen-bold page-header-button bg-gray-900 truncate"
+                    class="oxygen-bold page-header-button bg-gray-900"
                     onclick={() => (user ? switchToOverview() : goto('/'))}
                 >
                     <text class="">Travel Log</text>
@@ -67,8 +67,7 @@
             >
                 <button
                     id="headerText"
-                    class="oxygen-bold animate-slide-left page-header-button bg-{global.journeyData
-                        ?.color ?? 'bg-black'}/70 whitespace-nowrap truncate"
+                    class="oxygen-bold animate-slide-left page-header-button bg-{journey?.color ?? 'gray-900'}/70 whitespace-nowrap"
                     onclick={() => switchToJourney(journey?.journeyId ?? '')}
                 >
                     {global.journeyData?.name}
