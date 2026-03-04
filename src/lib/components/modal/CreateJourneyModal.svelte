@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { global } from '$lib/state.svelte';
 	import { MapLibre } from 'svelte-maplibre';
 	import JourneyMarker from '../JourneyMarker.svelte';
 	import Modal from './Modal.svelte';

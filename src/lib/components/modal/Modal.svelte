@@ -13,7 +13,7 @@
 		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default items-center justify-center gap-5 bg-black/90"
 		onclick={() => (open = false)}
 	>
-		<div id="modalContent" onclick={(e) => e.stopPropagation()}>
+		<div id="modalContent" class="animate-modal-in" onclick={(e) => e.stopPropagation()}>
 			{@render children?.()}
 		</div>
 	</div>

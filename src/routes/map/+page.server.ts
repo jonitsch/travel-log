@@ -101,8 +101,6 @@ export const actions = {
         }
     },
     addImage: async ({ request }) => {
-        const form = await superValidate(request, zod4(addImageSchema));
-        console.log(form);
         try {
             const data = await request.formData();
             const journeyId = `${data.get('journeyId')}`;
@@ -112,7 +110,7 @@ export const actions = {
             console.log(`Attempting to add Images at ${path}`)
             if (!existsSync(path)) {
                 fs.mkdir(path);
-                console.warn(`Image Folder did not exist at addImage action call and was has now been created!`);
+                console.warn(`Image Folder did not exist at addImage action call and has now been created!`);
             }
 
             for (const file of files) {
