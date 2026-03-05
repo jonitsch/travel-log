@@ -8,7 +8,7 @@
 	import Modal from './Modal.svelte';
 
 	let open = $state(false);
-	let imgLoaded = $state(false);
+	let imgRendered = $state(false);
 
 	let img = $state<Image | undefined>(),
 		imgCon = $state<HTMLDivElement | undefined>(),
@@ -54,7 +54,7 @@
 	function reset() {
 		imgCon = undefined;
 		imgElement = undefined;
-		imgLoaded = false;
+		imgRendered = false;
 		img = undefined;
 		if (dateDisplay) dateDisplay.classList.add('invisible');
 	}
@@ -62,7 +62,7 @@
 	$effect(() => {
 		if (!open) return;
 		function handleKey(e: KeyboardEvent) {
-			if (img && imgLoaded) {
+			if (img && imgRendered) {
 				switch (e.key) {
 					case 'ArrowRight':
 						e.preventDefault();
@@ -89,10 +89,10 @@
 </script>
 
 <Modal bind:open>
-	<div class="flex flex-col items-center justify-between gap-5">
+	<div class="flex flex-col items-center justify-between p-5 h-dvh">
 		{#if img}
 			{@const { width, height, path, id, fileName, createdOn } = img}
-			{#if imgLoaded}
+			{#if imgRendered}
 				<div id="fileNameDisplay" class="animate-modal-in h-fit text-white">{img.fileName}</div>
 			{/if}
 			<!-- svelte-ignore a11y_click_events_have_key_events -->
@@ -103,22 +103,19 @@
 				class="animate-modal-in relative rounded-lg shadow-xl"
 			>
 				{#await getImgProxyURL(path, width / 3, height / 3) then response}
-					{#if !imgLoaded}
-						<div class="w-xl skeleton"></div>
-					{/if}
 					<img
 						bind:this={imgElement}
 						id="fullpic-{id}"
 						src={response}
 						alt={fileName}
-						class="block h-[75dvh] max-w-[85dvw] min-w-[15dvw] animate-modal-in"
-						class:opacity-0={!imgLoaded}
-						class:opacity-100={imgLoaded}
+						class="block max-h-[75dvh] max-w-[85dvw] min-w-[15dvw] animate-modal-in"
+						class:opacity-0={!imgRendered}
+						class:opacity-100={imgRendered}
 						loading="eager"
 						onload={() => {
 							awaitImageRender(async () => {
 								await tick();
-								imgLoaded = true;
+								imgRendered = true;
 							});
 						}}
 					/>
@@ -126,7 +123,7 @@
 					<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
 				{/await}
 			</div>
-			{#if imgLoaded}
+			{#if imgRendered}
 				<div
 					bind:this={dateDisplay}
 					id="dateDisplay"

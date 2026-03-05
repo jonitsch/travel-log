@@ -27,7 +27,7 @@
 }
 
 @utility page-header-button {
-	@apply w-fit rounded-md px-3 py-2 leading-tight text-gray-50 border-b-2 border-b-black/90 button-hover;
+	@apply w-fit rounded-md px-3 py-2 whitespace-nowrap leading-tight text-gray-50 border-b-2 border-b-black/90 button-hover;
 }
 
 @utility button-hover {

@@ -4,18 +4,22 @@
 	import { getImgProxyURL } from '../imgproxy';
 	import { getBBox, handleShowOnMapClick } from '../utils/client';
 	import type { Image } from '$gen/prisma/client/client';
+	import { derived } from 'svelte/store';
 
 	let { img, color }: { img: Image; color: string } = $props();
 
 	let map: maplibregl.Map | null = global.map;
 	let thisMarker = $state<maplibregl.Marker>();
 
-	let imageError = $state<boolean>(false);
+	let imageError = $state<boolean>(false),
+		imgSelected = $derived(
+			global.selectedImageIds.filter((id) => id === img.id).length ? true : false
+		);
 
 	$effect(() => {
-		const selectedId = global.selectedImageId;
+		const selectedIds = global.selectedImageIds;
 		if (!thisMarker) return;
-		if (img.id === selectedId) {
+		if (selectedIds.filter((id) => id === img.id).length) {
 			thisMarker.addClassName('z-9999');
 		} else {
 			thisMarker.removeClassName('z-9999');
@@ -24,7 +28,7 @@
 
 	function handleSingleClick() {
 		if (!map || !img.lng || !img.lat) return;
-		global.selectedImageId = img.id;
+		global.selectedImageIds = [img.id];
 		document.getElementById(`bookpic-${img.id}`)?.scrollIntoView({ behavior: 'smooth' });
 	}
 
@@ -51,7 +55,7 @@
 					alt={img.fileName}
 					class={[
 						'size-full cursor-pointer rounded-lg hover:z-50 hover:border-2 hover:border-black',
-						{ 'ring-4 ring-(--img-highlight-color)': img.id === global.selectedImageId }
+						{ 'ring-4 ring-(--img-highlight-color)': imgSelected }
 					]}
 					onerror={() => thisMarker?.remove()}
 				/>

@@ -5,7 +5,7 @@
 	import { Input } from '../shadcn/input';
 	import SVGIcon from '../SVGIcon.svelte';
 
-	let open = $state(true),
+	let open = $state(false),
 		value = $state(),
 		files = $state<FileList>(),
 		images = $state<string[]>([]);
@@ -54,7 +54,7 @@
 				bind:value
 			/>
 			<Button type="submit" class="bg-green-600" disabled={!images?.length}>Upload</Button>
-			<Button type="button" onclick={() => reset()} disabled={!(images?.length > 0)}>Cancel</Button>
+			<Button type="button" onclick={() => reset()} disabled={!images?.length}>Cancel</Button>
 		</div>
 
 		<div class="grid grid-cols-5 justify-center gap-2">
@@ -72,7 +72,7 @@
 				{/each}
 			{/each}
 			{#if images.length > 9}
-				<div class="placeholder text-2xl">...{images.length - 9}</div>
+				<div class="placeholder text-2xl">+{images.length - 9}</div>
 			{/if}
 		</div>
 

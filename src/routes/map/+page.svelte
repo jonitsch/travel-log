@@ -8,7 +8,7 @@
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate, timeRange } from '$lib/utils/client';
 	import type { Journey } from '$gen/prisma/client/client';
-	import SVGIcon from '$lib/components/SVGIcon.svelte';
+	import SVGIcon, { type iconType } from '$lib/components/SVGIcon.svelte';
 	import Input from '$lib/components/shadcn/input/input.svelte';
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import { Button } from '$lib/components/shadcn/button';
@@ -30,50 +30,53 @@
 	let imgInputFiles = $state<FileList>();
 </script>
 
+{#snippet imageControl(type: iconType, text: string, onclick: () => any)}
+	<button
+		class="text-1xl flex w-fit flex-row items-center gap-1 rounded-md p-1 hover:bg-gray-900"
+		{onclick}
+	>
+		<SVGIcon {type} fill={global.loadingJourney ? 'none' : 'white'} hoverScale={false} />
+		{text}
+	</button>
+{/snippet}
+
 <div
 	class="grid size-full {global.viewMode === 'journey'
 		? 'grid-cols-[35%_1fr] grid-rows-[auto_1fr]'
 		: ''} gap-4 overflow-hidden"
 >
-	<!------------------- MAP HEADER --------------------->
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
 		{#if journey}
-			<div class="animate-slide-left flex h-fit flex-col justify-between">
-				<div
-					id="header"
-					class="h-fit items-stretch gap-5 {global.loadingJourney
-						? 'skeleton *:invisible'
-						: ''}"
-				>
-					<div class="oxygen-bold text-5xl text-white truncate py-1">
-						{journey.name ?? 'Loading Name'}
-					</div>
+			<!------------------- MAP HEADER --------------------->
+			<div
+				class="animate-slide-left flex h-fit flex-col justify-between {global.loadingJourney
+					? 'gap-1 *:skeleton *:text-transparent'
+					: '*:text-white'}"
+			>
+				<div class="oxygen-bold truncate py-2 text-5xl">
+					{journey.name ?? 'Loading Name'}
 				</div>
-				<!-------------------    INFO BOX     --------------------->
-				<div
-					class={[
-						'h-fit w-fit flex-none flex-col text-white',
-						{ 'skeleton *:invisible': global.loadingJourney }
-					]}
-				>
-					<text class="flex text-2xl font-light">
-						{timeRange(journey)}
-					</text>
+				<div class="w-fit text-2xl font-light">
+					{timeRange(journey)}
 				</div>
 			</div>
 			<!------------------- BOOK HEADER --------------------->
-			<div class="animate-slide-left flex h-fit flex-col items-start gap-1">
-				<div
-					id="header"
-					class={[
-						'flex h-fit flex-row items-stretch gap-5',
-						{ 'skeleton *:invisible': global.loadingJourney }
-					]}
-				>
-					<div class="inline-flex items-end gap-2 oxygen-bold text-5xl text-white py-1">
-						Images <div class="font-light text-3xl">{`(${journey.image.length})`}</div>
-					</div>
+			<div
+				class="animate-slide-left flex h-fit flex-col justify-between gap-1 {global.loadingJourney
+					? '*:skeleton *:text-transparent'
+					: '*:text-white'}"
+			>
+				<div class="oxygen-bold flex flex-row items-end gap-2 py-2 text-5xl">
+					Images <div class="text-3xl font-light">{`(${journey.image.length})`}</div>
+				</div>
+				<div class="flex w-fit flex-row">
+					{@render imageControl(
+						'selectImages',
+						'Select Images',
+						() => (global.imageSelectMode = true)
+					)}
+					{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
 				</div>
 			</div>
 		{/if}
@@ -93,7 +96,7 @@
 				bind:this={book}
 			>
 				{#if global.loadingJourney}
-					<div class="col-span-full skeleton py-2 text-2xl text-transparent">Placeholder</div>
+					<div class="col-span-full skeleton py-1 text-2xl text-transparent">Placeholder</div>
 					{#each { length: 200 }}
 						<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
 					{/each}
@@ -101,13 +104,13 @@
 					{@const images = journey.image}
 					{(previousDate = null)}
 					{#if images.length > 0}
-						{#each images as img}
+						{#each images as img, i}
 							{@const date = new Date(img.createdOn)}
 							{#if previousDate != dayOf(date)}
 								<div
 									class={[
-										'col-span-full h-fit w-full rounded-md border-b-2 border-black/60 bg-gray-900/70 px-4 py-2',
-										{ 'mt-4': previousDate }
+										'col-span-full h-fit w-full rounded-md border-b-2 border-black/60 bg-gray-900/70 px-3 py-1',
+										{ 'mt-2': i != 0 }
 									]}
 								>
 									<div class="text-2xl text-white">{formattedDate(date, 'dd/mm/yyyy')}</div>

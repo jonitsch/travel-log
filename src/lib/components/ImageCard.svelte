@@ -14,11 +14,11 @@
 	}
 	let { img, src, fullImageModal }: Props = $props();
 
-	let imageLoaded = $state<boolean>(false),
-		imageError = $state<boolean>(false);
+	let imgRendered = $state<boolean>(false),
+		imgError = $state<boolean>(false);
 
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
-		imgSelected = $derived<boolean>(img.id === global.selectedImageId);
+		imgSelected = $derived<boolean>(global.selectedImageIds?.filter((id) => img.id === id).length ? true : false);
 
 	let hovered = $state<boolean>(false);
 </script>
@@ -32,16 +32,16 @@
 	class="relative block size-full overflow-hidden rounded-md"
 	class:highlighted={imgSelected}
 >
-	{#if imageError}
+	{#if imgError}
 		<div
-			class="flex h-full flex-col items-center rounded-md border-4 border-gray-900 bg-red-900 p-3"
+			class="flex size-full flex-col items-center rounded-md bg-red-900 p-3"
 		>
-			<div class="text-white">{img.fileName}</div>
+			<div class="text-white truncate w-[90%]">{img.fileName}</div>u
 			<div class="flex flex-1 items-center">
 				<ErrorMessage>
-					<div class="flex flex-col items-center justify-center text-center wrap-break-word">
+					<div class="flex flex-col items-center justify-center text-center">
 						Image failed to load!
-						<SVGIcon type="imageError" fill="white" scale={2.5} />
+						<SVGIcon type="imgError" fill="white" scale={2.5} hoverScale={false} />
 					</div>
 				</ErrorMessage>
 			</div>
@@ -55,9 +55,9 @@
 			onload={() =>
 				awaitImageRender(async () => {
 					await tick();
-					imageLoaded = true;
+					imgRendered = true;
 				})}
-			onerror={() => (imageError = true)}
+			onerror={() => (imgError = true)}
 		/>
 		{#if hovered || imgSelected}
 			<div

@@ -31,7 +31,7 @@ export function switchToOverview(): void {
 	global.journeyData = null;
 	global.journeyId = undefined;
 	global.loadingJourney = false;
-	global.selectedImageId = null;
+	global.selectedImageIds = [];
 	global.viewMode = 'overview';
 }
 
@@ -170,7 +170,7 @@ export function calcInitZoom(width: number): number {
 export function handleShowOnMapClick(img: Image) {
 	if (!global.map || !img.lng || !img.lat) return;
 	const map = global.map;
-	const imgSelected = img.id === global.selectedImageId;
+	const imgSelected = global.selectedImageIds?.filter((id) => id === img.id) ? true : false;
 	if (
 		imgSelected &&
 		map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
@@ -182,10 +182,10 @@ export function handleShowOnMapClick(img: Image) {
 			padding: 90,
 			duration: 1000,
 		});
-		global.selectedImageId = null;
+		global.selectedImageIds = [];
 	} else {
 		map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-		global.selectedImageId = img.id;
+		global.selectedImageIds = [img.id];
 	}
 }
 

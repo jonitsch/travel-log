@@ -1,4 +1,3 @@
-import { type FileTypeResult } from 'file-type';
 import { fileTypeFromFile } from 'file-type';
 import sharp from 'sharp';
 import exifr from 'exifr';
@@ -10,7 +9,7 @@ export type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
 
 export async function getImageData(name: string, path: string, journeyId: string): Promise<imgCreateBody> {
     if(!existsSync(path)) throw Error('404: Image not found!');
-    let type: FileTypeResult | undefined = await fileTypeFromFile(path);
+    let type = await fileTypeFromFile(path);
     if (type?.mime.includes('image')) {
         let metaData: sharp.Metadata = await sharp(path).metadata(),
             coords: {

@@ -22,7 +22,7 @@
 
 	async function handleSignOut() {
 		try {
-            global.viewMode = 'overview';
+			global.viewMode = 'overview';
 			await authClient.signOut({
 				fetchOptions: {
 					onSuccess: async () => {
@@ -43,72 +43,73 @@
 
 <div id="main" class="inset-0 flex h-screen w-screen flex-col gap-3 overflow-auto p-3">
 	<div
-    id="header"
-    class="flex h-fit items-center justify-between gap-2 rounded-md bg-transparent w-full"
->
-    <!-- Left: Title/Logo -->
-    <div class="flex flex-1 flex-row items-center justify-start gap-2 min-w-0">
-        {#if true}
-            <div id="mainHeader" class="items-center bg-transparent">
-                <button
-                    id="headerText"
-                    class="oxygen-bold page-header-button bg-gray-900"
-                    onclick={() => (user ? switchToOverview() : goto('/'))}
-                >
-                    <text class="">Travel Log</text>
-                </button>
-            </div>
-        {/if}
-        {#if global.viewMode === 'journey'}
-            {@const journey = global.journeyData}
-            <div
-                id="journeyHeader"
-                class="before:mr-2 before:text-2xl before:text-white before:content-['/']"
-            >
-                <button
-                    id="headerText"
-                    class="oxygen-bold animate-slide-left page-header-button bg-{journey?.color ?? 'gray-900'}/70 whitespace-nowrap"
-                    onclick={() => switchToJourney(journey?.journeyId ?? '')}
-                >
-                    {global.journeyData?.name}
-                </button>
-            </div>
-        {/if}
-    </div>
+		id="header"
+		class="flex h-fit w-full items-center justify-between gap-2 rounded-md bg-transparent whitespace-nowrap"
+	>
+		<!-- Left: Title/Logo -->
+		<div class="flex min-w-0 flex-1 flex-row items-center justify-start gap-2">
+			{#if true}
+				<div id="mainHeader" class="items-center bg-transparent">
+					<button
+						id="headerText"
+						class="oxygen-bold page-header-button bg-gray-900"
+						onclick={() => (user ? switchToOverview() : goto('/'))}
+					>
+						<text class="">Travel Log</text>
+					</button>
+				</div>
+			{/if}
+			{#if global.viewMode === 'journey'}
+				{@const journey = global.journeyData}
+				<div
+					id="journeyHeader"
+					class="before:mr-2 before:text-[22px] before:text-white before:content-['/']"
+				>
+					<button
+						id="headerText"
+						class="oxygen-bold animate-slide-left page-header-button bg-{journey?.color ??
+							'gray-900'}/70 whitespace-nowrap"
+						onclick={() => switchToJourney(journey?.journeyId ?? '')}
+					>
+						{global.journeyData?.name}
+					</button>
+				</div>
+			{/if}
+		</div>
 
-    <!-- Center: Welcome -->
-    {#if user && global.viewMode === 'overview'}
-        <div class="flex flex-1 items-center justify-center" transition:fade={{duration: 150}}>
-            <div class="text-center">Welcome, {user.name}!</div>
-        </div>
-    {/if}
+		<!-- Center: Welcome -->
+		{#if user && global.viewMode === 'overview'}
+			<div class="flex flex-1 items-center justify-center" transition:fade={{ duration: 150 }}>
+				<div class="text-center">Welcome, {user.name}!</div>
+			</div>
+		{/if}
 
-    <!-- Right: Auth buttons -->
-    <div class="flex flex-1 flex-row items-center justify-end gap-2 min-w-0">
-        {#if user}
-            <div id="signOutButton" class="w-fit items-center">
-                <form
-                    onsubmit={(e) => {
-                        e.preventDefault();
-                        handleSignOut();
-                    }}
-                >
-                    <button
-                        type="submit"
-                        class="oxygen-bold flex page-header-button flex-row items-center gap-2 bg-gray-900 transition-all duration-100 ease-in-out"
-                    >
-                        <SVGIcon type="signOut" fill="white" hoverScale={false} scale={0.9} />
-                        Sign Out
-                    </button>
-                </form>
-            </div>
-        {:else}
-            <div id="loginButton" class="flex w-fit items-center">
-                <a href="/auth/login" class="oxygen-bold page-header-button bg-gray-900">Login</a>
-            </div>
-        {/if}
-    </div>
-</div>
+		<!-- Right: Auth buttons -->
+		<div class="flex flex-1 min-w-0 flex-row items-center justify-end gap-2">
+			{#if user}
+				<div id="signOutButton" class="w-fit items-center">
+					<form
+						onsubmit={(e) => {
+							e.preventDefault();
+							handleSignOut();
+						}}
+					>
+						<button
+							type="submit"
+							class="oxygen-bold flex page-header-button flex-row items-center gap-2 bg-gray-900 transition-all duration-100 ease-in-out"
+						>
+							<SVGIcon type="signOut" fill="white" hoverScale={false} scale={0.9} />
+							Sign Out
+						</button>
+					</form>
+				</div>
+			{:else}
+				<div id="loginButton" class="flex w-fit items-center">
+					<a href="/auth/login" class="oxygen-bold page-header-button bg-gray-900">Login</a>
+				</div>
+			{/if}
+		</div>
+	</div>
 
 	<div id="content" class="flex-auto overflow-hidden">
 		{@render children?.()}

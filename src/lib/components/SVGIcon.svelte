@@ -1,8 +1,18 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 
+	export type iconType = 
+		| 'fullscreen'
+		| 'marker'
+		| 'globePlus'
+		| 'imgError'
+		| 'signOut'
+		| 'reset'
+		| 'addImage'
+		| 'selectImages'
+
 	type Props = {
-		type: 'fullscreen' | 'marker' | 'globePlus' | 'imageError' | 'signOut' | 'reset' | 'addImage';
+		type: iconType;
 		fill?: string;
 		scale?: number;
 		stroke?: string;
@@ -27,7 +37,7 @@
 </script>
 
 <div class={hoverScale ? 'hover:scale-[120%]' : ''} {...rest}>
-	{#if ['fullscreen', 'marker', 'globePlus', 'addImage'].includes(type)}
+	{#if ['fullscreen', 'marker', 'globePlus', 'addImage', 'selectImages'].includes(type)}
 		<svg
 			width={24 * scale}
 			height={24 * scale}
@@ -75,23 +85,21 @@
 				<rect x="22.5" y="0.5" width="5" height="2" transform="rotate(90 22.5 0.5)" {fill} />
 			{/if}
 			{#if type === 'addImage'}
-				<g id="SVGRepo_bgCarrier" stroke-width="0"></g><g
-					id="SVGRepo_tracerCarrier"
-					stroke-linecap="round"
-					stroke-linejoin="round"
-				></g><g id="SVGRepo_iconCarrier">
-					<rect x="0" fill="none" width="24" height="24"></rect>
-					<g>
-						<path
-							d="M23 4v2h-3v3h-2V6h-3V4h3V1h2v3h3zm-8.5 7c.828 0 1.5-.672 1.5-1.5S15.328 8 14.5 8 13 8.672 13 9.5s.672 1.5 1.5 1.5zm3.5 3.234l-.513-.57c-.794-.885-2.18-.885-2.976 0l-.655.73L9 9l-3 3.333V6h7V4H6c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2v-7h-2v3.234z"
-						></path>
-					</g>
-				</g>
+				<rect x="0" fill="none" width="24" height="24"></rect>
+				<path
+					d="M23 4v2h-3v3h-2V6h-3V4h3V1h2v3h3zm-8.5 7c.828 0 1.5-.672 1.5-1.5S15.328 8 14.5 8 13 8.672 13 9.5s.672 1.5 1.5 1.5zm3.5 3.234l-.513-.57c-.794-.885-2.18-.885-2.976 0l-.655.73L9 9l-3 3.333V6h7V4H6c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2v-7h-2v3.234z"
+				></path>
+			{/if}
+			{#if type === 'selectImages'}
+				<path
+					fill-rule="evenodd"
+					d="M13,8 L13,6 L19,6 C20.1045695,6 21,6.8954305 21,8 L21,19 C21,20.1045695 20.1045695,21 19,21 L8,21 C6.8954305,21 6,20.1045695 6,19 L6,13 L8,13 L8,19 L19,19 L19,8 L13,8 Z M6,6 L6,3 L8,3 L8,6 L11,6 L11,8 L8,8 L8,11 L6,11 L6,8 L3,8 L3,6 L6,6 Z"
+				></path>
 			{/if}
 		</svg>
 	{/if}
 
-	{#if type === 'imageError'}
+	{#if type === 'imgError'}
 		<svg
 			width={36 * scale}
 			height={36 * scale}
