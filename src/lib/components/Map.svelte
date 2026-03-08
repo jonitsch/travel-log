@@ -63,6 +63,7 @@
 	});
 
 	$effect(() => {
+		global.center = center;
 		// close or open attributionControl whenever global.viewMode changes
 		let currentMode = global.viewMode;
 		setAttributionControl(currentMode);

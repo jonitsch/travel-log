@@ -2,9 +2,8 @@
 	import { Marker } from 'svelte-maplibre';
 	import { global } from '$lib/state.svelte';
 	import { getImgProxyURL } from '../imgproxy';
-	import { getBBox, handleShowOnMapClick } from '../utils/client';
+	import { handleImageSelection, handleShowOnMapClick } from '../utils/client';
 	import type { Image } from '$gen/prisma/client/client';
-	import { derived } from 'svelte/store';
 
 	let { img, color }: { img: Image; color: string } = $props();
 
@@ -26,13 +25,26 @@
 		}
 	});
 
+	function scrollToBookPic(id: string) {
+		document.getElementById(`bookpic-${id}`)?.scrollIntoView({ behavior: 'smooth' });
+	}
+
 	function handleSingleClick() {
 		if (!map || !img.lng || !img.lat) return;
-		global.selectedImageIds = [img.id];
+
+		if (global.imgSelectMode) {
+			handleImageSelection(img.id);
+			return;
+		}
 		document.getElementById(`bookpic-${img.id}`)?.scrollIntoView({ behavior: 'smooth' });
 	}
 
 	function handleDoubleClick() {
+		if (global.imgSelectMode) {
+			scrollToBookPic(img.id);
+			handleImageSelection(img.id);
+			return;
+		}
 		handleShowOnMapClick(img);
 	}
 </script>

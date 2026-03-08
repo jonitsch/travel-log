@@ -32,6 +32,7 @@ export function switchToOverview(): void {
 	global.journeyId = undefined;
 	global.loadingJourney = false;
 	global.selectedImageIds = [];
+	global.imgSelectMode = false;
 	global.viewMode = 'overview';
 }
 
@@ -167,26 +168,48 @@ export function calcInitZoom(width: number): number {
 	zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
 	return zoom;
 }
+
+export const isImgSelected = (imgId: string) =>
+	global.selectedImageIds.filter((id) => id === imgId).length ? true : false;
+
+export function handleImageSelection(imgId: string) {
+	if (isImgSelected(imgId)) {
+		global.selectedImageIds = global.selectedImageIds.filter((id) => id != imgId);
+	} else {
+		global.selectedImageIds.push(imgId);
+	}
+}
+
 export function handleShowOnMapClick(img: Image) {
 	if (!global.map || !img.lng || !img.lat) return;
 	const map = global.map;
-	const imgSelected = global.selectedImageIds?.filter((id) => id === img.id) ? true : false;
-	if (
-		imgSelected &&
-		map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-		map.getZoom() === 15
-	) {
-		const bbox = getBBox(global.journeyData);
-		if (!bbox) return;
-		map.fitBounds(bbox, {
-			padding: 90,
-			duration: 1000,
-		});
-		global.selectedImageIds = [];
+	const imgSelected = isImgSelected(img.id);
+	if (global.imgSelectMode) {
+		if (imgSelected) {
+			global.selectedImageIds = global.selectedImageIds.filter((id) => id != img.id);
+		} else {
+			global.selectedImageIds.push(img.id);
+		}
+		return;
 	} else {
-		map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-		global.selectedImageIds = [img.id];
+		if (
+			imgSelected &&
+			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
+			map.getZoom() === 15
+		) {
+			const bbox = getBBox(global.journeyData);
+			if (!bbox) return;
+			map.fitBounds(bbox, {
+				padding: 90,
+				duration: 1000,
+			});
+			global.selectedImageIds = [];
+		} else {
+			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
+			global.selectedImageIds = [img.id];
+		}
 	}
+
 }
 
 /**

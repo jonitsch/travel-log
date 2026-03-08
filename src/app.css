@@ -23,7 +23,7 @@
 }
 
 @utility skeleton {
-	@apply animate-pulse rounded-md bg-slate-600;
+	@apply animate-pulse rounded-md bg-slate-600 pointer-events-none;
 }
 
 @utility page-header-button {

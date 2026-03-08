@@ -106,6 +106,8 @@ export const actions = {
             const journeyId = `${data.get('journeyId')}`;
             const files = data.getAll('files') as Array<File>;
 
+            console.log(files);
+
             let path = env.IMAGE_FOLDER_PATH + journeyId + '/';
             console.log(`Attempting to add Images at ${path}`)
             if (!existsSync(path)) {

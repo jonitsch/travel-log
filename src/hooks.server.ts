@@ -29,7 +29,7 @@ export const init: ServerInit = async () => {
         console.error('Database connection failed!', err);
     }
 
-    await initializeDatabase();
+    /* await initializeDatabase(); */
 }
 
 async function initializeDatabase() {
