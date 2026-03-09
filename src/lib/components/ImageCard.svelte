@@ -2,7 +2,12 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, handleImageSelection, handleShowOnMapClick } from '../utils/client';
+	import {
+		awaitImageRender,
+		handleImageSelection,
+		handleShowOnMapClick,
+		handleSingleSelection
+	} from '../utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
@@ -20,8 +25,7 @@
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
 		imgSelected = $derived<boolean>(
 			global.selectedImageIds?.filter((id) => img.id === id).length ? true : false
-		),
-		imgShownOnMap = $state(false);
+		);
 
 	let hovered = $state<boolean>(false);
 </script>
@@ -32,6 +36,10 @@
 	tabindex="0"
 	onmouseenter={() => (hovered = true)}
 	onmouseleave={() => (hovered = false)}
+	onkeydown={(e) => {
+		if (e.key === 'Enter') handleImageSelection(img.id);
+	}}
+	onclick={() => handleImageSelection(img.id)}
 	class="relative block size-full overflow-hidden rounded-md"
 	class:highlightBorder={imgSelected}
 >
@@ -100,13 +108,12 @@
 					</div>
 				</div>
 			{:else}
-				<button
+				<div
 					id="imageSelectOverlay"
 					class={[
 						'absolute inset-0 flex flex-col items-center justify-center bg-transparent',
 						{ 'hover:bg-slate-900/40': !imgSelected }
 					]}
-					onclick={() => handleImageSelection(img.id)}
 					aria-label="Select Image"
 				>
 					{#if hovered}
@@ -115,7 +122,7 @@
 							class:highlightBackground={imgSelected}
 						></div>
 					{/if}
-				</button>
+				</div>
 			{/if}
 		{/if}
 	{/if}

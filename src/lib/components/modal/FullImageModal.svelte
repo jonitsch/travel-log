@@ -6,6 +6,7 @@
 	import ErrorMessage from '../ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
 	import Modal from './Modal.svelte';
+	import SVGIcon from '../SVGIcon.svelte';
 
 	let open = $state(false);
 	let imgRendered = $state(false);
@@ -80,6 +81,8 @@
 						e.preventDefault();
 					case 'ArrowUp':
 						e.preventDefault();
+					case 'Enter':
+						e.preventDefault();
 				}
 			}
 		}
@@ -89,49 +92,90 @@
 </script>
 
 <Modal bind:open>
-	<div class="flex flex-col items-center justify-between p-5 h-dvh">
-		{#if img}
-			{@const { width, height, path, id, fileName, createdOn } = img}
-			{#if imgRendered}
-				<div id="fileNameDisplay" class="animate-modal-in h-fit text-white">{img.fileName}</div>
-			{/if}
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div
-				id="imgCon"
-				bind:this={imgCon}
-				class="animate-modal-in relative rounded-lg shadow-xl"
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	{#if global.journeyData}
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<div class="flex w-dvw flex-row items-center justify-between px-5" onclick={() => closeModal()}>
+			<button
+				class="navArrow"
+				aria-label="View previous Image"
+				onclick={(e) => {
+					e.stopPropagation();
+					switchImage('backward');
+				}}
+				disabled={getImageIndex() <= 0}
 			>
-				{#await getImgProxyURL(path, width / 3, height / 3) then response}
-					<img
-						bind:this={imgElement}
-						id="fullpic-{id}"
-						src={response}
-						alt={fileName}
-						class="block max-h-[75dvh] max-w-[85dvw] min-w-[15dvw] animate-modal-in"
-						class:opacity-0={!imgRendered}
-						class:opacity-100={imgRendered}
-						loading="eager"
-						onload={() => {
-							awaitImageRender(async () => {
-								await tick();
-								imgRendered = true;
-							});
-						}}
-					/>
-				{:catch error}
-					<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
-				{/await}
+				<SVGIcon type="leftArrow" stroke="white" />
+			</button>
+			<div class="flex h-dvh flex-col items-center justify-between p-5">
+				{#if img}
+					{@const { width, height, path, id, fileName, createdOn } = img}
+					{#if imgRendered}
+						<div id="fileNameDisplay" class="animate-modal-in h-fit text-white">{img.fileName}</div>
+					{/if}
+					<div
+						id="imgCon"
+						bind:this={imgCon}
+						class="animate-modal-in relative rounded-lg shadow-xl"
+					>
+						{#await getImgProxyURL(path, width / 3, height / 3) then response}
+							<img
+								bind:this={imgElement}
+								id="fullpic-{id}"
+								src={response}
+								alt={fileName}
+								class="animate-modal-in block max-h-[75dvh] max-w-[85dvw] min-w-[15dvw]"
+								class:opacity-0={!imgRendered}
+								class:opacity-100={imgRendered}
+								loading="eager"
+								onload={() => {
+									awaitImageRender(async () => {
+										await tick();
+										imgRendered = true;
+									});
+								}}
+							/>
+						{:catch error}
+							<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
+						{/await}
+					</div>
+					{#if imgRendered}
+						<div
+							bind:this={dateDisplay}
+							id="dateDisplay"
+							class="animate-modal-in min-w-fit text-xl text-white"
+						>
+							{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
+						</div>
+					{/if}
+				{/if}
 			</div>
-			{#if imgRendered}
-				<div
-					bind:this={dateDisplay}
-					id="dateDisplay"
-					class="animate-modal-in min-w-fit text-xl text-white"
-				>
-					{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
-				</div>
-			{/if}
-		{/if}
-	</div>
+			<button
+				class="navArrow"
+				aria-label="View next Image"
+				onclick={(e) => {
+					e.stopPropagation();
+					switchImage('forward');
+				}}
+				disabled={getImageIndex() >= global.journeyData.image.length - 1}
+			>
+				<SVGIcon type="rightArrow" stroke="white" />
+			</button>
+		</div>
+	{/if}
 </Modal>
+
+<style>
+	.navArrow {
+		padding: 20px;
+		border-radius: 50%;
+		opacity: 80%;
+	}
+	.navArrow:hover:enabled {
+		background-color: #101828;
+	}
+	.navArrow:disabled {
+		opacity: 0.2;
+		cursor: auto;
+	}
+</style>

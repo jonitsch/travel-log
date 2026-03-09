@@ -173,11 +173,20 @@ export const isImgSelected = (imgId: string) =>
 	global.selectedImageIds.filter((id) => id === imgId).length ? true : false;
 
 export function handleImageSelection(imgId: string) {
+	if (!global.imgSelectMode) {
+		handleSingleSelection(imgId);
+		return;
+	}
 	if (isImgSelected(imgId)) {
 		global.selectedImageIds = global.selectedImageIds.filter((id) => id != imgId);
 	} else {
 		global.selectedImageIds.push(imgId);
 	}
+}
+
+export function handleSingleSelection(imgId: string) {
+	if (!isImgSelected(imgId)) global.imgShownOnMap = false;
+	global.selectedImageIds = [imgId];
 }
 
 export function handleShowOnMapClick(img: Image) {
@@ -192,7 +201,7 @@ export function handleShowOnMapClick(img: Image) {
 		}
 		return;
 	} else {
-		if (global.imgShownOnMap && isImgSelected(img.id)) {
+		if (global.imgShownOnMap && imgSelected) {
 			const bbox = getBBox(global.journeyData);
 			global.imgShownOnMap = false;
 			if (!bbox) return;

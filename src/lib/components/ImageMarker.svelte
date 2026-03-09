@@ -2,7 +2,7 @@
 	import { Marker } from 'svelte-maplibre';
 	import { global } from '$lib/state.svelte';
 	import { getImgProxyURL } from '../imgproxy';
-	import { handleImageSelection, handleShowOnMapClick } from '../utils/client';
+	import { handleImageSelection, handleShowOnMapClick, handleSingleSelection } from '../utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 
 	let { img, color }: { img: Image; color: string } = $props();
@@ -35,7 +35,7 @@
 			handleImageSelection(img.id);
 			return;
 		}
-		global.selectedImageIds = [img.id];
+		handleSingleSelection(img.id);
 		scrollToBookPic(img.id);
 	}
 
@@ -54,7 +54,7 @@
 		<Marker
 			bind:marker={thisMarker}
 			lngLat={[img.lng, img.lat]}
-			class={'flex size-7 items-center justify-center rounded-lg focus:outline-2 focus:outline-black'}
+			class="flex size-7 items-center justify-center rounded-lg focus:outline-2 focus:outline-black"
 			onclick={() => handleSingleClick()}
 			ondblclick={() => handleDoubleClick()}
 		>

@@ -69,7 +69,7 @@
 								currentSelection = global.selectedImageIds;
 								global.selectedImageIds = [];
 							} else {
-								global.selectedImageIds = currentSelection;
+								global.selectedImageIds = [...global.selectedImageIds, ...currentSelection];
 							}
 						})}
 						{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
