@@ -2,12 +2,7 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import {
-		awaitImageRender,
-		handleImageSelection,
-		handleShowOnMapClick,
-		handleSingleSelection
-	} from '../utils/client';
+	import { awaitImageRender, handleImageSelection, handleShowOnMapClick } from '../utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
@@ -25,7 +20,8 @@
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
 		imgSelected = $derived<boolean>(
 			global.selectedImageIds?.filter((id) => img.id === id).length ? true : false
-		);
+		),
+		imgShownOnMap = $derived<boolean>(global.imgShownOnMap === img.id);
 
 	let hovered = $state<boolean>(false);
 </script>
@@ -91,18 +87,26 @@
 							title="View Full Image"
 							onclick={() => fullImageModal?.openModal(img)}
 						>
-							<SVGIcon type="fullscreen" stroke="white" />
+							<SVGIcon type="fullscreen" stroke="white" hoverScale />
 						</button>
 						<button
 							id="showOnMapButton-{img.id}"
-							title={imgHasCoordinates ? 'Show on map' : 'Image has no coordinate data'}
-							onclick={() => handleShowOnMapClick(img)}
+							title={imgHasCoordinates
+								? !imgShownOnMap
+									? 'Show on Map'
+									: 'Zoom back out'
+								: 'Image has no coordinate data'}
+							onclick={(e) => {
+								if (imgSelected) e.stopPropagation();
+								handleShowOnMapClick(img);
+							}}
 							disabled={!imgHasCoordinates}
 						>
 							<SVGIcon
 								type="marker"
-								stroke={global.imgShownOnMap && imgSelected ? 'rgb(45, 212, 190)' : 'white'}
+								stroke={imgShownOnMap && imgSelected ? 'rgb(45, 212, 190)' : 'white'}
 								disabled={!imgHasCoordinates}
+								hoverScale
 							/>
 						</button>
 					</div>

@@ -2,7 +2,11 @@
 	import { Marker } from 'svelte-maplibre';
 	import { global } from '$lib/state.svelte';
 	import { getImgProxyURL } from '../imgproxy';
-	import { handleImageSelection, handleShowOnMapClick, handleSingleSelection } from '../utils/client';
+	import {
+		handleImageSelection,
+		handleShowOnMapClick,
+		handleSingleSelection
+	} from '../utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 
 	let { img, color }: { img: Image; color: string } = $props();
@@ -25,27 +29,9 @@
 		}
 	});
 
-	function scrollToBookPic(id: string) {
-		document.getElementById(`bookpic-${id}`)?.scrollIntoView({ behavior: 'smooth' });
-	}
-
-	function handleSingleClick() {
-		if (!map || !img.lng || !img.lat) return;
-		if (global.imgSelectMode) {
-			handleImageSelection(img.id);
-			return;
-		}
-		handleSingleSelection(img.id);
-		scrollToBookPic(img.id);
-	}
-
 	function handleDoubleClick() {
-		if (global.imgSelectMode) {
-			scrollToBookPic(img.id);
-			handleImageSelection(img.id);
-			return;
-		}
 		handleShowOnMapClick(img);
+		handleImageSelection(img.id);
 	}
 </script>
 
@@ -55,7 +41,7 @@
 			bind:marker={thisMarker}
 			lngLat={[img.lng, img.lat]}
 			class="flex size-7 items-center justify-center rounded-lg focus:outline-2 focus:outline-black"
-			onclick={() => handleSingleClick()}
+			onclick={() => handleImageSelection(img.id)}
 			ondblclick={() => handleDoubleClick()}
 		>
 			{#await getImgProxyURL(img.path, img.width * 0.05, img.height * 0.05)}

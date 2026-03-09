@@ -69,16 +69,40 @@
 								currentSelection = global.selectedImageIds;
 								global.selectedImageIds = [];
 							} else {
-								global.selectedImageIds = [...global.selectedImageIds, ...currentSelection];
+								global.selectedImageIds = currentSelection;
 							}
 						})}
 						{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
 					</div>
 				</div>
 				{#if !global.imgSelectMode}
-					<div class="flex w-fit flex-row gap-2">
-						<button class="hover:underline">Delete</button>
-						<button class="hover:underline">Change Name</button>
+					<div class="flex w-fit flex-row gap-2 *:items-center">
+						<button
+							class={[
+								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto disabled:opacity-50',
+								{ '*:invisible': global.loadingJourney }
+							]}
+							disabled={global.selectedImageIds.length != 1}
+						>
+							<SVGIcon
+								type="delete"
+								scale={0.8}
+								stroke="white"
+							/>Delete</button
+						>
+						<button
+							class={[
+								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto disabled:opacity-50',
+								{ '*:invisible': global.loadingJourney }
+							]}
+							disabled={global.selectedImageIds.length != 1}
+						>
+							<SVGIcon
+								type="rename"
+								fill={global.loadingJourney ? '' : 'white'}
+								scale={0.9}
+							/>Rename</button
+						>
 					</div>
 				{:else}
 					<div class="flex w-fit flex-row gap-2">

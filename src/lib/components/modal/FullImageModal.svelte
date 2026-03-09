@@ -105,7 +105,7 @@
 				}}
 				disabled={getImageIndex() <= 0}
 			>
-				<SVGIcon type="leftArrow" stroke="white" />
+				<SVGIcon type="leftArrow" stroke="white" hoverScale={false} />
 			</button>
 			<div class="flex h-dvh flex-col items-center justify-between p-5">
 				{#if img}
@@ -159,7 +159,7 @@
 				}}
 				disabled={getImageIndex() >= global.journeyData.image.length - 1}
 			>
-				<SVGIcon type="rightArrow" stroke="white" />
+				<SVGIcon type="rightArrow" stroke="white" hoverScale={false} />
 			</button>
 		</div>
 	{/if}

@@ -17,7 +17,7 @@ type State = {
 	} | null;
 	selectedImageIds: string[];
 	imgSelectMode: boolean,
-	imgShownOnMap: boolean,
+	imgShownOnMap: string,
 };
 
 export const global: State = $state({
@@ -30,5 +30,5 @@ export const global: State = $state({
 	savedViewPort: null,
 	selectedImageIds: [],
 	imgSelectMode: false,
-	imgShownOnMap: false,
+	imgShownOnMap: '',
 });

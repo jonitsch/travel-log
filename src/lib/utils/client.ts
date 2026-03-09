@@ -169,10 +169,15 @@ export function calcInitZoom(width: number): number {
 	return zoom;
 }
 
+function scrollToBookPic(id: string) {
+	document.getElementById(`bookpic-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
 export const isImgSelected = (imgId: string) =>
 	global.selectedImageIds.filter((id) => id === imgId).length ? true : false;
 
 export function handleImageSelection(imgId: string) {
+	scrollToBookPic(imgId);
 	if (!global.imgSelectMode) {
 		handleSingleSelection(imgId);
 		return;
@@ -183,41 +188,32 @@ export function handleImageSelection(imgId: string) {
 		global.selectedImageIds.push(imgId);
 	}
 }
-
 export function handleSingleSelection(imgId: string) {
-	if (!isImgSelected(imgId)) global.imgShownOnMap = false;
-	global.selectedImageIds = [imgId];
+	if (!isImgSelected(imgId)) {
+		global.selectedImageIds = [imgId];
+	} else {
+		global.selectedImageIds = [];
+	}
 }
 
 export function handleShowOnMapClick(img: Image) {
 	if (!global.map || !img.lng || !img.lat) return;
 	const map = global.map;
 	const imgSelected = isImgSelected(img.id);
-	if (global.imgSelectMode) {
-		if (imgSelected) {
-			global.selectedImageIds = global.selectedImageIds.filter((id) => id != img.id);
-		} else {
-			global.selectedImageIds.push(img.id);
-		}
-		return;
+	const imgShownOnMap = global.imgShownOnMap === img.id;
+	if (imgShownOnMap && imgSelected) {
+		const bbox = getBBox(global.journeyData);
+		if (!bbox) return;
+		map.fitBounds(bbox, {
+			padding: 90,
+			duration: 1000,
+		});
+		global.imgShownOnMap = '';
 	} else {
-		if (global.imgShownOnMap && imgSelected) {
-			const bbox = getBBox(global.journeyData);
-			global.imgShownOnMap = false;
-			if (!bbox) return;
-			map.fitBounds(bbox, {
-				padding: 90,
-				duration: 1000,
-			});
-			global.selectedImageIds = [];
-		} else {
-			global.imgShownOnMap = true;
-			map.once('drag', () => (global.imgShownOnMap = false));
-			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-			global.selectedImageIds = [img.id];
-		}
+		global.imgShownOnMap = img.id;
+		map.once('drag', () => (global.imgShownOnMap = ''));
+		map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
 	}
-
 }
 
 /**

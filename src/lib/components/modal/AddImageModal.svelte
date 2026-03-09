@@ -27,14 +27,13 @@
 		images = [];
 		value = null;
 	}
-
 </script>
 
 <Modal bind:open>
 	<div class="relative">
 		<button
 			type="button"
-			class="absolute top-1 right-1 flex size-8 items-center justify-center rounded-full p-2 text-xl text-white/70 hover:bg-white/10"
+			class="absolute z-99 top-1 right-1 flex size-8 items-center justify-center rounded-full p-2 text-white/70 hover:bg-white/10"
 			onclick={() => (open = false)}
 			aria-label="Close modal"
 		>
@@ -64,7 +63,7 @@
 			action="?/addImage"
 			method="POST"
 			enctype="multipart/form-data"
-			class="flex h-fit flex-col items-center justify-center gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900/90 p-5"
+			class="flex h-fit flex-col items-center justify-center gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
 		>
 			<div class="flex flex-row items-center gap-1">
 				<span class="text-4xl">Add Images</span>
@@ -84,22 +83,24 @@
 				<Button type="button" onclick={() => reset()} disabled={!images?.length}>Cancel</Button>
 			</div>
 
-			<div class="grid grid-cols-5 justify-center gap-2">
+			<div
+				class="flex flex-row items-center justify-center gap-2"
+			>
 				{#each images as src, i}
-					{#if i < 9}
+					{#if i < 4}
 						<img
-							class="size-25 rounded-md object-cover transition duration-100 ease-in-out"
+							class="preview rounded-md object-cover"
 							{src}
 							alt="File Upload Preview Image #{i + 1}"
 						/>
 					{/if}
 				{:else}
-					{#each { length: 5 }}
-						<div class="placeholder"></div>
+					{#each { length: 4 }}
+						<div class="preview placeholder"></div>
 					{/each}
 				{/each}
-				{#if images.length > 9}
-					<div class="placeholder text-2xl">+{images.length - 9}</div>
+				{#if images.length > 4}
+					<div class="preview placeholder text-2xl">+{images.length - 4}</div>
 				{/if}
 			</div>
 
@@ -109,11 +110,13 @@
 </Modal>
 
 <style>
+	.preview {
+		width: 15dvw;
+		height: 15dvw;
+	}
 	.placeholder {
 		display: flex;
 		background-color: #45556c;
-		width: 100px;
-		height: 100px;
 		border-radius: calc(var(--radius) /* 0.25rem = 4px */ - 2px);
 		justify-content: center;
 		align-items: center;
