@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
 
-	export type iconType = 
+	export type iconType =
 		| 'fullscreen'
 		| 'marker'
 		| 'globePlus'
@@ -9,21 +9,21 @@
 		| 'signOut'
 		| 'reset'
 		| 'addImage'
-		| 'selectImages'
+		| 'selectImages';
 
 	type Props = {
 		type: iconType;
 		fill?: string;
-		scale?: number;
 		stroke?: string;
+		scale?: number;
 		hoverScale?: boolean;
 		disabled?: boolean;
 	} & HTMLAttributes<HTMLDivElement>;
 	let {
 		type,
-		fill,
+		fill = 'none',
+		stroke = 'none',
 		scale = 1,
-		stroke = 'white',
 		hoverScale = true,
 		disabled,
 		...rest
@@ -33,23 +33,22 @@
 		stroke = 'grey';
 		hoverScale = false;
 	}
-	fill = fill ? fill : 'none';
+	fill = type === 'reset' ? 'none' : fill;
 </script>
 
 <div class={hoverScale ? 'hover:scale-[120%]' : ''} {...rest}>
-	{#if ['fullscreen', 'marker', 'globePlus', 'addImage', 'selectImages'].includes(type)}
+	{#if type != 'imgError'}
 		<svg
 			width={24 * scale}
 			height={24 * scale}
 			viewBox="0 0 24 24"
+			{stroke}
 			{fill}
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			{#if type === 'fullscreen'}
 				<path
 					d="M9.00002 3.99998H4.00004L4 9M20 8.99999V4L15 3.99997M15 20H20L20 15M4 15L4 20L9.00002 20"
-					{stroke}
-					{fill}
 					stroke-width="2.3"
 					stroke-linecap="round"
 					stroke-linejoin="round"
@@ -96,6 +95,19 @@
 					d="M13,8 L13,6 L19,6 C20.1045695,6 21,6.8954305 21,8 L21,19 C21,20.1045695 20.1045695,21 19,21 L8,21 C6.8954305,21 6,20.1045695 6,19 L6,13 L8,13 L8,19 L19,19 L19,8 L13,8 Z M6,6 L6,3 L8,3 L8,6 L11,6 L11,8 L8,8 L8,11 L6,11 L6,8 L3,8 L3,6 L6,6 Z"
 				></path>
 			{/if}
+			{#if type === 'signOut'}
+				<path
+					d="M13,15a1,1,0,0,0-1,1v4H4V4h8V8a1,1,0,0,0,2,0V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2V16A1,1,0,0,0,13,15Z"
+				></path><path
+					d="M21.92,11.62a1.15,1.15,0,0,0-.21-.33h0l-4-4a1,1,0,1,0-1.42,1.42L18.59,11H8a1,1,0,0,0,0,2H18.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4h0a1.15,1.15,0,0,0,.21-.33.94.94,0,0,0,0-.76Z"
+				></path>
+			{/if}
+			{#if type === 'reset'}
+				<path stroke-width="1.5" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path
+					stroke-width="1.5"
+					d="M3 3v5h5"
+				/>
+			{/if}
 		</svg>
 	{/if}
 
@@ -133,39 +145,5 @@
 				</clipPath>
 			</defs>
 		</svg>
-	{/if}
-	{#if type === 'signOut'}
-		<svg
-			width={24 * scale}
-			height={24 * scale}
-			{fill}
-			viewBox="0 0 24 24"
-			xmlns="http://www.w3.org/2000/svg"
-			id="sign-out-alt-2"
-		>
-			<path
-				d="M13,15a1,1,0,0,0-1,1v4H4V4h8V8a1,1,0,0,0,2,0V4a2,2,0,0,0-2-2H4A2,2,0,0,0,2,4V20a2,2,0,0,0,2,2h8a2,2,0,0,0,2-2V16A1,1,0,0,0,13,15Z"
-			></path><path
-				d="M21.92,11.62a1.15,1.15,0,0,0-.21-.33h0l-4-4a1,1,0,1,0-1.42,1.42L18.59,11H8a1,1,0,0,0,0,2H18.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4h0a1.15,1.15,0,0,0,.21-.33.94.94,0,0,0,0-.76Z"
-			></path>
-		</svg>
-	{/if}
-
-	{#if type === 'reset'}
-		<svg
-			xmlns="http://www.w3.org/2000/svg"
-			width={24 * scale}
-			height={24 * scale}
-			viewBox="0 0 24 24"
-			fill="none"
-			{stroke}
-			stroke-linecap="round"
-			stroke-linejoin="round"
-			class="lucide lucide-rotate-ccw-icon lucide-rotate-ccw"
-			><path stroke-width="1.5" d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" /><path
-				stroke-width="1.5"
-				d="M3 3v5h5"
-			/></svg
-		>
 	{/if}
 </div>

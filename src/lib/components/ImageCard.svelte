@@ -20,7 +20,8 @@
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
 		imgSelected = $derived<boolean>(
 			global.selectedImageIds?.filter((id) => img.id === id).length ? true : false
-		);
+		),
+		imgShownOnMap = $state(false);
 
 	let hovered = $state<boolean>(false);
 </script>
@@ -71,13 +72,18 @@
 					id="imageControlOverlay"
 					class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"
 				>
-					<div id="bottomControl" class="flex h-fit w-full flex-row flex-nowrap justify-evenly">
+					<div
+						id="bottomControl"
+						class="flex h-fit w-full flex-row flex-nowrap justify-evenly {imgSelected
+							? 'mb-1.25'
+							: ''}"
+					>
 						<button
 							id="viewFullImageButton-{img.id}"
 							title="View Full Image"
 							onclick={() => fullImageModal?.openModal(img)}
 						>
-							<SVGIcon type="fullscreen" />
+							<SVGIcon type="fullscreen" stroke="white" />
 						</button>
 						<button
 							id="showOnMapButton-{img.id}"
@@ -87,7 +93,7 @@
 						>
 							<SVGIcon
 								type="marker"
-								stroke={imgSelected ? '#2dd4bf' : 'white'}
+								stroke={global.imgShownOnMap && imgSelected ? 'rgb(45, 212, 190)' : 'white'}
 								disabled={!imgHasCoordinates}
 							/>
 						</button>

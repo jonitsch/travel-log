@@ -192,12 +192,9 @@ export function handleShowOnMapClick(img: Image) {
 		}
 		return;
 	} else {
-		if (
-			imgSelected &&
-			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-			map.getZoom() === 15
-		) {
+		if (global.imgShownOnMap && isImgSelected(img.id)) {
 			const bbox = getBBox(global.journeyData);
+			global.imgShownOnMap = false;
 			if (!bbox) return;
 			map.fitBounds(bbox, {
 				padding: 90,
@@ -205,6 +202,8 @@ export function handleShowOnMapClick(img: Image) {
 			});
 			global.selectedImageIds = [];
 		} else {
+			global.imgShownOnMap = true;
+			map.once('drag', () => (global.imgShownOnMap = false));
 			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
 			global.selectedImageIds = [img.id];
 		}

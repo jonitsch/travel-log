@@ -16,7 +16,8 @@ type State = {
 		bounds: maplibregl.LngLatBoundsLike | undefined;
 	} | null;
 	selectedImageIds: string[];
-	imgSelectMode: boolean;
+	imgSelectMode: boolean,
+	imgShownOnMap: boolean,
 };
 
 export const global: State = $state({
@@ -29,4 +30,5 @@ export const global: State = $state({
 	savedViewPort: null,
 	selectedImageIds: [],
 	imgSelectMode: false,
+	imgShownOnMap: false,
 });

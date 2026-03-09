@@ -96,7 +96,7 @@
 				>
 					<HoverButton anchor="left" onclick={() => switchToOverview()} class="cursor-pointer">
 						{#snippet content()}
-							<SVGIcon type="reset" fill="white" hoverScale={false} scale={1.25} />
+							<SVGIcon type="reset" fill="white" hoverScale={false} scale={1.25} stroke={'white'} />
 						{/snippet}
 						{#snippet hoveredContent()}
 							<div class="text-xl text-white" id="addJourneyText">Reset View</div>

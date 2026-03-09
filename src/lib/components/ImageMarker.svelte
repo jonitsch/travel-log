@@ -31,12 +31,12 @@
 
 	function handleSingleClick() {
 		if (!map || !img.lng || !img.lat) return;
-
 		if (global.imgSelectMode) {
 			handleImageSelection(img.id);
 			return;
 		}
-		document.getElementById(`bookpic-${img.id}`)?.scrollIntoView({ behavior: 'smooth' });
+		global.selectedImageIds = [img.id];
+		scrollToBookPic(img.id);
 	}
 
 	function handleDoubleClick() {
