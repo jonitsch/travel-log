@@ -7,7 +7,9 @@ import { auth } from '$lib/server/auth';
 import { prisma } from '$lib/server/prisma';
 import { env } from '$env/dynamic/private';
 
-const allowedEmails = JSON.parse(env.ALLOWED_EMAILS);
+const allowedEmails = env.ALLOWED_EMAILS
+  ? JSON.parse(env.ALLOWED_EMAILS)
+  : {}
 
 const schema = z.object({
     name: z.string().min(4),
