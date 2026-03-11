@@ -2,12 +2,13 @@
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
 	import { global } from '$lib/state.svelte';
-	import { timeRange } from '$lib/utils/client';
+	import { imgHighlightColor, timeRange } from '$lib/utils/client';
 	import type { Journey } from '$gen/prisma/client/client';
 	import SVGIcon, { type iconType } from '$lib/components/SVGIcon.svelte';
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import Book from '$lib/components/Book.svelte';
 	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
+	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
 
 	let { data }: PageProps = $props();
 	let journeys = $state<Journey[]>(data.journeys);
@@ -15,9 +16,22 @@
 	let map = $state<maplibregl.Map>();
 
 	let addImageModal = $state<AddImageModal>(),
-		deleteImageModal = $state<DeleteImageModal>();
+		deleteImageModal = $state<DeleteImageModal>(),
+		renameImageModal = $state<RenameImageModal>();
 
-	let currentSelection = $state<string[]>([]);
+	let currentSelection = $state<string[]>([]),
+		allImagesSelected = $derived(
+			global.selectedImageIds.length === global.journeyData?.image.length
+		);
+
+	function handleSelectAll() {
+		if (!allImagesSelected && global.journeyData) {
+			currentSelection = global.selectedImageIds;
+			global.selectedImageIds = global.journeyData.image.map((img) => img.id);
+		} else {
+			global.selectedImageIds = currentSelection;
+		}
+	}
 </script>
 
 {#snippet imageControl(type: iconType, text: string, onclick: () => any)}
@@ -29,7 +43,7 @@
 		]}
 		{onclick}
 	>
-		<SVGIcon {type} fill={global.loadingJourney ? 'none' : 'white'} hoverScale={false} />
+		<SVGIcon {type} color={global.loadingJourney ? 'none' : 'white'} hoverScale={false} />
 		{text}
 	</button>
 {/snippet}
@@ -93,19 +107,24 @@
 							disabled={global.selectedImageIds.length === 0}
 							onclick={() => deleteImageModal?.openModal()}
 						>
-							<SVGIcon type="delete" scale={0.8} stroke="white" />Delete</button
+							<SVGIcon type="delete" scale={0.8} color="white" />Delete</button
 						>
 						<button
 							class={[
 								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
 								{ '*:invisible': global.loadingJourney }
 							]}
-							disabled={global.selectedImageIds.length === 0}
+							disabled={!(global.selectedImageIds.length === 1)}
+							onclick={() => {
+								if (!(global.selectedImageIds.length === 1)) return;
+								const img = journey.image.find((i) => i.id === global.selectedImageIds[0]);
+								if (img) renameImageModal?.openModal(img);
+							}}
 						>
 							<SVGIcon
 								class="pt-0.75"
 								type="rename"
-								fill={global.loadingJourney ? '' : 'white'}
+								color="white"
 								scale={0.85}
 							/>Rename</button
 						>
@@ -113,15 +132,28 @@
 					{#if global.imgSelectMode}
 						<div>
 							<button
-								class="hover:underline"
+								class={[
+									'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+									{ '*:invisible': global.loadingJourney },
+								]}
 								aria-label="Select All"
-								onclick={() => (global.selectedImageIds = journey.image.map((img) => img.id))}
-								>Select all</button
+								onclick={() => handleSelectAll()}
+								><SVGIcon
+									class="pt-0.75"
+									type="selectAll"
+									color={allImagesSelected ? imgHighlightColor : 'white'}
+									scale={0.85}
+								/>Select all</button
 							>
 							<button
-								class="hover:underline"
+								class={[
+									'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+									{ '*:invisible': global.loadingJourney }
+								]}
 								aria-label="Unselect All"
-								onclick={() => (global.selectedImageIds = [])}>Unselect all</button
+								onclick={() => (global.selectedImageIds = [])}
+								><SVGIcon class="pt-0.75" type="unselectAll" color="white" scale={0.85} />Unselect
+								all</button
 							>
 							Selected:
 							<div class="w-[3ch]">{global.selectedImageIds.length}</div>
@@ -145,3 +177,4 @@
 
 <AddImageModal bind:this={addImageModal} addImageForm={data.addImageForm} />
 <DeleteImageModal bind:this={deleteImageModal} deleteImageForm={data.deleteImageForm} />
+<RenameImageModal bind:this={renameImageModal} renameImageForm={data.renameImageForm} />

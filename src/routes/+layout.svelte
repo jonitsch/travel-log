@@ -98,7 +98,7 @@
 							type="submit"
 							class="oxygen-bold flex page-header-button flex-row items-center gap-2 bg-gray-900 transition-all duration-100 ease-in-out"
 						>
-							<SVGIcon type="signOut" fill="white" hoverScale={false} scale={0.9} />
+							<SVGIcon type="signOut" color="white" hoverScale={false} scale={0.9} />
 							Sign Out
 						</button>
 					</form>

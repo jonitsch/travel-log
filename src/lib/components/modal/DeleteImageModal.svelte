@@ -49,7 +49,7 @@
 			onclick={() => (open = false)}
 			aria-label="Close modal"
 		>
-			<SVGIcon type="x" stroke="white" scale={0.8} />
+			<SVGIcon type="x" color="white" scale={0.8} />
 		</button>
 		<form
 			id="deleteImageForm"
@@ -68,9 +68,9 @@
 				}
 			}}
 		>
-			<div class="flex flex-row items-center gap-1">
-				<span class="text-4xl">Delete Images?</span>
-				<SVGIcon type="delete" stroke="white" scale={2.5} hoverScale={false} />
+			<div class="flex flex-col items-center gap-1">
+				<SVGIcon type="delete" color="white" scale={2.5} hoverScale={false} />
+				<span class="text-4xl">Delete Image{$form.imgIds.length === 1 ? '' : 's'}?</span>
 			</div>
 			<div class="flex flex-row gap-2">
 				<Button type="submit" class="bg-green-600" disabled={$form.imgIds.length === 0}

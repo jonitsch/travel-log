@@ -63,7 +63,7 @@
 				class="col-span-full flex h-75 flex-row items-center justify-center gap-3 rounded-md bg-slate-800 text-3xl"
 			>
 				Add your first images!
-				<SVGIcon type="addImage" fill="white" scale={2} hoverScale={false} />
+				<SVGIcon type="addImage" color="white" scale={2} hoverScale={false} />
 			</div>
 		{/if}
 	{:else}

@@ -2,10 +2,11 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, handleImageSelection, handleShowOnMapClick } from '../utils/client';
+	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '../utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
+	import { preventDefault } from 'svelte/legacy';
 
 	interface Props {
 		img: Image;
@@ -47,7 +48,7 @@
 				<ErrorMessage>
 					<div class="flex flex-col items-center justify-center text-center">
 						Image failed to load!
-						<SVGIcon type="imgError" fill="white" stroke="white" scale={2.5} hoverScale={false} />
+						<SVGIcon type="imgError" color="white" scale={2.5} hoverScale={false} />
 					</div>
 				</ErrorMessage>
 			</div>
@@ -87,7 +88,7 @@
 							title="View Full Image"
 							onclick={() => fullImageModal?.openModal(img)}
 						>
-							<SVGIcon type="fullscreen" stroke="white" hoverScale />
+							<SVGIcon type="fullscreen" color="white" hoverScale />
 						</button>
 						<button
 							id="showOnMapButton-{img.id}"
@@ -104,7 +105,7 @@
 						>
 							<SVGIcon
 								type="marker"
-								stroke={imgShownOnMap && imgSelected ? 'rgb(45, 212, 190)' : 'white'}
+								color={imgShownOnMap && imgSelected ? imgHighlightColor : 'white'}
 								disabled={!imgHasCoordinates}
 								hoverScale
 							/>

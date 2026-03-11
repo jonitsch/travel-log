@@ -3,7 +3,7 @@
 	import * as Card from '$lib/components/shadcn/card';
 	import { Input } from '$lib/components/shadcn/input';
 	import { Label } from '$lib/components/shadcn/label';
-	import SuperDebug, { superForm } from 'sveltekit-superforms';
+	import { superForm } from 'sveltekit-superforms';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();

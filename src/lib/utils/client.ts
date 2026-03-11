@@ -7,6 +7,8 @@ import type { Image } from '$gen/prisma/client/client';
 
 export const defaultMapCenter: LngLatLike = [13.388, 52.517];
 
+export const imgHighlightColor = '#2DD4BE';
+
 export function switchToOverview(): void {
 	const map = global.map;
 	if (map) {

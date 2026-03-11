@@ -3,21 +3,24 @@ import { prisma } from '$lib/server/prisma';
 import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import { redirect } from "@sveltejs/kit";
-import type { Journey } from '$gen/prisma/client/client';
+import type { Image, Journey } from '$gen/prisma/client/client';
 import { existsSync, writeFileSync } from 'fs';
 import { getImageData, type imgCreateBody } from '$lib/utils/server';
 import z from 'zod';
-import { fail, superValidate, withFiles } from 'sveltekit-superforms';
+import { fail, message, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 
 const addImageSchema = z.object({
     journeyId: z.string(),
     files: z.array(z.file().mime('image/*')),
 });
-
 const deleteImageSchema = z.object({
     journeyId: z.string(),
     imgIds: z.array(z.string()),
+})
+const renameImageSchema = z.object({
+    imgId: z.string(),
+    newName: z.string(),
 })
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -36,11 +39,13 @@ export const load: PageServerLoad = async ({ locals }) => {
     })
     const addImageForm = await superValidate(zod4(addImageSchema));
     const deleteImageForm = await superValidate(zod4(deleteImageSchema));
+    const renameImageForm = await superValidate(zod4(renameImageSchema));
     return {
         journeys: journeys,
         user: user,
         addImageForm: addImageForm,
-        deleteImageForm: deleteImageForm
+        deleteImageForm: deleteImageForm,
+        renameImageForm: renameImageForm,
     };
 }
 
@@ -109,8 +114,8 @@ export const actions = {
         }
     },
     addImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(addImageSchema));
         try {
-            const form = await superValidate(request, zod4(addImageSchema));
             const { journeyId, files } = form.data;
 
             let path = env.IMAGE_FOLDER_PATH + journeyId + '/';
@@ -130,7 +135,7 @@ export const actions = {
                 const id = crypto.randomUUID();
                 const imgPath = path + id;
                 writeFileSync(imgPath, Buffer.from(await file.arrayBuffer()));
-                
+
                 let imgData: imgCreateBody = await getImageData(file.name, imgPath, journeyId);
                 if (!imgData) return fail(500, { message: 'Image Upload failed' });
 
@@ -141,22 +146,21 @@ export const actions = {
                     }
                 });
             }
-            console.log('Images added successfully!', files.map((f) => f.name));
+            console.log('Images added successfully:', files.map((f) => f.name));
             return withFiles({ form, journeyId });
         } catch (err) {
-            throw err;
+            return message(form, err, { status: 500 });
         }
     },
     deleteImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(deleteImageSchema));
         try {
-            const form = await superValidate(request, zod4(deleteImageSchema));
             const { journeyId, imgIds } = form.data;
-
-            console.log(imgIds)
+            console.log(`Attempting to delete Images:`, imgIds)
 
             if (!form.valid) return fail(400, { form });
 
-            let deletedImgs: string[] = []
+            let deletedImgs: Image[] = []
             for (const id of imgIds) {
                 const img = await prisma.image.delete({
                     where: {
@@ -165,12 +169,38 @@ export const actions = {
                     }
                 })
                 await fs.rm(img.path);
-                deletedImgs.push(img.fileName);
+                deletedImgs.push(img);
             }
 
-            return { form, journeyId, deletedImgs };
+            console.log(`Successfully deleted Images:`, deletedImgs.map((i) => i.id));
+            return { form, deletedImgs, journeyId };
         } catch (err) {
-            throw err;
+            return message(form, err, { status: 500 });
+        }
+    },
+    renameImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(renameImageSchema));
+        try {
+            const { imgId, newName } = form.data;
+            console.log(`Attempting to rename Image: ${imgId}`)
+
+            if (!form.valid) return fail(400, { form });
+
+            const renamedImg = await prisma.image.update({
+                where: {
+                    id: imgId,
+                },
+                data: {
+                    fileName: newName,
+                }
+            })
+
+            const journeyId = renamedImg.journeyId;
+
+            console.log(`Successfully renamed Image to: ${newName}`);
+            return { form, newName, journeyId };
+        } catch (err) {
+            return message(form, err, { status: 500 });
         }
     }
 } satisfies Actions;

@@ -65,7 +65,7 @@
 			onclick={() => (open = false)}
 			aria-label="Close modal"
 		>
-			<SVGIcon type="x" stroke="white" scale={0.8} />
+			<SVGIcon type="x" color="white" scale={0.8} />
 		</button>
 		<form
 			id="addImageForm"
@@ -88,7 +88,7 @@
 		>
 			<div class="flex flex-row items-center gap-1">
 				<span class="text-4xl">Add Images</span>
-				<SVGIcon type="addImage" fill="white" scale={2.5} hoverScale={false} />
+				<SVGIcon type="addImage" color="white" scale={2.5} hoverScale={false} />
 			</div>
 			<div class="flex flex-row gap-2">
 				<div class="flex flex-col gap-1">
