@@ -8,7 +8,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const { form, errors, constraints, enhance } = superForm(data.form);
+	const { form, errors, constraints, message, enhance } = superForm(data.form);
 </script>
 
 <form
@@ -80,6 +80,9 @@
 						<small class="text-red-600">{$errors.password}</small>
 					{/if}
 				</div>
+				{#if $message}
+					<small class="text-red-600">{$message}</small>
+				{/if}
 			</div>
 		</Card.Content>
 		<Card.Footer class="flex-col gap-2">

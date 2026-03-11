@@ -120,11 +120,13 @@ export const actions = {
     },
     addImage: async ({ request }) => {
         const form = await superValidate(request, zod4(addImageSchema));
+        if (!form.valid) return fail(400, { form });
         try {
             const { journeyId, files } = form.data;
 
             let path = env.IMAGE_FOLDER_PATH + journeyId + '/';
             console.log(`Attempting to add Images at ${path}`)
+            
             if (!existsSync(path)) {
                 fs.mkdir(path);
                 console.warn(`Image Folder did not exist at addImage action call and has now been created!`);
@@ -159,11 +161,10 @@ export const actions = {
     },
     deleteImage: async ({ request }) => {
         const form = await superValidate(request, zod4(deleteImageSchema));
+        if (!form.valid) return fail(400, { form });
         try {
             const { journeyId, imgIds } = form.data;
-            console.log(`Attempting to delete Images:`, imgIds)
-
-            if (!form.valid) return fail(400, { form });
+            console.log(`Attempting to delete Images:`, imgIds);
 
             let deletedImgs: Image[] = []
             for (const id of imgIds) {
@@ -185,11 +186,10 @@ export const actions = {
     },
     renameImage: async ({ request }) => {
         const form = await superValidate(request, zod4(renameImageSchema));
+        if (!form.valid) return fail(400, { form });
         try {
             const { imgId, newName } = form.data;
             console.log(`Attempting to rename Image: ${imgId}`)
-
-            if (!form.valid) return fail(400, { form });
 
             const renamedImg = await prisma.image.update({
                 where: {

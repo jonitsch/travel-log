@@ -109,7 +109,7 @@
 				</div>
 
 				<Button type="submit" class="bg-green-600" disabled={images.length === 0}>Upload</Button>
-				<Button type="button" onclick={() => reset()} disabled={images.length === 0}>Cancel</Button>
+				<Button type="button" onclick={() => open = false}>Cancel</Button>
 			</div>
 
 			<div class="flex flex-row items-center justify-center gap-2">
