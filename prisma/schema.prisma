@@ -48,7 +48,7 @@ model Journey {
   image     Image[]
   marker    Marker[]
   userId    String
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("journey")
 }
@@ -60,7 +60,7 @@ model Marker {
   lat       Float
   color     String?
   journeyId String
-  Journey   Journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey")
+  Journey   Journey @relation(fields: [journeyId], references: [journeyId], map: "Marker_journeyId_fkey", onDelete: Cascade)
 
   @@index([journeyId], map: "Marker_journeyId_fkey")
   @@map("marker")
@@ -77,7 +77,7 @@ model Image {
   id        String   @id @default(uuid())
   createdOn DateTime
   fileType  String
-  Journey   Journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey")
+  Journey   Journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey", onDelete: Cascade)
 
   @@index([journeyId], map: "Image_journeyId_fkey")
   @@map("image")
