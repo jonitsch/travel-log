@@ -27,7 +27,7 @@
 	let open = $state(false),
 		images = $state<string[]>([]);
 
-	const { form, errors, enhance } = superForm(addImageForm);
+	const { form, errors, message, enhance } = superForm(addImageForm);
 
 	const files = filesProxy(form, 'files');
 
@@ -75,7 +75,7 @@
 			class="flex h-fit flex-col items-center justify-center gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
 			use:enhance={{
 				onResult: ({ result }) => {
-					console.log(result)
+					console.log(result);
 					reset();
 					if (result.type === 'success' && result.data?.journeyId) {
 						global.loadingJourney = true;
@@ -109,7 +109,7 @@
 				</div>
 
 				<Button type="submit" class="bg-green-600" disabled={images.length === 0}>Upload</Button>
-				<Button type="button" onclick={() => open = false}>Cancel</Button>
+				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
 			</div>
 
 			<div class="flex flex-row items-center justify-center gap-2">
@@ -132,6 +132,9 @@
 			</div>
 
 			<input type="hidden" value={global.journeyId} name="journeyId" />
+			{#if $message}
+				<small class="text-red-600">{$message}</small>
+			{/if}
 		</form>
 	</div>
 </Modal>

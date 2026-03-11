@@ -99,7 +99,8 @@ export const actions = {
             console.log(`Attempting to delete Journey \`${journeyId}\`...`);
             const res = await prisma.journey.delete({
                 where: {
-                    journeyId: journeyId
+                    journeyId: journeyId,
+                    userId: user.id,
                 }
             });
             await fs.rm(imageFolder, { recursive: true });
@@ -153,7 +154,7 @@ export const actions = {
             console.log('Images added successfully:', files.map((f) => f.name));
             return withFiles({ form, journeyId });
         } catch (err) {
-            return message(form, err, { status: 500 });
+            return message(form, err instanceof Error ? err.message : "Unknown error", { status: 500 });
         }
     },
     deleteImage: async ({ request }) => {
@@ -178,7 +179,7 @@ export const actions = {
             console.log(`Successfully deleted Images:`, deletedImgs.map((i) => i.id));
             return { form, deletedImgs, journeyId };
         } catch (err) {
-            return message(form, err, { status: 500 });
+            return message(form, err instanceof Error ? err.message : "Unknown error", { status: 500 });
         }
     },
     renameImage: async ({ request }) => {
@@ -202,7 +203,7 @@ export const actions = {
             console.log(`Successfully renamed Image to: ${newName}`);
             return { form, newName, journeyId };
         } catch (err) {
-            return message(form, err, { status: 500 });
+            return message(form, err instanceof Error ? err.message : "Unknown error", { status: 500 });
         }
     }
 } satisfies Actions;

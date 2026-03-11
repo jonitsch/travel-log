@@ -25,7 +25,7 @@
 	let open = $state(false),
 		images = $state<string[]>([]);
 
-	const { form, errors, enhance } = superForm(deleteImageForm);
+	const { form, errors, message, enhance } = superForm(deleteImageForm);
 
 	export function openModal() {
 		reset();
@@ -86,6 +86,9 @@
 			{#each $form.imgIds as id, i}
 				<input type="hidden" bind:value={$form.imgIds[i]} name="imgIds" />
 			{/each}
+			{#if $message}
+				<small class="text-red-600">{$message}</small>
+			{/if}
 		</form>
 	</div>
 </Modal>

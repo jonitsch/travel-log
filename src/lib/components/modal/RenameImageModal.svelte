@@ -28,7 +28,7 @@
 		img = $state<Image>(),
 		newName = $state<string>();
 
-	const { form, errors, enhance } = superForm(renameImageForm);
+	const { form, errors, message, enhance } = superForm(renameImageForm);
 
 	export function openModal(inputImg: Image) {
 		reset();
@@ -79,8 +79,10 @@
 				}}
 			>
 				<Input class="text-center" type="text" bind:value={newName} name="newName" />
-				<div class="flex flex-row justify-center w-full gap-2">
-					<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}>Confirm</Button>
+				<div class="flex w-full flex-row justify-center gap-2">
+					<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}
+						>Confirm</Button
+					>
 					<Button type="button" onclick={() => (open = false)}>Cancel</Button>
 				</div>
 				{#if $errors.imgId}
@@ -88,6 +90,9 @@
 				{/if}
 				<input type="hidden" value={img.id} name="imgId" />
 			</form>
+			{#if $message}
+				<small class="text-red-600">{$message}</small>
+			{/if}
 		</div>
 	{/if}
 </Modal>
