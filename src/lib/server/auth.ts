@@ -9,8 +9,6 @@ import { dev } from "$app/environment";
 console.log(env.BETTER_AUTH_BASE_URL)
 
 export const auth = betterAuth({
-    secret: env.BETTER_AUTH_SECRET,
-    baseURL: dev ? 'http://localhost:3000' : env.BETTER_AUTH_BASE_URL,
     emailAndPassword: {
         enabled: true,
         minPasswordLength: 8,
