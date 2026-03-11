@@ -19,7 +19,7 @@ COPY --from=builder /app/build /app/build
 COPY --from=builder /app/package.json /app/package-lock.json /app/
 
 ENV NODE_ENV=production
-ENV BETTER_AUTH_BASE_URL=http://localhost:3000
+ENV BETTER_AUTH_BASE_URL=https://travel-log-staging.up.railway.app
 
 EXPOSE 3000
 
