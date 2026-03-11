@@ -9,7 +9,6 @@ import { getImageData, type imgCreateBody } from '$lib/utils/server';
 import z from 'zod';
 import { fail, message, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
-import { invalidateAll } from '$app/navigation';
 
 const addImageSchema = z.object({
     journeyId: z.string(),
@@ -84,7 +83,6 @@ export const actions = {
             console.log(`Successfully created Image Folder: \`${env.IMAGE_FOLDER_PATH + journeyId}\``);
             console.log(`Journey \`${journey.journeyId}\` was successfully created!`);
 
-            await invalidateAll();
             return { success: true, journey };
         } catch (err) {
             throw err;
@@ -107,7 +105,6 @@ export const actions = {
             await fs.rm(imageFolder, { recursive: true });
             console.log(`Journey \`${journeyId}\` was successfully deleted!`);
 
-            await invalidateAll();
             return {
                 success: true, deletedJourney: {
                     journeyId: res.journeyId,
@@ -126,7 +123,7 @@ export const actions = {
 
             let path = env.IMAGE_FOLDER_PATH + journeyId + '/';
             console.log(`Attempting to add Images at ${path}`)
-            
+
             if (!existsSync(path)) {
                 fs.mkdir(path);
                 console.warn(`Image Folder did not exist at addImage action call and has now been created!`);
