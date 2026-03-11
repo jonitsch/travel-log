@@ -1,6 +1,6 @@
 import type { Journey, Marker, Image } from "$gen/prisma/client/client";
 
-export type ViewMode = 'overview' | 'journey' | null;
+export type ViewMode = 'overview' | 'journey' | 'createJourney' | null;
 export type JourneyData = Journey & { marker: Marker[], image: Image[] } | null;
 
 type State = {
@@ -8,13 +8,16 @@ type State = {
 	journeyData: JourneyData;
 	journeyId: string | undefined;
 	map: maplibregl.Map | null;
+	center: maplibregl.LngLatLike | undefined;
 	loadingJourney: boolean;
 	savedViewPort: {
 		zoom: number | undefined;
 		center: maplibregl.LngLatLike | undefined;
 		bounds: maplibregl.LngLatBoundsLike | undefined;
 	} | null;
-	selectedImageId: string | null;
+	selectedImageIds: string[];
+	imgSelectMode: boolean,
+	imgShownOnMap: string,
 };
 
 export const global: State = $state({
@@ -22,7 +25,10 @@ export const global: State = $state({
 	journeyData: null,
 	journeyId: '',
 	map: null,
+	center: undefined,
 	loadingJourney: false,
 	savedViewPort: null,
-	selectedImageId: null
+	selectedImageIds: [],
+	imgSelectMode: false,
+	imgShownOnMap: '',
 });

@@ -55,4 +55,4 @@ services:
     tty: true
 
 volumes:
-  - mysql_data:
+  mysql_data:

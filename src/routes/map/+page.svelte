@@ -2,125 +2,179 @@
 	import Map from '$lib/components/Map.svelte';
 	import type { PageProps } from './$types';
 	import { global } from '$lib/state.svelte';
-	import ErrorMessage from '$src/lib/components/ErrorMessage.svelte';
-	import { getImgProxyURL } from '$src/lib/imgproxy';
-	import FullImageModal from '$src/lib/components/FullImageModal.svelte';
-	import CreateJourneyModal from '$src/lib/components/CreateJourneyModal.svelte';
-	import ImageCard from '$src/lib/components/ImageCard.svelte';
-	import { formattedDate, timeRange } from '$src/lib/utils';
+	import { imgHighlightColor, timeRange } from '$lib/utils/client';
+	import type { Journey } from '$gen/prisma/client/client';
+	import SVGIcon, { type iconType } from '$lib/components/SVGIcon.svelte';
+	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
+	import Book from '$lib/components/Book.svelte';
+	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
+	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
 
 	let { data }: PageProps = $props();
-	let createJourneyModal = $state<CreateJourneyModal>();
+	let journeys = $state<Journey[]>(data.journeys);
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
-	let fullImageModal = $state<FullImageModal>();
-	let book = $state<HTMLDivElement>();
-	// svelte-ignore non_reactive_update
-	let previousDate: string | null = null;
-	let dayOf = (date: Date) => {
-		return date.toISOString().slice(0, 10);
-	}; // DD//MM//YYYY
+
+	let addImageModal = $state<AddImageModal>(),
+		deleteImageModal = $state<DeleteImageModal>(),
+		renameImageModal = $state<RenameImageModal>();
+
+	let currentSelection = $state<string[]>([]),
+		allImagesSelected = $derived(
+			global.selectedImageIds.length === global.journeyData?.image.length
+		);
+
+	function handleSelectAll() {
+		if (!allImagesSelected && global.journeyData) {
+			currentSelection = global.selectedImageIds;
+			global.selectedImageIds = global.journeyData.image.map((img) => img.id);
+		} else {
+			global.selectedImageIds = currentSelection;
+		}
+	}
 </script>
 
-<div class="flex size-full flex-row gap-4 overflow-hidden">
-	<div
-		class="items-top flex flex-col gap-4 {global.viewMode === 'overview'
-			? 'size-full'
-			: 'h-full w-[40dvw]'}"
+{#snippet imageControl(type: iconType, text: string, onclick: () => any)}
+	<button
+		class={[
+			'flex w-fit flex-row items-center gap-1 rounded-md p-1',
+			{ 'hover:bg-gray-900': !global.loadingJourney },
+			{ 'bg-gray-900': global.imgSelectMode && type === 'selectImages' && !global.loadingJourney }
+		]}
+		{onclick}
 	>
-		<!------------------- MAP CONTAINER --------------------->
-		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:data bind:createJourneyModal />
-		</div>
+		<SVGIcon {type} color={global.loadingJourney ? 'none' : 'white'} hoverScale={false} />
+		{text}
+	</button>
+{/snippet}
 
-		<!------------------- JOURNEY HEADER --------------------->
-		{#if global.viewMode === 'journey'}
-			{@const journey = global.journeyData}
-			{#if journey}
-				<div class="animate-slide-left flex flex-col gap-1">
-					<div
-						id="header"
-						class={[
-							'flex h-fit w-full flex-row items-stretch gap-5',
-							{ 'skeleton *:invisible': global.loadingJourney }
-						]}
-					>
-						<text class="oxygen-bold text-5xl text-white">
-							{journey.name ?? 'Loading Name'}
-						</text>
-						<!-- 						<form method="POST" action="?/deleteJourney" class="mr-0">
-							<button
-								class="oxygen-bold text-1xl w-fit rounded-md p-3 leading-tight text-gray-50 shadow-xl bg-gray-900"
-								aria-label="Delete Journey"
-								name="journeyId"
-								value={journey.journeyId}
-								type="submit">Delete</button
-							>
-						</form> -->
-					</div>
-					<!-------------------    INFO BOX     --------------------->
-					<div
-						class={[
-							'h-fit w-fit flex-none flex-col text-white',
-							{ 'skeleton *:invisible': global.loadingJourney }
-						]}
-					>
-						<text class="flex text-2xl">
-							{timeRange(journey)}
-						</text>
-					</div>
-				</div>
-			{/if}
-		{/if}
-	</div>
-
+<div
+	class="grid size-full {global.viewMode === 'journey'
+		? 'grid-cols-[35%_1fr] grid-rows-[auto_1fr]'
+		: ''} gap-4 overflow-hidden"
+>
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<div
-			id="book"
-			class="animate-slide-right grid h-full w-[75dvw] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden overflow-y-visible pr-3"
-			bind:this={book}
-		>
-			{#if global.loadingJourney}
-				<div class="col-span-full skeleton py-2 text-2xl text-transparent">Placeholder</div>
-				{#each { length: 200 }}
-					<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
-				{/each}
-			{:else if journey}
-				{@const images = journey.image}
-				{(previousDate = null)}
-				{#if images.length > 0}
-					{#each images as img}
-						{@const date = new Date(img.createdOn)}
-						{#if previousDate != dayOf(date)}
-							<div
+		{#if journey}
+			<!------------------- MAP HEADER --------------------->
+			<div
+				class="animate-slide-left flex h-fit flex-col justify-between {global.loadingJourney
+					? 'gap-2 *:skeleton *:text-transparent'
+					: '*:text-white'}"
+			>
+				<div class="oxygen-bold truncate py-2 text-5xl">
+					{journey.name}
+				</div>
+				<div class="w-fit text-2xl font-light">
+					{timeRange(journey)}
+				</div>
+			</div>
+			<!------------------- BOOK HEADER --------------------->
+			<div
+				class="animate-slide-left flex h-fit flex-col justify-between gap-2 {global.loadingJourney
+					? '*:skeleton *:text-transparent'
+					: '*:text-white'}"
+			>
+				<div class="flex w-full flex-row items-end gap-2 py-2">
+					<div class="oxygen-bold flex flex-row items-end gap-2 text-5xl">
+						Images <div class="text-3xl font-light">{`(${journey.image.length})`}</div>
+					</div>
+					<div class="flex w-fit flex-row items-center gap-3">
+						{@render imageControl('selectImages', 'Select Images', () => {
+							global.imgSelectMode = !global.imgSelectMode;
+							if (!global.imgSelectMode) {
+								currentSelection = global.selectedImageIds;
+								global.selectedImageIds = [];
+							} else {
+								global.selectedImageIds = currentSelection;
+							}
+						})}
+						{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
+					</div>
+				</div>
+
+				<div
+					class="flex {global.loadingJourney
+						? 'w-fit'
+						: 'w-full'} flex-row justify-between *:flex *:items-end *:gap-2"
+				>
+					<div class="*:items-center">
+						<button
+							class={[
+								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+								{ '*:invisible': global.loadingJourney }
+							]}
+							disabled={global.selectedImageIds.length === 0}
+							onclick={() => deleteImageModal?.openModal()}
+						>
+							<SVGIcon type="delete" scale={0.8} color="white" />Delete</button
+						>
+						<button
+							class={[
+								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+								{ '*:invisible': global.loadingJourney }
+							]}
+							disabled={!(global.selectedImageIds.length === 1)}
+							onclick={() => {
+								if (!(global.selectedImageIds.length === 1)) return;
+								const img = journey.image.find((i) => i.id === global.selectedImageIds[0]);
+								if (img) renameImageModal?.openModal(img);
+							}}
+						>
+							<SVGIcon
+								class="pt-0.75"
+								type="rename"
+								color="white"
+								scale={0.85}
+							/>Rename</button
+						>
+					</div>
+					{#if global.imgSelectMode}
+						<div>
+							<button
 								class={[
-									'col-span-full w-full rounded-md px-4 py-2 text-2xl text-white shadow-inner shadow-slate-400/60',
-									{ 'mt-4': previousDate }
+									'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+									{ '*:invisible': global.loadingJourney },
 								]}
+								aria-label="Select All"
+								onclick={() => handleSelectAll()}
+								><SVGIcon
+									class="pt-0.75"
+									type="selectAll"
+									color={allImagesSelected ? imgHighlightColor : 'white'}
+									scale={0.85}
+								/>Select all</button
 							>
-								{formattedDate(date, 'dd/mm/yyyy')}
-							</div>
-						{/if}
-						<div class="col-span-1">
-							{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
-								<ImageCard {img} src={response} {fullImageModal} />
-							{:catch error}
-								<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
-							{/await}
+							<button
+								class={[
+									'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+									{ '*:invisible': global.loadingJourney }
+								]}
+								aria-label="Unselect All"
+								onclick={() => (global.selectedImageIds = [])}
+								><SVGIcon class="pt-0.75" type="unselectAll" color="white" scale={0.85} />Unselect
+								all</button
+							>
+							Selected:
+							<div class="w-[3ch]">{global.selectedImageIds.length}</div>
 						</div>
-						<div hidden>{(previousDate = dayOf(date))}</div>
-					{/each}
-				{:else}
-					<div class="h-full w-full text-2xl text-white">No images yet</div>
-				{/if}
-			{:else}
-				{@const error = new Error('Images failed to load - no image data received')}
-				<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
-			{/if}
-			<FullImageModal bind:this={fullImageModal} />
+					{/if}
+				</div>
+			</div>
+		{/if}
+	{/if}
+	<div class="items-top flex size-full flex-col gap-4">
+		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
+			<Map bind:map={map!} bind:mapContainer bind:journeys />
+		</div>
+	</div>
+	{#if global.viewMode === 'journey'}
+		<div id="bookContainer" class="animate-slide-right size-full overflow-y-auto">
+			<Book />
 		</div>
 	{/if}
-	<!------------------- CREATE JOURNEY MODAL --------------------->
-	<CreateJourneyModal bind:this={createJourneyModal} />
 </div>
+
+<AddImageModal bind:this={addImageModal} addImageForm={data.addImageForm} />
+<DeleteImageModal bind:this={deleteImageModal} deleteImageForm={data.deleteImageForm} />
+<RenameImageModal bind:this={renameImageModal} renameImageForm={data.renameImageForm} />

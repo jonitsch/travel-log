@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { Button } from '$src/lib/components/shadcn/button';
-	import * as Card from '$src/lib/components/shadcn/card';
-	import { Input } from '$src/lib/components/shadcn/input';
-	import { Label } from '$src/lib/components/shadcn/label';
+	import { Button } from '$lib/components/shadcn/button';
+	import * as Card from '$lib/components/shadcn/card';
+	import { Input } from '$lib/components/shadcn/input';
+	import { Label } from '$lib/components/shadcn/label';
 	import { superForm } from 'sveltekit-superforms';
 	import type { PageData } from './$types';
 
@@ -13,7 +13,7 @@
 
 <form
 	id="main"
-	class="animate-modal-in flex size-full flex-row items-start mt-15 justify-center gap-4"
+	class="animate-modal-in mt-15 flex size-full flex-row items-start justify-center gap-4"
 	method="POST"
 	use:enhance
 >
@@ -52,10 +52,10 @@
 						required
 					/>
 					{#if $errors.email}
-						<small class="text-red-600 flex justify-between"
+						<small class="flex justify-between text-red-600"
 							>{$errors.email}
 							{#if $errors.email.join().includes('Email is already in use')}
-								<a href="/auth/login" class="text-white ml-3 underline"> Login instead?</a>
+								<a href="/auth/login" class="ml-3 text-white underline"> Login instead?</a>
 							{/if}
 						</small>
 					{/if}
@@ -80,6 +80,9 @@
 						<small class="text-red-600">{$errors.password}</small>
 					{/if}
 				</div>
+				{#if $message}
+					<small class="text-red-600">{$message}</small>
+				{/if}
 			</div>
 		</Card.Content>
 		<Card.Footer class="flex-col gap-2">

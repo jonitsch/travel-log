@@ -1,5 +1,5 @@
 import type { Marker } from '$gen/prisma/client/client';
-import { prisma } from '$src/lib/server/prisma.js';
+import { prisma } from '$lib/server/prisma.js';
 import { json } from '@sveltejs/kit';
 
 export async function GET(journeyId) {

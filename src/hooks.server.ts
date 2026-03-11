@@ -1,16 +1,12 @@
 import fs from 'fs';
 import path from "path";
-import { prisma } from '$src/lib/server/prisma.js';
-import { redirect, type ServerInit } from '@sveltejs/kit';
-import { fileTypeFromFile, type FileTypeResult } from 'file-type';
-import exifr from 'exifr';
-import sharp from 'sharp';
-import { Prisma } from '$gen/prisma/client/client';
-import { stat } from "fs/promises";
+import { prisma } from '$lib/server/prisma.js';
+import { type ServerInit } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { auth } from "$lib/server/auth";
 import { svelteKitHandler } from "better-auth/svelte-kit";
 import { building } from "$app/environment";
+import { getImageData, type imgCreateBody } from './lib/utils/server';
 
 export async function handle({ event, resolve }) {
     // Fetch current session from Better Auth
@@ -33,10 +29,8 @@ export const init: ServerInit = async () => {
         console.error('Database connection failed!', err);
     }
 
-    await initializeDatabase();
+    /* await initializeDatabase(); */
 }
-
-type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
 
 async function initializeDatabase() {
     console.log('Database Initialization started');
@@ -47,10 +41,11 @@ async function initializeDatabase() {
             await prisma.image.deleteMany();
             let journeys = await prisma.journey.findMany();
             for (const j of journeys) {
-                let journeyImages = await getImages(j.journeyId);
-                for (const img of journeyImages) {
+                const journeyImages = await getImages(j.journeyId);
+                for (const imgData of journeyImages) {
+                    if (!imgData) throw Error(`No Image Data for: ${imgData}`);
                     await prisma.image.create({
-                        data: img
+                        data: imgData,
                     });
                 }
             }
@@ -67,9 +62,9 @@ async function initializeDatabase() {
 
 async function getImages(journeyId: string) {
     console.log('GetImages started: Getting Images for: ', journeyId);
-    let images: Array<imgCreateBody> = [];
+    let images: imgCreateBody[] = [];
     try {
-        let dir = `${env.IMAGE_FOLDER_PATH}/${journeyId}`
+        let dir = env.IMAGE_FOLDER_PATH + journeyId;
         if (!fs.existsSync(dir)) {
             return images;
         };
@@ -78,62 +73,19 @@ async function getImages(journeyId: string) {
             recursive: true,
         });
         for (const entry of entries) {
-            let fullPath = path.join(entry.parentPath, entry.name);
+            let filePath = path.join(entry.parentPath, entry.name);
+            if (!filePath) throw Error(`File path is not defined for ${entry}`);
             if (entry.isFile()) {
-                let type: FileTypeResult | undefined = await fileTypeFromFile(fullPath);
-                if (type?.mime.includes('image')) {
-                    let name = entry.name,
-                        path = fullPath,
-                        metaData: sharp.Metadata = await sharp(path).metadata(),
-                        coords: {
-                            latitude: number,
-                            longitude: number,
-                        } | undefined;
-                    if (await exifr.gps(path)) {
-                        coords = await exifr.gps(path);
-                    }
-                    // exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
-                    let exifrDates: {
-                        DateTimeOriginal: string;
-                        CreateDate: string;
-                        ModifyDate: string;
-                    } = await exifr.parse(path, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
-                    let createdOn: Date;
-                    if (exifrDates) {
-                        createdOn = new Date(exifrDates.DateTimeOriginal ?? exifrDates.CreateDate ?? exifrDates.ModifyDate);
-                    } else {
-                        let systemDates = await stat(path);
-                        if (systemDates) {
-                            createdOn = new Date(systemDates.birthtime ?? systemDates.mtime ?? systemDates.ctime);
-                        } else {
-                            createdOn = new Date(Date.now());
-                            console.log(`No valid Date found for ${path} in exifr or system data, using fallback Date.now()`);
-                        }
-                    }
-                    let imgData: imgCreateBody = {
-                        path: path,
-                        fileName: name,
-                        fileType: type.ext,
-                        createdOn: createdOn,
-                        width: metaData.width,
-                        height: metaData.height,
-                        lng: coords?.longitude ?? null,
-                        lat: coords?.latitude ?? null,
-                        journeyId: journeyId,
-                    }
-                    images.push(imgData);
-                    console.log('Loaded Image: ', path)
-                }
-                else { console.log('Skipped file as it is not an image: ', entry.name) }
-
+                const imgData = await getImageData(entry.name, filePath, journeyId);
+                if (!imgData) continue;
+                images.push(imgData);
             }
-            else { console.log('Skipped entry as it is not a file: ', fullPath) }
+            else { console.log('Skipped entry as it is not a file: ', filePath) }
         };
     } catch (err) {
         console.log('GetImages failed', err)
         console.error(err);
     } finally {
-        console.log('GetImages finished!')
         return images;
     }
 }

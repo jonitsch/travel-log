@@ -1,10 +1,13 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms';
+import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
-import { auth } from '$src/lib/server/auth';
+import { auth } from '$lib/server/auth';
 import { prisma } from '$lib/server/prisma';
+import { env } from '$env/dynamic/private';
+
+const allowedEmails = JSON.parse(env.ALLOWED_EMAILS);
 
 const schema = z.object({
     name: z.string().min(4),
@@ -22,16 +25,17 @@ export const actions = {
         const form = await superValidate(request, zod4(schema));
         const { name, email, password } = form.data;
 
-        if (await prisma.user.findUnique({ where: { email } })) {
-            form.errors.email = ["Email is already in use"]
-            return fail(400, {
-                form,
-            })
-        }
-        if (!form.valid) {
-            console.log('test')
+        if (!form.valid) return fail(400, { form });
+
+        if (!allowedEmails.includes(email)) {
+            form.errors.email = ["Access Denied"];
             return fail(400, { form });
         }
+        if (await prisma.user.findUnique({ where: { email } })) {
+            form.errors.email = ["Email is already in use!"];
+            return fail(400, { form });
+        }
+
         try {
             await auth.api.signUpEmail({
                 body: {
@@ -40,8 +44,8 @@ export const actions = {
                     password,
                 }
             });
-        } catch (e) {
-            return fail(400, { form });
+        } catch (err) {
+            return message(form, err, { status: 500 });
         }
 
         redirect(300, '/auth/login');

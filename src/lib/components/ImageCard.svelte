@@ -1,53 +1,30 @@
 <script lang="ts">
-	import type { Image } from '../server/prisma';
-	import FullImageModal from './FullImageModal.svelte';
+	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, getBBox } from '../utils';
+	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '../utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
+	import type { Image } from '$gen/prisma/client/client';
+	import { preventDefault } from 'svelte/legacy';
 
 	interface Props {
 		img: Image;
 		src: string;
-		fullImageModal: FullImageModal | undefined;
+		fullImageModal?: FullImageModal | undefined;
 	}
 	let { img, src, fullImageModal }: Props = $props();
 
-	let imageLoaded = $state<boolean>(false),
-		imageError = $state<boolean>(false);
-	let journey = global.journeyData;
+	let imgRendered = $state<boolean>(false),
+		imgError = $state<boolean>(false);
 
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
-		imgSelected = $derived<boolean>(img.id === global.selectedImageId);
+		imgSelected = $derived<boolean>(
+			global.selectedImageIds?.filter((id) => img.id === id).length ? true : false
+		),
+		imgShownOnMap = $derived<boolean>(global.imgShownOnMap === img.id);
 
 	let hovered = $state<boolean>(false);
-
-	function handleShowOnMapClick() {
-		if (!global.map || !img.lng || !img.lat) return;
-		const map = global.map;
-		if (
-			imgSelected &&
-			map.getCenter().lng.toFixed(4) === img.lng.toFixed(4) &&
-			map.getZoom() === 15
-		) {
-			const bbox = getBBox(journey!);
-			if (!bbox) return;
-			map.fitBounds(bbox, {
-				padding: {
-					top: 90,
-					bottom: 90,
-					left: 90,
-					right: 90
-				},
-				duration: 1500
-			});
-			global.selectedImageId = null;
-		} else {
-			map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
-			global.selectedImageId = img.id;
-		}
-	}
 </script>
 
 <div
@@ -56,19 +33,22 @@
 	tabindex="0"
 	onmouseenter={() => (hovered = true)}
 	onmouseleave={() => (hovered = false)}
+	onkeydown={(e) => {
+		if (e.key === 'Enter') handleImageSelection(img.id);
+	}}
+	onclick={() => handleImageSelection(img.id)}
 	class="relative block size-full overflow-hidden rounded-md"
-	class:highlighted={imgSelected}
+	class:highlightBorder={imgSelected}
 >
-	{#if imageError}
-		<div
-			class="flex h-full flex-col items-center rounded-md border-4 border-gray-900 bg-red-900 p-3"
-		>
-			<div class="text-white">{img.fileName}</div>
+	{#if imgError}
+		<div class="flex size-full flex-col items-center rounded-md bg-red-900 p-3">
+			<div class="w-[90%] truncate text-white">{img.fileName}</div>
+			u
 			<div class="flex flex-1 items-center">
 				<ErrorMessage>
-					<div class="flex flex-col items-center justify-center wrap-break-word text-center">
+					<div class="flex flex-col items-center justify-center text-center">
 						Image failed to load!
-						<SVGIcon type="imageError" fill="white" scale={2.5} />
+						<SVGIcon type="imgError" color="white" scale={2.5} hoverScale={false} />
 					</div>
 				</ErrorMessage>
 			</div>
@@ -82,51 +62,109 @@
 			onload={() =>
 				awaitImageRender(async () => {
 					await tick();
-					imageLoaded = true;
+					imgRendered = true;
 				})}
-			onerror={() => (imageError = true)}
+			onerror={() => (imgError = true)}
 		/>
+		{#if imgSelected}
+			<div class="highlightBorderOverlay"></div>
+		{/if}
 		{#if hovered || imgSelected}
-			<div
-				id="imageControlOverlay"
-				class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"
-			>
-				<div id="bottomControl" class="flex h-fit w-full flex-row flex-nowrap justify-evenly">
-					<button
-						id="viewFullImageButton-{img.id}"
-						title="View Full Image"
-						onclick={() => fullImageModal?.open(img)}
+			{#if !global.imgSelectMode}
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					id="imageControlOverlay"
+					class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"
+				>
+					<div
+						id="bottomControl"
+						class="flex h-fit w-full flex-row flex-nowrap justify-evenly {imgSelected
+							? 'mb-1.25'
+							: ''}"
 					>
-						<SVGIcon type="fullscreen" />
-					</button>
-					<button
-						id="showOnMapButton-{img.id}"
-						title={imgHasCoordinates ? "Show on map" : "Image has no coordinate data"}
-						onclick={() => handleShowOnMapClick()}
-						disabled={!imgHasCoordinates}
-					>
-						<SVGIcon
-							type="marker"
-							stroke={imgSelected ? '#2dd4bf' : 'white'}
+						<button
+							id="viewFullImageButton-{img.id}"
+							title="View Full Image"
+							onclick={() => fullImageModal?.openModal(img)}
+						>
+							<SVGIcon type="fullscreen" color="white" hoverScale />
+						</button>
+						<button
+							id="showOnMapButton-{img.id}"
+							title={imgHasCoordinates
+								? !imgShownOnMap
+									? 'Show on Map'
+									: 'Zoom back out'
+								: 'Image has no coordinate data'}
+							onclick={(e) => {
+								if (imgSelected) e.stopPropagation();
+								handleShowOnMapClick(img);
+							}}
 							disabled={!imgHasCoordinates}
-						/>
-					</button>
+						>
+							<SVGIcon
+								type="marker"
+								color={imgShownOnMap && imgSelected ? imgHighlightColor : 'white'}
+								disabled={!imgHasCoordinates}
+								hoverScale
+							/>
+						</button>
+					</div>
 				</div>
-			</div>
+			{:else}
+				<div
+					id="imageSelectOverlay"
+					class={[
+						'absolute inset-0 flex flex-col items-center justify-center bg-transparent',
+						{ 'hover:bg-slate-900/40': !imgSelected }
+					]}
+					aria-label="Select Image"
+				>
+					{#if hovered}
+						<div
+							class="size-8 rounded-full border-2 border-white"
+							class:highlightBackground={imgSelected}
+						></div>
+					{/if}
+				</div>
+			{/if}
 		{/if}
 	{/if}
 </div>
 
 <style>
-	.highlighted {
-		border: inset 5px var(--img-highlight-color);
+	.highlightBorderOverlay {
+		position: absolute;
+		z-index: 1000;
+		inset: 0;
+		pointer-events: none;
+		box-shadow: 0 0 0 5px var(--img-highlight-color) inset;
+		border-radius: inherit;
+		animation: border-fade 0.1s ease-in-out;
 	}
 
-	#bottomControl {
+	@keyframes border-fade {
+		0% {
+			box-shadow: 0 0 0 0px inset;
+		}
+
+		100% {
+			box-shadow: 0 0 0 5px var(--img-highlight-color) inset;
+		}
+	}
+
+	.highlightBackground {
+		background-color: var(--img-highlight-color);
+		opacity: 50%;
+	}
+
+	#imageControlOverlay > #bottomControl {
 		transform-origin: bottom;
 		animation: growIn 120ms cubic-bezier(0.2, 0, 0.38, 0.9);
 	}
-	button {
+
+	#bottomControl > button {
 		display: flex;
 		width: 100%;
 		justify-content: center;
@@ -134,7 +172,7 @@
 		padding-top: 0.5rem /* 8px */;
 		padding-bottom: 0.5rem /* 8px */;
 	}
-	button:hover {
+	#bottomControl > button:hover {
 		background-color: rgb(15 23 42 / 0.9);
 		border: inset 2px solid rgba(0, 0, 0, 0.385);
 	}

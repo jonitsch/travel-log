@@ -1,14 +1,33 @@
 import type { PageServerLoad, Actions } from './$types';
-import { prisma } from '$src/lib/server/prisma';
+import { prisma } from '$lib/server/prisma';
 import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import { redirect } from "@sveltejs/kit";
-import type { Journey } from '$gen/prisma/client/client';
+import type { Image, Journey } from '$gen/prisma/client/client';
+import { existsSync, writeFileSync } from 'fs';
+import { getImageData, type imgCreateBody } from '$lib/utils/server';
+import z from 'zod';
+import { fail, message, superValidate, withFiles } from 'sveltekit-superforms';
+import { zod4 } from 'sveltekit-superforms/adapters';
+
+const addImageSchema = z.object({
+    journeyId: z.string(),
+    files: z.array(z.file().mime('image/*')),
+});
+const deleteImageSchema = z.object({
+    journeyId: z.string(),
+    imgIds: z.array(z.string()),
+})
+const renameImageSchema = z.object({
+    imgId: z.string(),
+    newName: z.string(),
+})
 
 export const load: PageServerLoad = async ({ locals }) => {
     const user = locals.user;
     if (!user) {
-        throw redirect(303, '/auth/login');}
+        throw redirect(303, '/auth/login');
+    }
     const journeys: Journey[] = await prisma.journey.findMany({
         include: {
             marker: true,
@@ -18,9 +37,15 @@ export const load: PageServerLoad = async ({ locals }) => {
             userId: user.id,
         }
     })
+    const addImageForm = await superValidate(zod4(addImageSchema));
+    const deleteImageForm = await superValidate(zod4(deleteImageSchema));
+    const renameImageForm = await superValidate(zod4(renameImageSchema));
     return {
         journeys: journeys,
         user: user,
+        addImageForm: addImageForm,
+        deleteImageForm: deleteImageForm,
+        renameImageForm: renameImageForm,
     };
 }
 
@@ -54,12 +79,12 @@ export const actions = {
                 name: res.name,
                 color: res.color
             }
-            await fs.mkdir(`${env.IMAGE_FOLDER_PATH}/${journeyId}`);
-            console.log(`Successfully created Image Folder: \`${env.IMAGE_FOLDER_PATH}/${journeyId}\``);
+            await fs.mkdir(env.IMAGE_FOLDER_PATH + journeyId);
+            console.log(`Successfully created Image Folder: \`${env.IMAGE_FOLDER_PATH + journeyId}\``);
             console.log(`Journey \`${journey.journeyId}\` was successfully created!`);
+
             return { success: true, journey };
         } catch (err) {
-            console.error(err);
             throw err;
         }
     },
@@ -67,18 +92,20 @@ export const actions = {
         try {
             const user = locals.user;
             if (!user) throw redirect(303, '/auth/login');
-            
+
             const data = await request.formData();
             const journeyId: string = `${data.get('journeyId')}`;
-            const imageFolder: string = `${env.IMAGE_FOLDER_PATH}/${journeyId}`;
+            const imageFolder: string = env.IMAGE_FOLDER_PATH + journeyId;
             console.log(`Attempting to delete Journey \`${journeyId}\`...`);
             const res = await prisma.journey.delete({
                 where: {
-                    journeyId: journeyId
+                    journeyId: journeyId,
+                    userId: user.id,
                 }
             });
             await fs.rm(imageFolder, { recursive: true });
-            console.log(`Journey \`${journeyId}\` was successfully deleted!`)
+            console.log(`Journey \`${journeyId}\` was successfully deleted!`);
+
             return {
                 success: true, deletedJourney: {
                     journeyId: res.journeyId,
@@ -86,8 +113,97 @@ export const actions = {
                 }
             };
         } catch (err) {
-            console.error(err);
             throw err;
         }
     },
+    addImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(addImageSchema));
+        if (!form.valid) return fail(400, { form });
+        try {
+            const { journeyId, files } = form.data;
+
+            let path = env.IMAGE_FOLDER_PATH + journeyId + '/';
+            console.log(`Attempting to add Images at ${path}`)
+
+            if (!existsSync(path)) {
+                fs.mkdir(path);
+                console.warn(`Image Folder did not exist at addImage action call and has now been created!`);
+            }
+
+            for (const file of files) {
+                if (!file.type.includes('image/')) {
+                    const err = `${file.name} is of type ${file.type} instead of the expected type image/*`
+                    console.error(err);
+                    return fail(400, { form });
+                }
+
+                const id = crypto.randomUUID();
+                const imgPath = path + id;
+                writeFileSync(imgPath, Buffer.from(await file.arrayBuffer()));
+
+                let imgData: imgCreateBody = await getImageData(file.name, imgPath, journeyId);
+                if (!imgData) return fail(500, { message: 'Image Upload failed' });
+
+                await prisma.image.create({
+                    data: {
+                        id: id,
+                        ...imgData,
+                    }
+                });
+            }
+            console.log('Images added successfully:', files.map((f) => f.name));
+            return withFiles({ form, journeyId });
+        } catch (err) {
+            return message(form, err instanceof Error ? err.message : "Unknown error", { status: 500 });
+        }
+    },
+    deleteImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(deleteImageSchema));
+        if (!form.valid) return fail(400, { form });
+        try {
+            const { journeyId, imgIds } = form.data;
+            console.log(`Attempting to delete Images:`, imgIds);
+
+            let deletedImgs: Image[] = []
+            for (const id of imgIds) {
+                const img = await prisma.image.delete({
+                    where: {
+                        id: id,
+                        journeyId: journeyId,
+                    }
+                })
+                await fs.rm(img.path);
+                deletedImgs.push(img);
+            }
+
+            console.log(`Successfully deleted Images:`, deletedImgs.map((i) => i.id));
+            return { form, deletedImgs, journeyId };
+        } catch (err) {
+            return message(form, err instanceof Error ? err.message : "Unknown error", { status: 500 });
+        }
+    },
+    renameImage: async ({ request }) => {
+        const form = await superValidate(request, zod4(renameImageSchema));
+        if (!form.valid) return fail(400, { form });
+        try {
+            const { imgId, newName } = form.data;
+            console.log(`Attempting to rename Image: ${imgId}`)
+
+            const renamedImg = await prisma.image.update({
+                where: {
+                    id: imgId,
+                },
+                data: {
+                    fileName: newName,
+                }
+            })
+
+            const journeyId = renamedImg.journeyId;
+
+            console.log(`Successfully renamed Image to: ${newName}`);
+            return { form, newName, journeyId };
+        } catch (err) {
+            return message(form, err instanceof Error ? err.message : "Unknown error", { status: 500 });
+        }
+    }
 } satisfies Actions;

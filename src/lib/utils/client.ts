@@ -1,0 +1,311 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
+import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
+import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
+import { global, type JourneyData } from '$lib/state.svelte';
+import type { Image } from '$gen/prisma/client/client';
+
+export const defaultMapCenter: LngLatLike = [13.388, 52.517];
+
+export const imgHighlightColor = '#2DD4BE';
+
+export function switchToOverview(): void {
+	const map = global.map;
+	if (map) {
+		map.setProjection({ type: 'globe' });
+		if (global.savedViewPort?.center && global.savedViewPort?.zoom) {
+			map.flyTo({
+				center: global.savedViewPort.center,
+				zoom: global.savedViewPort.zoom,
+				speed: 1.5
+			});
+		} else {
+			map.flyTo({
+				center: [13.388, 52.517],
+				zoom: 1.5,
+				speed: 1
+			});
+		}
+	} else {
+		throw new Error('Map not found!');
+	}
+	global.savedViewPort = null;
+	global.journeyData = null;
+	global.journeyId = undefined;
+	global.loadingJourney = false;
+	global.selectedImageIds = [];
+	global.imgSelectMode = false;
+	global.viewMode = 'overview';
+}
+
+export async function switchToJourney(journeyId: string): Promise<{
+	journey: JourneyData;
+	bbox: maplibregl.LngLatBoundsLike | null;
+	geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
+}> {
+	const journey = await getJourneyData(journeyId);
+	const map = global.map;
+
+	if (!map || !journey) throw Error('Map or Journey not defined!');
+
+	await waitForStyle(map);
+	map.setProjection({ type: 'mercator' });
+
+	map.once('moveend', () => {
+		setTimeout(() => {
+			global.loadingJourney = false;
+		}, 200);
+	})
+
+	const bbox = getBBox(journey);
+	if (bbox) {
+		map.fitBounds(bbox, {
+			padding: {
+				top: 90,
+				bottom: 150,
+				left: 90,
+				right: 90
+			},
+			duration: 500
+		});
+	} else {
+		map.flyTo({
+			center: [journey.lng, journey.lat],
+			zoom: 6
+		});
+	}
+	const geoJSON = await buildGeoJSON(journey);
+
+	const data = {
+		journey: journey,
+		bbox: bbox,
+		geoJSON: geoJSON
+	};
+	return data;
+}
+
+function waitForStyle(map: maplibregl.Map): Promise<void> {
+	if (map.isStyleLoaded()) return Promise.resolve();
+
+	return new Promise((resolve) => {
+		map.once('styledata', () => resolve());
+	});
+}
+
+export async function getJourneyData(journeyId: string): Promise<JourneyData> {
+	try {
+		const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
+		global.journeyData = await res.json();
+		if (global.journeyData?.image) {
+			global.journeyData.image.sort((a, b) => {
+				if (a.createdOn < b.createdOn) {
+					return -1;
+				} else if (a.createdOn > b.createdOn) {
+					return 1;
+				} else {
+					return 0;
+				}
+			});
+		}
+		const journey = global.journeyData;
+		return journey;
+	} catch (err) {
+		throw err;
+	}
+}
+export async function buildGeoJSON(journey: JourneyData): Promise<FeatureCollection | null> {
+	let geoJSON: FeatureCollection = {
+		type: 'FeatureCollection',
+		features: []
+	};
+	if (journey?.image) {
+		const images = journey.image.filter((img) => {
+			return img.lat && img.lng;
+		});
+		if (images.length > 0) {
+			let lineString: LineString = {
+				type: 'LineString',
+				coordinates: []
+			};
+			for (const img of images) {
+				lineString.coordinates.push([img.lng!, img.lat!]);
+			}
+			geoJSON.features.push({
+				type: 'Feature',
+				geometry: lineString,
+				properties: {}
+			});
+			return geoJSON;
+		}
+	}
+	return null;
+}
+export function getBBox(journey: JourneyData): LngLatBoundsLike | null {
+	if (!journey) throw Error('No Journey defined!');
+	if (journey.image.length === 0) return null;
+	let lngs: Array<number> = [];
+	let lats: Array<number> = [];
+	if (journey.image) {
+		const images = journey.image.filter((img) => {
+			return img.lat && img.lng;
+		});
+		for (const img of images) {
+			lngs.push(img.lng!);
+			lats.push(img.lat!);
+		}
+	}
+	if (journey.marker) {
+		for (const marker of journey.marker) {
+			lngs.push(marker.lng);
+			lats.push(marker.lat);
+		}
+	}
+	if (lngs.length > 0 && lats.length > 0) {
+		const bbox: LngLatBoundsLike = [
+			[Math.min(...lngs), Math.max(...lats)],
+			[Math.max(...lngs), Math.min(...lats)]
+		];
+		return bbox;
+	}
+	return null;
+}
+
+export function calcInitZoom(width: number): number {
+	let zoom = width * 0.002;
+	const MIN_ZOOM = 0.6;
+	const MAX_ZOOM = 1.2;
+
+	zoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, zoom));
+	return zoom;
+}
+
+function scrollToBookPic(id: string) {
+	document.getElementById(`bookpic-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+export const isImgSelected = (imgId: string) =>
+	global.selectedImageIds.filter((id) => id === imgId).length ? true : false;
+
+export function handleImageSelection(imgId: string) {
+	scrollToBookPic(imgId);
+	if (!global.imgSelectMode) {
+		handleSingleSelection(imgId);
+		return;
+	}
+	if (isImgSelected(imgId)) {
+		global.selectedImageIds = global.selectedImageIds.filter((id) => id != imgId);
+	} else {
+		global.selectedImageIds.push(imgId);
+	}
+}
+export function handleSingleSelection(imgId: string) {
+	if (!isImgSelected(imgId)) {
+		global.selectedImageIds = [imgId];
+	} else {
+		global.selectedImageIds = [];
+	}
+}
+
+export function handleShowOnMapClick(img: Image) {
+	if (!global.map || !img.lng || !img.lat) return;
+	const map = global.map;
+	const imgSelected = isImgSelected(img.id);
+	const imgShownOnMap = global.imgShownOnMap === img.id;
+	if (imgShownOnMap && imgSelected) {
+		const bbox = getBBox(global.journeyData);
+		if (!bbox) return;
+		map.fitBounds(bbox, {
+			padding: 90,
+			duration: 1000,
+		});
+		global.imgShownOnMap = '';
+	} else {
+		global.imgShownOnMap = img.id;
+		map.once('drag', () => (global.imgShownOnMap = ''));
+		map.flyTo({ center: [img.lng, img.lat], zoom: 15, speed: 2 });
+	}
+}
+
+/**
+ * Runs a two-frame render pipeline and executes a callback
+ * after the browser has completed rendering the image.
+ *
+ * @param {Function} onRender - Callback executed after render completes
+ */
+export function awaitImageRender(onRender: () => void) {
+	function rendered() {
+		// Rendering finished;
+		onRender();
+	}
+	function startRender() {
+		//Rendering start
+		requestAnimationFrame(rendered);
+	}
+	function loaded() {
+		requestAnimationFrame(startRender);
+	}
+	loaded();
+}
+
+export const timeRange = (journey: JourneyData) => {
+	if (!journey) throw Error('No Journey defined!');
+	if (journey.image.length === 0) return;
+	let end = new Date(journey.image[journey.image.length - 1].createdOn);
+	let start = new Date(journey.image[0].createdOn);
+	return `${start.toLocaleDateString('de-DE', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric'
+	})} - ${end.toLocaleDateString('de-DE', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric'
+	})}`;
+};
+export const formattedDate = (
+	imgDate: Date,
+	format?: 'dd/mm/yyyy' | 'dd/mm/yyyy hh:mm' | 'dd/mm/yyyy hh:mm:ss'
+) => {
+	let date = new Date(imgDate);
+	switch (format) {
+		default:
+			return date.toLocaleDateString('de-DE', {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric',
+				hour12: false
+			});
+		case 'dd/mm/yyyy hh:mm':
+			return date.toLocaleDateString('de-DE', {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+				hour12: false
+			});
+		case 'dd/mm/yyyy hh:mm:ss':
+			return date.toLocaleDateString('de-DE', {
+				day: '2-digit',
+				month: '2-digit',
+				year: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+				hour12: false
+			});
+	}
+};
+
+// shadcn
+
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T;
+export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
+export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
