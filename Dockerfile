@@ -5,7 +5,11 @@ RUN mkdir /app && mkdir /app/data
 COPY . /app
 WORKDIR /app
 
-RUN npm install && npm run build
+RUN npm ci
+
+RUN npx prisma generate
+
+RUN npm run build
 
 # ---------- Production stage ----------
 FROM node:lts-alpine
