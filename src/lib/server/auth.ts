@@ -3,13 +3,14 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import type { User } from "$gen/prisma/client/client";
 import { env } from "$env/dynamic/private";
+import { dev } from "$app/environment";
 // If your Prisma file is located elsewhere, you can change the path
 
 console.log(env.BETTER_AUTH_BASE_URL)
 
 export const auth = betterAuth({
-    secret: env.BETTER_AUTH_SECRET ?? 'your-secret-key',
-    baseURL: 'http://localhost:3000',
+    secret: env.BETTER_AUTH_SECRET,
+    baseURL: dev ? 'http://localhost:3000' : env.BETTER_AUTH_BASE_URL,
     emailAndPassword: {
         enabled: true,
         minPasswordLength: 8,
