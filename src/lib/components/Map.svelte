@@ -4,7 +4,12 @@
 	import { innerWidth } from 'svelte/reactivity/window';
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
-	import { calcInitZoom, defaultMapCenter, switchToJourney, switchToOverview } from '$lib/utils/client';
+	import {
+		calcInitZoom,
+		defaultMapCenter,
+		switchToJourney,
+		switchToOverview
+	} from '$lib/utils/client';
 	import SVGIcon from './SVGIcon.svelte';
 	import type { Journey } from '$gen/prisma/client/client';
 	import ErrorMessage from './ErrorMessage.svelte';
@@ -123,8 +128,9 @@
 								zoom: zoom,
 								bounds: bounds
 							};
-							global.journeyId = journey.journeyId;
 							global.viewMode = 'journey';
+							global.journeyId = journey.journeyId;
+							global.loadingJourney = true;
 						}}
 						open={true}
 					/>
@@ -136,14 +142,8 @@
 
 		{#if global.viewMode === 'journey' && global.journeyId}
 			{#await switchToJourney(global.journeyId)}
-				<div hidden>{(global.loadingJourney = true)}</div>
 				<div class="text-white">Loading Journey Data...</div>
 			{:then res}
-				{map.once('moveend', () => {
-					setTimeout(() => {
-						global.loadingJourney = false;
-					}, 200);
-				})}
 				{@const journey = res?.journey}
 				{@const geoJSON = res?.geoJSON}
 				{#if journey}

@@ -7,13 +7,16 @@
 	import SVGIcon, { type iconType } from '$lib/components/SVGIcon.svelte';
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import Book from '$lib/components/Book.svelte';
+	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
 
 	let { data }: PageProps = $props();
 	let journeys = $state<Journey[]>(data.journeys);
 	let mapContainer = $state<HTMLDivElement>();
 	let map = $state<maplibregl.Map>();
 
-	let addImageModal = $state<AddImageModal>();
+	let addImageModal = $state<AddImageModal>(),
+		deleteImageModal = $state<DeleteImageModal>();
+
 	let currentSelection = $state<string[]>([]);
 </script>
 
@@ -22,7 +25,7 @@
 		class={[
 			'flex w-fit flex-row items-center gap-1 rounded-md p-1',
 			{ 'hover:bg-gray-900': !global.loadingJourney },
-			{ 'bg-gray-900': global.imgSelectMode && type === 'selectImages' }
+			{ 'bg-gray-900': global.imgSelectMode && type === 'selectImages' && !global.loadingJourney }
 		]}
 		{onclick}
 	>
@@ -46,7 +49,7 @@
 					: '*:text-white'}"
 			>
 				<div class="oxygen-bold truncate py-2 text-5xl">
-					{journey.name ?? 'Loading Name'}
+					{journey.name}
 				</div>
 				<div class="w-fit text-2xl font-light">
 					{timeRange(journey)}
@@ -58,7 +61,7 @@
 					? '*:skeleton *:text-transparent'
 					: '*:text-white'}"
 			>
-				<div class="flex w-fit flex-row items-end gap-2 py-2">
+				<div class="flex w-full flex-row items-end gap-2 py-2">
 					<div class="oxygen-bold flex flex-row items-end gap-2 text-5xl">
 						Images <div class="text-3xl font-light">{`(${journey.image.length})`}</div>
 					</div>
@@ -75,52 +78,56 @@
 						{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
 					</div>
 				</div>
-				{#if !global.imgSelectMode}
-					<div class="flex w-fit flex-row gap-2 *:items-center">
+
+				<div
+					class="flex {global.loadingJourney
+						? 'w-fit'
+						: 'w-full'} flex-row justify-between *:flex *:items-end *:gap-2"
+				>
+					<div class="*:items-center">
 						<button
 							class={[
-								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto disabled:opacity-50',
+								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
 								{ '*:invisible': global.loadingJourney }
 							]}
-							disabled={global.selectedImageIds.length != 1}
+							disabled={global.selectedImageIds.length === 0}
+							onclick={() => deleteImageModal?.openModal()}
 						>
-							<SVGIcon
-								type="delete"
-								scale={0.8}
-								stroke="white"
-							/>Delete</button
+							<SVGIcon type="delete" scale={0.8} stroke="white" />Delete</button
 						>
 						<button
 							class={[
-								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto disabled:opacity-50',
+								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
 								{ '*:invisible': global.loadingJourney }
 							]}
-							disabled={global.selectedImageIds.length != 1}
+							disabled={global.selectedImageIds.length === 0}
 						>
 							<SVGIcon
+								class="pt-0.75"
 								type="rename"
 								fill={global.loadingJourney ? '' : 'white'}
-								scale={0.9}
+								scale={0.85}
 							/>Rename</button
 						>
 					</div>
-				{:else}
-					<div class="flex w-fit flex-row gap-2">
-						Selected:
-						<div class="w-[3ch]">{global.selectedImageIds.length}</div>
-						<button
-							class="hover:underline"
-							aria-label="Unselect All"
-							onclick={() => (global.selectedImageIds = [])}>Unselect all</button
-						>
-						<button
-							class="hover:underline"
-							aria-label="Select All"
-							onclick={() => (global.selectedImageIds = journey.image.map((img) => img.id))}
-							>Select all</button
-						>
-					</div>
-				{/if}
+					{#if global.imgSelectMode}
+						<div>
+							<button
+								class="hover:underline"
+								aria-label="Select All"
+								onclick={() => (global.selectedImageIds = journey.image.map((img) => img.id))}
+								>Select all</button
+							>
+							<button
+								class="hover:underline"
+								aria-label="Unselect All"
+								onclick={() => (global.selectedImageIds = [])}>Unselect all</button
+							>
+							Selected:
+							<div class="w-[3ch]">{global.selectedImageIds.length}</div>
+						</div>
+					{/if}
+				</div>
 			</div>
 		{/if}
 	{/if}
@@ -130,11 +137,11 @@
 		</div>
 	</div>
 	{#if global.viewMode === 'journey'}
-		{@const journey = global.journeyData}
 		<div id="bookContainer" class="animate-slide-right size-full overflow-y-auto">
 			<Book />
 		</div>
 	{/if}
 </div>
 
-<AddImageModal bind:this={addImageModal} />
+<AddImageModal bind:this={addImageModal} addImageForm={data.addImageForm} />
+<DeleteImageModal bind:this={deleteImageModal} deleteImageForm={data.deleteImageForm} />

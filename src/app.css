@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
 
 @config '../tailwind.config.js';
 
@@ -202,8 +203,6 @@ button {
 @source inline('border-white');
 
 /* SHADCN */
-
-@import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
 

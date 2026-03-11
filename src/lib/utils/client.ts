@@ -40,38 +40,46 @@ export async function switchToJourney(journeyId: string): Promise<{
 	journey: JourneyData;
 	bbox: maplibregl.LngLatBoundsLike | null;
 	geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
-} | null> {
+}> {
 	const journey = await getJourneyData(journeyId);
 	const map = global.map;
-	if (map && journey) {
-		await waitForStyle(map);
-		map.setProjection({ type: 'mercator' });
-		const bbox = getBBox(journey);
-		if (bbox) {
-			map.fitBounds(bbox, {
-				padding: {
-					top: 90,
-					bottom: 150,
-					left: 90,
-					right: 90
-				},
-				duration: 500
-			});
-		} else {
-			map.flyTo({
-				center: [journey.lng, journey.lat],
-				zoom: 6
-			});
-		}
-		const geoJSON = await buildGeoJSON(journey);
-		const data = {
-			journey: journey,
-			bbox: bbox,
-			geoJSON: geoJSON
-		};
-		return data;
+
+	if (!map || !journey) throw Error('Map or Journey not defined!');
+
+	await waitForStyle(map);
+	map.setProjection({ type: 'mercator' });
+
+	map.once('moveend', () => {
+		setTimeout(() => {
+			global.loadingJourney = false;
+		}, 200);
+	})
+
+	const bbox = getBBox(journey);
+	if (bbox) {
+		map.fitBounds(bbox, {
+			padding: {
+				top: 90,
+				bottom: 150,
+				left: 90,
+				right: 90
+			},
+			duration: 500
+		});
+	} else {
+		map.flyTo({
+			center: [journey.lng, journey.lat],
+			zoom: 6
+		});
 	}
-	return null;
+	const geoJSON = await buildGeoJSON(journey);
+
+	const data = {
+		journey: journey,
+		bbox: bbox,
+		geoJSON: geoJSON
+	};
+	return data;
 }
 
 function waitForStyle(map: maplibregl.Map): Promise<void> {

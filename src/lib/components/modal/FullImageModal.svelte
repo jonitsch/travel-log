@@ -73,10 +73,6 @@
 						e.preventDefault();
 						switchImage('backward');
 						break;
-					case 'Escape':
-						e.preventDefault();
-						closeModal();
-						break;
 					case 'ArrowDown':
 						e.preventDefault();
 					case 'ArrowUp':
@@ -97,7 +93,7 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<div class="flex w-dvw flex-row items-center justify-between px-5" onclick={() => closeModal()}>
 			<button
-				class="navArrow"
+				class="navArrow animate-slide-left"
 				aria-label="View previous Image"
 				onclick={(e) => {
 					e.stopPropagation();
@@ -151,7 +147,7 @@
 				{/if}
 			</div>
 			<button
-				class="navArrow"
+				class="navArrow animate-slide-right"
 				aria-label="View next Image"
 				onclick={(e) => {
 					e.stopPropagation();

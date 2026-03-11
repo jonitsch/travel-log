@@ -3,17 +3,17 @@
 	import * as Card from '$lib/components/shadcn/card';
 	import { Input } from '$lib/components/shadcn/input';
 	import { Label } from '$lib/components/shadcn/label';
-	import { superForm } from 'sveltekit-superforms';
+	import SuperDebug, { superForm } from 'sveltekit-superforms';
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
 
-	const { form, errors, constraints, message, enhance } = superForm(data.form);
+	const { form, errors, constraints, enhance } = superForm(data.form);
 </script>
 
 <form
 	id="main"
-	class="animate-modal-in flex size-full flex-row items-start mt-15 justify-center gap-4"
+	class="animate-modal-in mt-15 flex size-full flex-row items-start justify-center gap-4"
 	method="POST"
 	use:enhance
 >
@@ -52,10 +52,10 @@
 						required
 					/>
 					{#if $errors.email}
-						<small class="text-red-600 flex justify-between"
+						<small class="flex justify-between text-red-600"
 							>{$errors.email}
 							{#if $errors.email.join().includes('Email is already in use')}
-								<a href="/auth/login" class="text-white ml-3 underline"> Login instead?</a>
+								<a href="/auth/login" class="ml-3 text-white underline"> Login instead?</a>
 							{/if}
 						</small>
 					{/if}

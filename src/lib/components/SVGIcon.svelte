@@ -13,7 +13,8 @@
 		| 'leftArrow'
 		| 'rightArrow'
 		| 'delete'
-		| 'rename';
+		| 'rename'
+		| 'x';
 
 	type Props = {
 		type: iconType;
@@ -37,7 +38,7 @@
 		stroke = 'grey';
 		hoverScale = false;
 	}
-	fill = type === 'reset' ? 'none' : fill;
+	if (type === 'reset' || type === 'delete') fill = 'none';
 </script>
 
 <div class="size-fit {hoverScale ? 'hover:scale-[120%]' : ''}" {...rest}>
@@ -150,6 +151,24 @@
 				<path
 					d="M19 16H12V18H19C20.6569 18 22 16.6569 22 15V9C22 7.34315 20.6569 6 19 6H12V8H19C19.5523 8 20 8.44771 20 9V15C20 15.5523 19.5523 16 19 16Z"
 				></path>
+			{/if}
+			{#if type === 'x'}
+				<line
+					x1="4"
+					y1="4"
+					x2="20"
+					y2="20"
+					stroke-width="2"
+					stroke-linecap="round"
+				/>
+				<line
+					x1="20"
+					y1="4"
+					x2="4"
+					y2="20"
+					stroke-width="2"
+					stroke-linecap="round"
+				/>
 			{/if}
 		</svg>
 	{/if}

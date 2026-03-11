@@ -6,14 +6,10 @@
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate } from '$lib/utils/client';
 	import SVGIcon from '$lib/components/SVGIcon.svelte';
-	import Input from '$lib/components/shadcn/input/input.svelte';
-	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
-	import { Button } from '$lib/components/shadcn/button';
-	import { onMount } from 'svelte';
 
 	let book = $state<HTMLDivElement>(),
 		fullImageModal = $state<FullImageModal>();
-			
+
 	// svelte-ignore non_reactive_update
 	let previousDate: string | null = null;
 	let dayOf = (date: Date) => {
@@ -28,7 +24,7 @@
 	bind:this={book}
 >
 	{#if global.loadingJourney}
-		<div class="col-span-full skeleton py-1 text-2xl text-transparent">Placeholder</div>
+		<div class="skeleton col-span-full py-1 text-2xl text-transparent">Placeholder</div>
 		{#each { length: 200 }}
 			<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
 		{/each}
@@ -63,32 +59,12 @@
 			>
 				No images yet!
 			</div>
-			<form
-				id="addImageForm"
-				action="?/addImage"
-				method="POST"
-				enctype="multipart/form-data"
-				class="col-span-full flex h-75 flex-col items-center justify-center gap-5 rounded-md bg-slate-800 text-2xl"
+			<div
+				class="col-span-full flex h-75 flex-row items-center justify-center gap-3 rounded-md bg-slate-800 text-3xl"
 			>
-				<div class="flex flex-row items-center gap-1">
-					Add your first images!
-					<SVGIcon type="addImage" fill="white" scale={1.5} hoverScale={false} />
-				</div>
-				<div class="flex flex-row gap-2">
-					<Input
-						name="files"
-						type="file"
-						class="w-sm cursor-pointer hover:ring-2 hover:ring-white"
-						bind:files={imgInputFiles}
-						accept="image/*"
-						multiple
-					/>
-					<Button type="submit" class="bg-green-600" disabled={!imgInputFiles?.length}
-						>Upload</Button
-					>
-				</div>
-				<input type="hidden" value={global.journeyId} name="journeyId" />
-			</form>
+				Add your first images!
+				<SVGIcon type="addImage" fill="white" scale={2} hoverScale={false} />
+			</div>
 		{/if}
 	{:else}
 		{@const error = new Error('Images failed to load - no image data received')}

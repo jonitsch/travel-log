@@ -47,7 +47,7 @@
 				<ErrorMessage>
 					<div class="flex flex-col items-center justify-center text-center">
 						Image failed to load!
-						<SVGIcon type="imgError" fill="white" scale={2.5} hoverScale={false} />
+						<SVGIcon type="imgError" fill="white" stroke="white" scale={2.5} hoverScale={false} />
 					</div>
 				</ErrorMessage>
 			</div>
