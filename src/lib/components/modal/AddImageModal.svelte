@@ -7,6 +7,7 @@
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
 	import { switchToJourney } from '$lib/utils/client';
+	import { invalidateAll } from '$app/navigation';
 
 	let {
 		addImageForm
@@ -74,15 +75,16 @@
 			enctype="multipart/form-data"
 			class="flex h-fit flex-col items-center justify-center gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
 			use:enhance={{
-				onResult: ({ result }) => {
-					console.log(result);
-					reset();
+				onResult: async ({ result }) => {
 					if (result.type === 'success' && result.data?.journeyId) {
+						await invalidateAll();
+						reset();
 						global.loadingJourney = true;
 						switchToJourney(result.data.journeyId);
 						open = false;
+					} else {
+						console.error(result);
 					}
-					open = false;
 				}
 			}}
 		>
