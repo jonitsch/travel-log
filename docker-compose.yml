@@ -21,11 +21,13 @@ services:
       IMAGE_FOLDER_PATH: ${IMAGE_FOLDER_PATH}
 
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_BASE_URL: http://localhost:3000
+      BETTER_AUTH_BASE_URL: ${BETTER_AUTH_BASE_URL}
 
       ALLOWED_EMAILS: ${ALLOWED_EMAILS}
 
       ORIGIN: http://localhost:3000
+    volumes:
+      - ${IMAGE_FOLDER_PATH}:/pictures
 
   # -------------------
   # MySQL Database

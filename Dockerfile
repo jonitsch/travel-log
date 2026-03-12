@@ -1,7 +1,12 @@
 # ---------- Build stage ----------
 FROM node:lts-alpine AS builder
 
-RUN mkdir /app && mkdir /app/data
+ARG BETTER_AUTH_BASE_URL
+ARG BETTER_AUTH_SECRET
+ENV BETTER_AUTH_BASE_URL=$BETTER_AUTH_BASE_URL
+ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
+
+RUN mkdir /app && mkdir /pictures
 COPY . /app
 WORKDIR /app
 
@@ -17,9 +22,6 @@ FROM node:lts-alpine
 RUN mkdir /app
 COPY --from=builder /app/build /app/build
 COPY --from=builder /app/package.json /app/package-lock.json /app/
-
-ENV NODE_ENV=production
-ENV BETTER_AUTH_BASE_URL=https://travel-log-staging.up.railway.app
 
 EXPOSE 3000
 
