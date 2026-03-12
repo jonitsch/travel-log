@@ -1,10 +1,9 @@
 # ---------- Build stage ----------
 FROM node:lts-alpine AS builder
 
-ARG BETTER_AUTH_BASE_URL
-ARG BETTER_AUTH_SECRET
 ENV BETTER_AUTH_BASE_URL=$BETTER_AUTH_BASE_URL
 ENV BETTER_AUTH_SECRET=$BETTER_AUTH_SECRET
+ENV DATABASE_URL=$DATABASE_URL
 
 RUN mkdir /app && mkdir /pictures
 COPY . /app
