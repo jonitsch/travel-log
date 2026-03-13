@@ -7,9 +7,9 @@ import { auth } from '$lib/server/auth';
 import { prisma } from '$lib/server/prisma';
 import { env } from '$env/dynamic/private';
 
-const allowedEmails = env.ALLOWED_EMAILS
-  ? JSON.parse(env.ALLOWED_EMAILS)
-  : {}
+const allowedEmails: string[] | undefined = env.ALLOWED_EMAILS
+  ? Array.from(JSON.parse(env.ALLOWED_EMAILS))
+  : undefined
 
 const schema = z.object({
     name: z.string().min(4),
@@ -29,7 +29,7 @@ export const actions = {
 
         if (!form.valid) return fail(400, { form });
 
-        if (!allowedEmails.includes(email)) {
+        if (allowedEmails && !allowedEmails.includes(email)) {
             form.errors.email = ["Access Denied"];
             return fail(400, { form });
         }
