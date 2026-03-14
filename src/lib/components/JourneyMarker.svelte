@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { Marker, Popup } from 'svelte-maplibre';
 	import { type LngLatLike } from 'maplibre-gl';
-	import { buildGeoJSON } from '../utils/client';
 
 	type Props = {
 		lngLat: LngLatLike;

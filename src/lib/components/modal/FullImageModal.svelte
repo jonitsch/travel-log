@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getImgProxyURL } from '$lib/imgproxy';
+	import { getImgProxyURL } from '$lib/utils/client';
 	import { global } from '$lib/state.svelte';
 	import { awaitImageRender, formattedDate } from '../../utils/client';
 	import { tick } from 'svelte';

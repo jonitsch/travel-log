@@ -2,11 +2,10 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '../utils/client';
+	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '$lib/utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
-	import { preventDefault } from 'svelte/legacy';
 
 	interface Props {
 		img: Image;

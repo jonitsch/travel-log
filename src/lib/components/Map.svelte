@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { MapLibre, Marker, GeoJSON, LineLayer, Control } from 'svelte-maplibre';
+	import { MapLibre, GeoJSON, LineLayer, Control } from 'svelte-maplibre';
 	import maplibregl from 'maplibre-gl';
 	import { innerWidth } from 'svelte/reactivity/window';
 	import { global, type ViewMode } from '$lib/state.svelte';
@@ -12,7 +12,6 @@
 	} from '$lib/utils/client';
 	import SVGIcon from './SVGIcon.svelte';
 	import type { Journey } from '$gen/prisma/client/client';
-	import ErrorMessage from './ErrorMessage.svelte';
 	import JourneyMarker from './JourneyMarker.svelte';
 	import ImageMarker from './ImageMarker.svelte';
 	import HoverButton from './HoverButton.svelte';

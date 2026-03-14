@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { Marker } from 'svelte-maplibre';
 	import { global } from '$lib/state.svelte';
-	import { getImgProxyURL } from '../imgproxy';
-	import {
-		handleImageSelection,
-		handleShowOnMapClick,
-		handleSingleSelection
-	} from '../utils/client';
+	import { handleImageSelection, handleShowOnMapClick, getImgProxyURL } from '$lib/utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 
 	let { img, color }: { img: Image; color: string } = $props();

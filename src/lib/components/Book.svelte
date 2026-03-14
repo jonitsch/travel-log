@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-	import { getImgProxyURL } from '$lib/imgproxy';
+	import { getImgProxyURL } from '$lib/utils/client';
 	import FullImageModal from '$lib/components/modal/FullImageModal.svelte';
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate } from '$lib/utils/client';
