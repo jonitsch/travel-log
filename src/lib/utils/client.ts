@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
-import { global, type JourneyData } from '$lib/state.svelte';
+import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
 import type { Image } from '$gen/prisma/client/client';
 
 export const defaultMapCenter: LngLatLike = [13.388, 52.517];
@@ -38,15 +38,21 @@ export function switchToOverview(): void {
 	global.viewMode = 'overview';
 }
 
-export async function switchToJourney(journeyId: string): Promise<{
-	journey: JourneyData;
-	bbox: maplibregl.LngLatBoundsLike | null;
-	geoJSON: FeatureCollection<Geometry, GeoJsonProperties> | null;
-}> {
+export async function switchToJourney(journeyId: string): Promise<JourneyData> {
+	global.viewMode = 'journey';
+	global.journeyId = journeyId;
+	global.loadingJourney = true;
+
 	const journey = await getJourneyData(journeyId);
 	const map = global.map;
 
 	if (!map || !journey) throw Error('Map or Journey not defined!');
+
+	global.savedViewPort = {
+		center: map.getCenter(),
+		zoom: map.getZoom(),
+		bounds: map.getBounds()
+	};
 
 	await waitForStyle(map);
 	map.setProjection({ type: 'mercator' });
@@ -55,7 +61,8 @@ export async function switchToJourney(journeyId: string): Promise<{
 		setTimeout(() => {
 			global.loadingJourney = false;
 		}, 200);
-	})
+	});
+	map._interactive;
 
 	const bbox = getBBox(journey);
 	if (bbox) {
@@ -77,10 +84,11 @@ export async function switchToJourney(journeyId: string): Promise<{
 	const geoJSON = await buildGeoJSON(journey);
 
 	const data = {
-		journey: journey,
+		...journey,
 		bbox: bbox,
 		geoJSON: geoJSON
 	};
+	global.journeyData = data;
 	return data;
 }
 
@@ -92,74 +100,75 @@ function waitForStyle(map: maplibregl.Map): Promise<void> {
 	});
 }
 
-export async function getJourneyData(journeyId: string): Promise<JourneyData> {
+export async function getJourneyData(journeyId: string): Promise<JourneyWithRelations> {
 	try {
 		const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
-		global.journeyData = await res.json();
-		if (global.journeyData?.image) {
-			global.journeyData.image.sort((a, b) => {
-				if (a.createdOn < b.createdOn) {
-					return -1;
-				} else if (a.createdOn > b.createdOn) {
-					return 1;
-				} else {
-					return 0;
-				}
-			});
-		}
-		const journey = global.journeyData;
+		let journey: JourneyWithRelations = await res.json();
+
+		journey.image.sort((a, b) => {
+			if (a.createdOn < b.createdOn) {
+				return -1;
+			} else if (a.createdOn > b.createdOn) {
+				return 1;
+			} else {
+				return 0;
+			}
+		});
+
 		return journey;
 	} catch (err) {
 		throw err;
 	}
 }
-export async function buildGeoJSON(journey: JourneyData): Promise<FeatureCollection | null> {
+export async function buildGeoJSON(
+	journey: JourneyWithRelations
+): Promise<FeatureCollection | undefined> {
 	let geoJSON: FeatureCollection = {
 		type: 'FeatureCollection',
 		features: []
 	};
-	if (journey?.image) {
-		const images = journey.image.filter((img) => {
-			return img.lat && img.lng;
-		});
-		if (images.length > 0) {
-			let lineString: LineString = {
-				type: 'LineString',
-				coordinates: []
-			};
-			for (const img of images) {
-				lineString.coordinates.push([img.lng!, img.lat!]);
-			}
-			geoJSON.features.push({
-				type: 'Feature',
-				geometry: lineString,
-				properties: {}
-			});
-			return geoJSON;
+	const trackedImgs = journey.image.filter((img) => {
+		return img.lat && img.lng;
+	});
+	if (trackedImgs.length > 0) {
+		let lineString: LineString = {
+			type: 'LineString',
+			coordinates: []
+		};
+		for (const img of trackedImgs) {
+			lineString.coordinates.push([img.lng!, img.lat!]);
 		}
+		geoJSON.features.push({
+			type: 'Feature',
+			geometry: lineString,
+			properties: {}
+		});
+		return geoJSON;
 	}
-	return null;
+
+	return undefined;
 }
-export function getBBox(journey: JourneyData): LngLatBoundsLike | null {
+export function getBBox(journey: JourneyData): LngLatBoundsLike | undefined {
 	if (!journey) throw Error('No Journey defined!');
-	if (journey.image.length === 0) return null;
+	let { image, marker } = journey;
+	image = image.filter((img) => {
+		return img.lat && img.lng;
+	});
+
+	if (!image.length && !marker.length) return undefined;
+
 	let lngs: Array<number> = [];
 	let lats: Array<number> = [];
-	if (journey.image) {
-		const images = journey.image.filter((img) => {
-			return img.lat && img.lng;
-		});
-		for (const img of images) {
-			lngs.push(img.lng!);
-			lats.push(img.lat!);
-		}
+
+	for (const img of image) {
+		lngs.push(img.lng!);
+		lats.push(img.lat!);
 	}
-	if (journey.marker) {
-		for (const marker of journey.marker) {
-			lngs.push(marker.lng);
-			lats.push(marker.lat);
-		}
+	for (const mrk of marker) {
+		lngs.push(mrk.lng);
+		lats.push(mrk.lat);
 	}
+
 	if (lngs.length > 0 && lats.length > 0) {
 		const bbox: LngLatBoundsLike = [
 			[Math.min(...lngs), Math.max(...lats)],
@@ -167,7 +176,7 @@ export function getBBox(journey: JourneyData): LngLatBoundsLike | null {
 		];
 		return bbox;
 	}
-	return null;
+	return undefined;
 }
 
 export function calcInitZoom(width: number): number {
@@ -180,7 +189,9 @@ export function calcInitZoom(width: number): number {
 }
 
 function scrollToBookPic(id: string) {
-	document.getElementById(`bookpic-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+	document
+		.getElementById(`bookpic-${id}`)
+		?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
 export const isImgSelected = (imgId: string) =>
@@ -216,7 +227,7 @@ export function handleShowOnMapClick(img: Image) {
 		if (!bbox) return;
 		map.fitBounds(bbox, {
 			padding: 90,
-			duration: 1000,
+			duration: 1000
 		});
 		global.imgShownOnMap = '';
 	} else {

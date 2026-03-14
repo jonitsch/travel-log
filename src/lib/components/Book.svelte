@@ -66,9 +66,6 @@
 				<SVGIcon type="addImage" color="white" scale={2} hoverScale={false} />
 			</div>
 		{/if}
-	{:else}
-		{@const error = new Error('Images failed to load - no image data received')}
-		<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
 	{/if}
 	<FullImageModal bind:this={fullImageModal} />
 </div>

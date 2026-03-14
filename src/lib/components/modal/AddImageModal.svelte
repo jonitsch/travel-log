@@ -80,7 +80,8 @@
 						await invalidateAll();
 						reset();
 						global.loadingJourney = true;
-						switchToJourney(result.data.journeyId);
+						const data = await switchToJourney(result.data.journeyId);
+						global.journeyData = data;
 						open = false;
 					} else {
 						console.error(result);

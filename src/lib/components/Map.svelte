@@ -39,7 +39,7 @@
 		})
 	);
 	function setAttributionControl(viewMode: ViewMode) {
-		if (viewMode === 'overview' || viewMode === 'createJourney') {
+		if (viewMode === 'overview') {
 			attributionControl._container.classList.add('maplibregl-compact-show');
 			attributionControl._container.setAttribute('open', 'true');
 		} else if (viewMode === 'journey') {
@@ -88,6 +88,7 @@
 		standardControls={false}
 		zoomOnDoubleClick={false}
 		attributionControl={false}
+		interactive={!global.loadingJourney}
 		style="https://tiles.openfreemap.org/styles/liberty"
 	>
 		<!-------------------------------------------------- OVERVIEW MODE ---------------------------------------------------->
@@ -123,14 +124,8 @@
 						lngLat={[journey.lng, journey.lat]}
 						color={journey.color ?? 'black'}
 						onclick={() => {
-							global.savedViewPort = {
-								center: center,
-								zoom: zoom,
-								bounds: bounds
-							};
-							global.viewMode = 'journey';
-							global.journeyId = journey.journeyId;
-							global.loadingJourney = true;
+							
+							switchToJourney(journey.journeyId)
 						}}
 						open={true}
 					/>
@@ -140,60 +135,50 @@
 
 		<!---------------------------------------------------- JOURNEY MODE ---------------------------------------------------->
 
-		{#if global.viewMode === 'journey' && global.journeyId}
-			{#await switchToJourney(global.journeyId)}
-				<div class="text-white">Loading Journey Data...</div>
-			{:then res}
-				{@const journey = res?.journey}
-				{@const geoJSON = res?.geoJSON}
-				{#if journey}
-					{@const trackedImages = journey.image.filter((img) => {
-						return img.lng && img.lat;
-					})}
-					{#if !(trackedImages.length === 0 && journey.marker.length === 0)}
-						{#each journey.marker as marker}
-							<JourneyMarker
-								popupText={marker.name}
-								lngLat={[marker.lng, marker.lat]}
-								color={marker.color ?? journey.color}
-								onclick={() => switchToOverview()}
-								open
-							/>
-						{/each}
-						{#if journey.image && !global.loadingJourney}
-							{#each journey.image as img}
-								<ImageMarker {img} color={journey.color} />
-							{/each}
-						{/if}
-						{#if geoJSON}
-							<GeoJSON data={geoJSON}>
-								<LineLayer
-									layout={{ 'line-cap': 'round', 'line-join': 'round' }}
-									paint={{
-										'line-width': 3,
-										'line-color': '#008800',
-										'line-opacity': 0.8
-									}}
-								/>
-							</GeoJSON>
-						{/if}
-					{:else}
+		{#if global.viewMode === 'journey'}
+			{#if global.journeyData}
+				{@const journey = global.journeyData}
+				{@const geoJSON = journey.geoJSON}
+				{@const trackedImages = journey.image.filter((img) => {
+					return img.lng && img.lat;
+				})}
+				{#if !(trackedImages.length === 0 && journey.marker.length === 0)}
+					{#each journey.marker as marker}
 						<JourneyMarker
-							popupText={journey.name}
-							lngLat={[journey.lng, journey.lat]}
-							color={journey.color ?? 'black'}
+							popupText={marker.name}
+							lngLat={[marker.lng, marker.lat]}
+							color={marker.color ?? journey.color}
 							onclick={() => switchToOverview()}
-							open={true}
+							open
 						/>
+					{/each}
+					{#if journey.image && !global.loadingJourney}
+						{#each journey.image as img}
+							<ImageMarker {img} color={journey.color} />
+						{/each}
+					{/if}
+					{#if geoJSON}
+						<GeoJSON data={geoJSON}>
+							<LineLayer
+								layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+								paint={{
+									'line-width': 3,
+									'line-color': '#008800',
+									'line-opacity': 0.8
+								}}
+							/>
+						</GeoJSON>
 					{/if}
 				{:else}
-					{@const error = new Error('Map failed to load - no journey data received')}
-					<ErrorMessage {error}>Failed To Load Map</ErrorMessage>
+					<JourneyMarker
+						popupText={journey.name}
+						lngLat={[journey.lng, journey.lat]}
+						color={journey.color ?? 'black'}
+						onclick={() => switchToOverview()}
+						open={true}
+					/>
 				{/if}
-			{:catch err}
-				{@const error = err}
-				<ErrorMessage {error}>Failed To Load Journey Data</ErrorMessage>
-			{/await}
+			{/if}
 		{/if}
 	</MapLibre>
 </div>
