@@ -5,8 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"studio": "npx prisma studio",
-		"generate": "npx prisma generate",
+		"studio": "prisma studio",
+		"generate": "prisma generate",
+		"start": "node build",
+		"postinstall": "prisma generate",
 		"build": "vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
