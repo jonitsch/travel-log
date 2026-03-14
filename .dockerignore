@@ -1,4 +1,8 @@
-node-modules
-.svelte-kit
+node_modules
+.git
+.gitignore
+.vscode
 build
+Dockerfile
+README.md
 .env

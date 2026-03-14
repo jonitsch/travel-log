@@ -1,6 +1,9 @@
 # ---------- Build stage ----------
 FROM node:lts-alpine AS builder
 
+ENV BETTER_AUTH_SECRET=dummysecret
+ENV BETTER_AUTH_BASE_URL=http://localhost:3000
+
 RUN mkdir /app && mkdir /pictures
 COPY . /app
 WORKDIR /app

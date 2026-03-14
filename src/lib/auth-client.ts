@@ -1,4 +1,3 @@
-import { dev } from "$app/environment";
 import { createAuthClient } from "better-auth/svelte";
 
 export const authClient = createAuthClient();
