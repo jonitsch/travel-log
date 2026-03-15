@@ -4,7 +4,8 @@
 	import { Button } from '../shadcn/button';
 	import SVGIcon from '../SVGIcon.svelte';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { switchToJourney } from '$lib/utils/client';
+	import { getJourneyData, switchToJourney } from '$lib/utils/client';
+	import { invalidateAll } from '$app/navigation';
 
 	let {
 		deleteImageForm
@@ -61,6 +62,7 @@
 				onResult: async ({ result }) => {
 					global.selectedImageIds = [];
 					if (result.type === 'success' && result.data?.journeyId) {
+						await invalidateAll();
 						global.loadingJourney = true;
 						switchToJourney(result.data.journeyId);
 						open = false;

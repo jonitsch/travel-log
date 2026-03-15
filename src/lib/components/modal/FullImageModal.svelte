@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getImgProxyURL } from '$lib/imgproxy';
+	import { getImgProxyURL } from '$lib/utils/client';
 	import { global } from '$lib/state.svelte';
 	import { awaitImageRender, formattedDate } from '../../utils/client';
 	import { tick } from 'svelte';
@@ -114,7 +114,7 @@
 						bind:this={imgCon}
 						class="animate-modal-in relative rounded-lg shadow-xl"
 					>
-						{#await getImgProxyURL(path, width / 3, height / 3) then response}
+						{#await getImgProxyURL(id, width / 3, height / 3) then response}
 							<img
 								bind:this={imgElement}
 								id="fullpic-{id}"

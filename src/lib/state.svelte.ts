@@ -1,7 +1,19 @@
-import type { Journey, Marker, Image } from "$gen/prisma/client/client";
+import type { Journey, Marker, Image } from '$gen/prisma/client/client';
+import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
 
-export type ViewMode = 'overview' | 'journey' | 'createJourney' | null;
-export type JourneyData = Journey & { marker: Marker[], image: Image[] } | null;
+export type ViewMode = 'overview' | 'journey';
+
+export type JourneyWithRelations = Journey & {
+	marker: Marker[];
+	image: Image[];
+};
+
+export type JourneyMapData = {
+	bbox?: maplibregl.LngLatBoundsLike;
+	geoJSON?: FeatureCollection<Geometry, GeoJsonProperties>;
+};
+
+export type JourneyData = (JourneyWithRelations & JourneyMapData) | null;
 
 type State = {
 	viewMode: ViewMode;
@@ -16,8 +28,8 @@ type State = {
 		bounds: maplibregl.LngLatBoundsLike | undefined;
 	} | null;
 	selectedImageIds: string[];
-	imgSelectMode: boolean,
-	imgShownOnMap: string,
+	imgSelectMode: boolean;
+	imgShownOnMap: string;
 };
 
 export const global: State = $state({
@@ -30,5 +42,5 @@ export const global: State = $state({
 	savedViewPort: null,
 	selectedImageIds: [],
 	imgSelectMode: false,
-	imgShownOnMap: '',
+	imgShownOnMap: ''
 });

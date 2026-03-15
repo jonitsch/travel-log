@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
 	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
-	import { getImgProxyURL } from '$lib/imgproxy';
+	import { getImgProxyURL } from '$lib/utils/client';
 	import FullImageModal from '$lib/components/modal/FullImageModal.svelte';
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate } from '$lib/utils/client';
@@ -45,7 +45,7 @@
 					</div>
 				{/if}
 				<div class="col-span-1">
-					{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
+					{#await getImgProxyURL(img.id, img.width * 0.15, img.height * 0.15) then response}
 						<ImageCard {img} src={response} {fullImageModal} />
 					{:catch error}
 						<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
@@ -66,9 +66,6 @@
 				<SVGIcon type="addImage" color="white" scale={2} hoverScale={false} />
 			</div>
 		{/if}
-	{:else}
-		{@const error = new Error('Images failed to load - no image data received')}
-		<ErrorMessage {error}>Failed To Load Image Data</ErrorMessage>
 	{/if}
 	<FullImageModal bind:this={fullImageModal} />
 </div>

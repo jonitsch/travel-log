@@ -5,9 +5,10 @@
 	"type": "module",
 	"scripts": {
 		"dev": "vite dev",
-		"studio": "npx prisma studio",
-		"generate": "npx prisma generate",
-		"build": "vite build",
+		"studio": "prisma studio",
+		"generate": "prisma generate",
+		"start": "node build",
+		"build": "prisma generate && vite build",
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",

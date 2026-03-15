@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { Marker } from 'svelte-maplibre';
 	import { global } from '$lib/state.svelte';
-	import { getImgProxyURL } from '../imgproxy';
-	import {
-		handleImageSelection,
-		handleShowOnMapClick,
-		handleSingleSelection
-	} from '../utils/client';
+	import { handleImageSelection, handleShowOnMapClick, getImgProxyURL } from '$lib/utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 
 	let { img, color }: { img: Image; color: string } = $props();
@@ -44,7 +39,7 @@
 			onclick={() => handleImageSelection(img.id)}
 			ondblclick={() => handleDoubleClick()}
 		>
-			{#await getImgProxyURL(img.path, img.width * 0.05, img.height * 0.05)}
+			{#await getImgProxyURL(img.id, img.width * 0.05, img.height * 0.05)}
 				<div class="h-full w-full bg-{color} rounded-lg"></div>
 			{:then response}
 				<img

@@ -7,6 +7,7 @@
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
 	import { switchToJourney } from '$lib/utils/client';
+	import { invalidateAll } from '$app/navigation';
 
 	let {
 		addImageForm
@@ -58,7 +59,7 @@
 </script>
 
 <Modal bind:open onclose={reset}>
-	<div class="relative">
+	<div class="max-w-90dvw relative">
 		<button
 			type="button"
 			class="absolute top-1 right-1 z-99 flex size-8 items-center justify-center rounded-full p-2 text-white/70 hover:bg-white/10"
@@ -74,15 +75,15 @@
 			enctype="multipart/form-data"
 			class="flex h-fit flex-col items-center justify-center gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
 			use:enhance={{
-				onResult: ({ result }) => {
-					console.log(result);
-					reset();
+				onResult: async ({ result }) => {
 					if (result.type === 'success' && result.data?.journeyId) {
+						await invalidateAll();
+						reset();
 						global.loadingJourney = true;
-						switchToJourney(result.data.journeyId);
+						const data = await switchToJourney(result.data.journeyId);
+						global.journeyData = data;
 						open = false;
 					}
-					open = false;
 				}
 			}}
 		>
@@ -90,22 +91,20 @@
 				<span class="text-4xl">Add Images</span>
 				<SVGIcon type="addImage" color="white" scale={2.5} hoverScale={false} />
 			</div>
-			<div class="flex flex-row gap-2">
-				<div class="flex flex-col gap-1">
+			<div class="flex flex-row w-full gap-2">
+				<div class="flex flex-col flex-1 w-auto gap-1">
 					<Input
 						name="files"
 						type="file"
-						class="w-sm cursor-pointer hover:ring-2 hover:ring-white"
+						class="w-auto cursor-pointer hover:ring-2 hover:ring-white"
 						accept="image/*"
 						aria-invalid={$errors.files ? 'true' : undefined}
 						multiple
 						oninput={(e) => ($form.files = Array.from(e.currentTarget.files ?? []))}
 					/>
-					{#if $errors.files}
-						<small class="text-red-600" role="alert">{$errors.files[0]}</small>
-					{:else}
-						<small class="invisible">Invisible Error Placeholder</small>
-					{/if}
+					{#each $errors.files?._errors as error}
+						<small class="text-red-500">{error}</small>
+					{/each}
 				</div>
 
 				<Button type="submit" class="bg-green-600" disabled={images.length === 0}>Upload</Button>

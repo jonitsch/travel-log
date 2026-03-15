@@ -2,11 +2,10 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '../utils/client';
+	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '$lib/utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
-	import { preventDefault } from 'svelte/legacy';
 
 	interface Props {
 		img: Image;
@@ -37,7 +36,7 @@
 		if (e.key === 'Enter') handleImageSelection(img.id);
 	}}
 	onclick={() => handleImageSelection(img.id)}
-	class="relative block size-full overflow-hidden rounded-md"
+	class="relative block size-full overflow-hidden rounded-md cursor-pointer"
 	class:highlightBorder={imgSelected}
 >
 	{#if imgError}
@@ -58,7 +57,7 @@
 			id="bookpic-{img.id}"
 			{src}
 			alt={img.fileName}
-			class="size-full cursor-pointer object-cover transition duration-100 ease-in-out"
+			class="size-full object-cover min-w-20 min-h-30"
 			onload={() =>
 				awaitImageRender(async () => {
 					await tick();
