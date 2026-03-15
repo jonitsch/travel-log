@@ -123,8 +123,12 @@
 						lngLat={[journey.lng, journey.lat]}
 						color={journey.color ?? 'black'}
 						onclick={() => {
-							
-							switchToJourney(journey.journeyId)
+							global.savedViewPort = {
+								center: center,
+								zoom: zoom,
+								bounds: bounds,
+							};
+							switchToJourney(journey.journeyId);
 						}}
 						open={true}
 					/>

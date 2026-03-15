@@ -119,7 +119,9 @@ export const actions = {
     },
     addImage: async ({ request }) => {
         const form = await superValidate(request, zod4(addImageSchema));
-        console.log(form)
+        console.log(form);
+        if (!form.valid) return fail(400, { form });
+        
         try {
             const { journeyId, files } = form.data;
 

@@ -24,7 +24,7 @@ export async function GET({ url, locals }) {
     if (!img) throw new Error('The specified img id does not exist in the database!');
 
     const src = `local:///${img.journeyId}/${id}`;
-    
+
     // optional parameters with default values
     const width = searchParams.get("width") ?? '300';
     const height = searchParams.get("height") ?? '300';
@@ -41,7 +41,6 @@ export async function GET({ url, locals }) {
         return hmac.digest('base64url');
     }
     const target = `/rs:fit:${width}:${height}/plain/${encodeURI(src)}@${format}`;
-console.log(target)
     const signature = sign(SALT, target, KEY);
 
     const result = `${env.IMGPROXY_URL}/${signature + target}`;

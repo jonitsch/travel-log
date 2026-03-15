@@ -74,12 +74,6 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 
 	if (!map || !journey) throw Error('Map or Journey not defined!');
 
-	global.savedViewPort = {
-		center: map.getCenter(),
-		zoom: map.getZoom(),
-		bounds: map.getBounds()
-	};
-
 	await waitForStyle(map);
 	map.setProjection({ type: 'mercator' });
 
