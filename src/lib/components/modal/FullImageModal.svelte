@@ -114,7 +114,7 @@
 						bind:this={imgCon}
 						class="animate-modal-in relative rounded-lg shadow-xl"
 					>
-						{#await getImgProxyURL(path, width / 3, height / 3) then response}
+						{#await getImgProxyURL(id, width / 3, height / 3) then response}
 							<img
 								bind:this={imgElement}
 								id="fullpic-{id}"

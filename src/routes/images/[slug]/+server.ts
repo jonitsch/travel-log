@@ -1,5 +1,4 @@
 import { existsSync, readFileSync } from 'fs';
-import { env } from '$env/dynamic/private';
 import { prisma } from '$lib/server/prisma.js';
 
 export const GET = async ({ params }) => {

@@ -39,7 +39,7 @@
 			onclick={() => handleImageSelection(img.id)}
 			ondblclick={() => handleDoubleClick()}
 		>
-			{#await getImgProxyURL(img.path, img.width * 0.05, img.height * 0.05)}
+			{#await getImgProxyURL(img.id, img.width * 0.05, img.height * 0.05)}
 				<div class="h-full w-full bg-{color} rounded-lg"></div>
 			{:then response}
 				<img

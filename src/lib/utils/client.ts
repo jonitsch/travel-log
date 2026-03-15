@@ -13,18 +13,18 @@ export const imgHighlightColor = '#2DD4BE';
  * Returns a ImgProxy-URL signed with your IMGPROXY_KEY
  * and IMGPROXY_SALT enviroment variables
  *
- * @param {string} src - path to your image (see README for more details)
+ * @param {string} id - the img's id
  * @param {number} width - desired width (in px) of the output image
  * @param {number} height - desired height (in px) of the output image
  * @param {string} format - desired format of the output image (defaults to "webp")
  */
 export async function getImgProxyURL(
-    src: string,
+    id: string,
     width?: number,
     height?: number,
     format?: string,
 ): Promise<string> {
-    const params = new URLSearchParams({ src: src });
+    const params = new URLSearchParams({ id: id });
 
     if (width) params.append('width', Math.round(width).toString());
     if (height) params.append('height', Math.round(height).toString());

@@ -45,7 +45,7 @@
 					</div>
 				{/if}
 				<div class="col-span-1">
-					{#await getImgProxyURL(img.path, img.width * 0.15, img.height * 0.15) then response}
+					{#await getImgProxyURL(img.id, img.width * 0.15, img.height * 0.15) then response}
 						<ImageCard {img} src={response} {fullImageModal} />
 					{:catch error}
 						<ErrorMessage {error}>Image Failed To Load!</ErrorMessage>
