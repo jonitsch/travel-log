@@ -1,7 +1,6 @@
 import { json, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { createHmac } from 'node:crypto';
-import { dev } from '$app/environment';
 import { prisma } from '$lib/server/prisma.js';
 
 
@@ -12,8 +11,6 @@ export async function GET({ url, locals }) {
     const { searchParams } = new URL(url);
     let id = searchParams.get("id");
     if (!id) throw new Error('ImgProxy API called without specifying image id!');
-
-    if (!dev) return json(`${env.BETTER_AUTH_BASE_URL}/images/${id}`);
 
     let img = await prisma.image.findUnique({
         where: { id },

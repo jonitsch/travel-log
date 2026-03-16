@@ -23,7 +23,8 @@ export async function handle({ event, resolve }) {
 
 export const init: ServerInit = async () => {
     try {
-        await prisma.$connect();
+        const test = await prisma.$queryRaw`SELECT 1`;
+        if (!test) throw Error('Database connection test failed!');
         console.log('Database connection successful!');
     } catch (err) {
         console.error('Database connection failed!', err);
