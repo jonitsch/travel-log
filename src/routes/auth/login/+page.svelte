@@ -8,15 +8,16 @@
 
 	let email = $state(''),
 		password = $state(''),
-		errorMessage = $state();
+		message = $state();
 
 	async function handleSignin() {
 		try {
 			const { error } = await authClient.signIn.email({ email, password });
-			if (error) errorMessage = error.message;
+			if (error) message = error.message;
 			await invalidateAll();
 			goto('/map');
 		} catch (err) {
+			message = 'Something went wrong!';
 			throw err;
 		}
 	}
@@ -25,10 +26,7 @@
 <form
 	id="main"
 	class="animate-modal-in mt-15 flex size-full flex-row items-start justify-center gap-4"
-	onsubmit={(e) => {
-		e.preventDefault();
-		handleSignin();
-	}}
+	onsubmit={() => handleSignin()}
 >
 	<Card.Root class="-my-4 w-full max-w-sm">
 		<Card.Header>
@@ -60,7 +58,7 @@
 		</Card.Content>
 		<Card.Footer class="flex-col gap-2">
 			<Button type="submit" class="w-full">Login</Button>
-			{#if errorMessage}<div class="text-sm text-red-600">{errorMessage}</div>{/if}
+			{#if message}<div class="text-sm text-red-600">{message}</div>{/if}
 			<Button variant="link" class="w-full" href="/auth/register"
 				>Dont have an acccount? Create One!
 			</Button>

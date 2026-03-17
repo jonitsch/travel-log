@@ -4,10 +4,11 @@ import { message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { z } from 'zod';
 import { auth } from '$lib/server/auth';
+import { prisma } from '$lib/server/prisma';
 
 const schema = z.object({
-	email: z.string(),
-	password: z.string().min(8)
+	email: z.email(),
+	password: z.string(),
 });
 
 export const load: PageServerLoad = async () => {
@@ -23,6 +24,14 @@ export const actions = {
 		if (!form.valid) {
 			return fail(400, { form });
 		}
+		const user = await prisma.user.findUnique({
+			where: { email }
+		})
+		console.log(user);
+		if (!user) {
+			form.valid = false;
+			return message(form, 'User not found!');
+		}
 		try {
 			await auth.api.signInEmail({
 				body: {
@@ -33,12 +42,8 @@ export const actions = {
 				method: 'POST',
 			});
 		} catch (err: any) {
-			if (err?.body?.code === 'INVALID_EMAIL_OR_PASSWORD') {
-				form.valid = false;
-				return message(form, err.body.message);
-			}
 			console.log(`Login for user ${email} failed!`);
-            console.error(err);
+			console.error(err);
 			return fail(500, { message: 'Login failed' });
 		}
 		console.log(`Login for user ${email} was successful!`);

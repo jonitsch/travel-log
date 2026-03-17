@@ -19,20 +19,20 @@ export const imgHighlightColor = '#2DD4BE';
  * @param {string} format - desired format of the output image (defaults to "webp")
  */
 export async function getImgProxyURL(
-    id: string,
-    width?: number,
-    height?: number,
-    format?: string,
+	id: string,
+	width?: number,
+	height?: number,
+	format?: string,
 ): Promise<string> {
-    const params = new URLSearchParams({ id: id });
+	const params = new URLSearchParams({ id: id });
 
-    if (width) params.append('width', Math.round(width).toString());
-    if (height) params.append('height', Math.round(height).toString());
-    if (format) params.append('format', format);
+	if (width) params.append('width', Math.round(width).toString());
+	if (height) params.append('height', Math.round(height).toString());
+	if (format) params.append('format', format);
 
-    const response = await fetch(`/api/imgproxy?${params.toString()}`);
-    let url = await response.json();
-    return url;
+	const response = await fetch(`/api/imgproxy?${params.toString()}`);
+	let url = await response.json();
+	return url;
 }
 
 export function switchToOverview(): void {
