@@ -5,7 +5,7 @@
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import {
-		calcInitZoom,
+		calcOptimizedZoom,
 		defaultMapCenter,
 		switchToJourney,
 		switchToOverview
@@ -27,7 +27,7 @@
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		center = $state<maplibregl.LngLatLike | undefined>(defaultMapCenter);
 
-	let initialZoom = calcInitZoom(innerWidth.current ?? 0),
+	let initialZoom = calcOptimizedZoom(innerWidth.current ?? 0),
 		zoom = $state<number>(initialZoom);
 
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -74,7 +74,7 @@
 	});
 </script>
 
-<div class="map-wrapper">
+<div class="map-wrapper relative">
 	<MapLibre
 		bind:map
 		bind:mapContainer
@@ -126,7 +126,7 @@
 							global.savedViewPort = {
 								center: center,
 								zoom: zoom,
-								bounds: bounds,
+								bounds: bounds
 							};
 							switchToJourney(journey.journeyId);
 						}}

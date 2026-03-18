@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { HTMLAttributes } from "svelte/elements";
 	import { cn, type WithElementRef } from "$lib/utils/shadcn";
+	import type { HTMLAttributes } from "svelte/elements";
 
 	let {
 		ref = $bindable(null),
@@ -12,9 +12,9 @@
 
 <div
 	bind:this={ref}
-	data-slot="card"
+	data-slot="field-group"
 	class={cn(
-		"bg-card text-card-foreground flex flex-col gap-6 rounded-xl border py-6 shadow-sm",
+		"group/field-group @container/field-group flex w-full flex-col gap-7 data-[slot=checkbox-group]:gap-3 [&>[data-slot=field-group]]:gap-4",
 		className
 	)}
 	{...restProps}
