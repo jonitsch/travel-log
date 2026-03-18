@@ -67,11 +67,12 @@
 				>
 					<button
 						id="headerText"
-						class="oxygen-bold animate-slide-left page-header-button bg-{journey?.color ??
-							'gray-900'}/70 whitespace-nowrap"
+						class="oxygen-bold page-header-button bg-{journey?.color}/70 whitespace-nowrap {global.loadingJourney
+							? 'skeleton text-transparent'
+							: 'text-white'}"
 						onclick={() => switchToJourney(journey?.journeyId ?? '')}
 					>
-						{global.journeyData?.name}
+						{journey?.name ?? 'Placeholder'}
 					</button>
 				</div>
 			{/if}

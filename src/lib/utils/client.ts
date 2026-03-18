@@ -47,8 +47,8 @@ export function switchToOverview(): void {
 			});
 		} else {
 			map.flyTo({
-				center: [13.388, 52.517],
-				zoom: 1.5,
+				center: defaultMapCenter,
+				zoom: calcOptimizedZoom(window.innerWidth),
 				speed: 1
 			});
 		}
