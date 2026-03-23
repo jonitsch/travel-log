@@ -5,7 +5,7 @@
 	import { innerWidth } from 'svelte/reactivity/window';
 
 	let map = $state<maplibregl.Map>();
-	let zoom = $state<number>(calcOptimizedZoom(innerWidth.current ?? 0));
+	let zoom = $derived<number>(calcOptimizedZoom(innerWidth.current ?? 0));
 </script>
 
 <div class="flex size-full flex-col items-center bg-transparent">

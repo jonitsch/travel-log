@@ -24,7 +24,7 @@
 }
 
 @utility skeleton {
-	@apply animate-pulse rounded-md bg-slate-600 pointer-events-none;
+	@apply animate-pulse rounded-md bg-slate-600 pointer-events-none text-transparent *:invisible;
 }
 
 @utility page-header-button {

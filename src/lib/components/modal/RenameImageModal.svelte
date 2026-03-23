@@ -48,7 +48,7 @@
 <Modal bind:open onclose={reset}>
 	{#if img}
 		<div
-			class="relative flex flex-col gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
+			class="relative flex w-xl flex-col gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
 		>
 			<button
 				type="button"
@@ -79,12 +79,10 @@
 				}}
 			>
 				<Input class="text-center" type="text" bind:value={newName} name="newName" />
-				<div class="flex w-full flex-row justify-center gap-2">
-					<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}
-						>Confirm</Button
-					>
-					<Button type="button" onclick={() => (open = false)}>Cancel</Button>
-				</div>
+				<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}
+					>Confirm</Button
+				>
+				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
 				{#if $errors.imgId}
 					<small class="text-red-600" role="alert">{$errors.imgId[0]}</small>
 				{/if}

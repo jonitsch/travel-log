@@ -15,7 +15,6 @@
 	let dayOf = (date: Date) => {
 		return date.toISOString().slice(0, 10);
 	}; // DD//MM//YYYY
-	let imgInputFiles = $state<FileList>();
 </script>
 
 <div

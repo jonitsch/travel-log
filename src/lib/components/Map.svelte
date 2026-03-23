@@ -27,8 +27,7 @@
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		center = $state<maplibregl.LngLatLike | undefined>(defaultMapCenter);
 
-	let initialZoom = calcOptimizedZoom(innerWidth.current ?? 0),
-		zoom = $state<number>(initialZoom);
+	let zoom = $state<number>(calcOptimizedZoom(innerWidth.current ?? 0));
 
 	let createJourneyModal = $state<CreateJourneyModal>();
 
@@ -52,6 +51,11 @@
 		map.addControl(attributionControl);
 		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
 		setAttributionControl(global.viewMode);
+
+		map.flyTo({
+			center: defaultMapCenter,
+			zoom: zoom,
+		});
 
 		// prevent non-critical styleimagemissing warnings in the browser
 		const emptyImage = {
