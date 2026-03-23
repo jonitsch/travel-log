@@ -38,7 +38,7 @@
 			{name} <SVGIcon type="profilePic" scale={1.1} />
 		</div>
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content class="bg-gray-900 w-60 mt-0.5" align="end">
+	<DropdownMenu.Content class="bg-gray-900 w-fit mt-0.5" align="end">
 		<DropdownMenu.Group class="*:text-[16px]">
 			<DropdownMenu.Item>
 				<SVGIcon type="profilePic" color="white" hoverScale={false} />
