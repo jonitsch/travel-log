@@ -85,7 +85,10 @@
 						<button
 							id="viewFullImageButton-{img.id}"
 							title="View Full Image"
-							onclick={() => fullImageModal?.openModal(img)}
+							onclick={(e) => {
+								e.stopPropagation();
+								fullImageModal?.openModal(img);
+							}}
 						>
 							<SVGIcon type="fullscreen" color="white" hoverScale />
 						</button>
