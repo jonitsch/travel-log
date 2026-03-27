@@ -199,7 +199,7 @@ export function getBBox(journey: JourneyData): LngLatBoundsLike | undefined {
 	return undefined;
 }
 
-export function calcInitZoom(width: number): number {
+export function calcOptimizedZoom(width: number): number {
 	let zoom = width * 0.002;
 	const MIN_ZOOM = 0.6;
 	const MAX_ZOOM = 1.2;

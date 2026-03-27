@@ -24,6 +24,16 @@
 			global.selectedImageIds.length === global.journeyData?.image.length
 		);
 
+	function handleSelectMode() {
+		global.imgSelectMode = !global.imgSelectMode;
+		if (!global.imgSelectMode) {
+			currentSelection = global.selectedImageIds;
+			global.selectedImageIds = [];
+		} else {
+			global.selectedImageIds = currentSelection;
+		}
+	}
+
 	function handleSelectAll() {
 		if (!allImagesSelected && global.journeyData) {
 			currentSelection = global.selectedImageIds;
@@ -80,15 +90,7 @@
 						Images <div class="text-3xl font-light">{`(${journey.image.length})`}</div>
 					</div>
 					<div class="flex w-fit flex-row items-center gap-3">
-						{@render imageControl('selectImages', 'Select Images', () => {
-							global.imgSelectMode = !global.imgSelectMode;
-							if (!global.imgSelectMode) {
-								currentSelection = global.selectedImageIds;
-								global.selectedImageIds = [];
-							} else {
-								global.selectedImageIds = currentSelection;
-							}
-						})}
+						{@render imageControl('selectImages', 'Select Images', handleSelectMode)}
 						{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
 					</div>
 				</div>
@@ -121,12 +123,7 @@
 								if (img) renameImageModal?.openModal(img);
 							}}
 						>
-							<SVGIcon
-								class="pt-0.75"
-								type="rename"
-								color="white"
-								scale={0.85}
-							/>Rename</button
+							<SVGIcon class="pt-0.75" type="rename" color="white" scale={0.85} />Rename</button
 						>
 					</div>
 					{#if global.imgSelectMode}
@@ -134,7 +131,7 @@
 							<button
 								class={[
 									'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
-									{ '*:invisible': global.loadingJourney },
+									{ '*:invisible': global.loadingJourney }
 								]}
 								aria-label="Select All"
 								onclick={() => handleSelectAll()}
