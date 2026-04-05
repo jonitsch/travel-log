@@ -1,34 +1,4 @@
 services:
-  travel-log:
-    image: latest
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: travel-log
-    depends_on:
-      mysql:
-        condition: service_healthy
-    ports:
-      - "3000:3000"
-    environment:
-      DATABASE_URL: ${DATABASE_URL}
-      DATABASE_HOST: mysql
-
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-
-      IMAGE_FOLDER_PATH: ${IMAGE_FOLDER_PATH}
-
-      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET}
-      BETTER_AUTH_BASE_URL: ${BETTER_AUTH_BASE_URL}
-
-      ALLOWED_EMAILS: ${ALLOWED_EMAILS}
-
-      ORIGIN: http://localhost:3000
-    volumes:
-      - ${IMAGE_FOLDER_PATH}:/pictures
-
   # -------------------
   # MySQL Database
   # -------------------

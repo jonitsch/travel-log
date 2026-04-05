@@ -86,7 +86,7 @@
 		{/if}
 
 		<!-- Right: Auth buttons -->
-		<div class="flex flex-1 min-w-0 flex-row items-center justify-end gap-2">
+		<div class="flex min-w-0 flex-1 flex-row items-center justify-end gap-2">
 			{#if user}
 				<div id="signOutButton" class="w-fit items-center">
 					<form
