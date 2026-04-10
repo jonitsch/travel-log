@@ -190,7 +190,10 @@ export const actions = {
             );
             return { form, deletedImgs, journeyId };
         } catch (err) {
-            return message(form, err instanceof Error ? err.message : 'Unknown error', { status: 500 });
+            console.log('Failed to delete Images:', form.data.imgIds);
+            console.error(err);
+            
+            return message(form, 'Something went wrong!', { status: 500 });
         }
     },
     renameImage: async ({ request }) => {

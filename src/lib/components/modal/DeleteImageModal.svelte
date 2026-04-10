@@ -4,7 +4,7 @@
 	import { Button } from '../shadcn/button';
 	import SVGIcon from '../SVGIcon.svelte';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { getJourneyData, switchToJourney } from '$lib/utils/client';
+	import { switchToJourney } from '$lib/utils/client';
 	import { invalidateAll } from '$app/navigation';
 
 	let {
@@ -39,6 +39,7 @@
 		$form.imgIds = [];
 		$errors.journeyId = [];
 		$errors.imgIds = {};
+		$message = '';
 	}
 </script>
 
