@@ -9,7 +9,6 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { User } from 'better-auth';
-	import SVGIcon from '$lib/components/SVGIcon.svelte';
 	import { fade } from 'svelte/transition';
 	import ProfileMenu from '$lib/components/ProfileMenu.svelte';
 
