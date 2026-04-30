@@ -11,15 +11,17 @@
 	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
 
 	let { data }: PageProps = $props();
+
+	let { deleteImageForm, addImageForm, renameImageForm } = data;
+
 	let journeys = $state<Journey[]>(data.journeys);
 	let mapContainer = $state<HTMLDivElement>();
-	let map = $state<maplibregl.Map>();
 
 	let addImageModal = $state<AddImageModal>(),
 		deleteImageModal = $state<DeleteImageModal>(),
 		renameImageModal = $state<RenameImageModal>();
 
-	let currentSelection = $state<string[]>([]),
+	let cachedSelection = $state<string[]>([]),
 		allImagesSelected = $derived(
 			global.selectedImageIds.length === global.journeyData?.image.length
 		);
@@ -27,19 +29,28 @@
 	function handleSelectMode() {
 		global.imgSelectMode = !global.imgSelectMode;
 		if (!global.imgSelectMode) {
-			currentSelection = global.selectedImageIds;
+			cachedSelection = global.selectedImageIds;
 			global.selectedImageIds = [];
 		} else {
-			global.selectedImageIds = currentSelection;
+			global.selectedImageIds = cachedSelection;
 		}
 	}
 
 	function handleSelectAll() {
 		if (!allImagesSelected && global.journeyData) {
-			currentSelection = global.selectedImageIds;
+			cachedSelection = global.selectedImageIds;
 			global.selectedImageIds = global.journeyData.image.map((img) => img.id);
 		} else {
-			global.selectedImageIds = currentSelection;
+			global.selectedImageIds = cachedSelection;
+		}
+	}
+
+	function handleUnselectAll() {
+		if (global.selectedImageIds.length) {
+			cachedSelection = global.selectedImageIds;
+			global.selectedImageIds = [];
+		} else {
+			global.selectedImageIds = cachedSelection;
 		}
 	}
 
@@ -149,10 +160,7 @@
 							{@render subImgControl({
 								type: 'unselectAll',
 								text: 'Unselect all',
-								onclick: () => {
-									currentSelection = global.selectedImageIds;
-									global.selectedImageIds = [];
-								},
+								onclick: () => handleUnselectAll(),
 								className: 'pt-0.75'
 							})}
 							Selected:
@@ -165,7 +173,7 @@
 	{/if}
 	<div class="items-top flex size-full flex-col gap-4">
 		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:journeys />
+			<Map bind:journeys />
 		</div>
 	</div>
 	{#if global.viewMode === 'journey'}
@@ -175,6 +183,6 @@
 	{/if}
 </div>
 
-<AddImageModal bind:this={addImageModal} addImageForm={data.addImageForm} />
-<DeleteImageModal bind:this={deleteImageModal} deleteImageForm={data.deleteImageForm} />
-<RenameImageModal bind:this={renameImageModal} renameImageForm={data.renameImageForm} />
+<AddImageModal bind:this={addImageModal} {addImageForm} />
+<DeleteImageModal bind:this={deleteImageModal} {deleteImageForm} />
+<RenameImageModal bind:this={renameImageModal} {renameImageForm} />
