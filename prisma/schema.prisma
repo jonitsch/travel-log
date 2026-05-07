@@ -67,7 +67,6 @@ model Marker {
 }
 
 model Image {
-  path      String
   fileName  String
   width     Int
   lng       Float?
