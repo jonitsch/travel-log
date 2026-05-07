@@ -16,10 +16,10 @@ const client = new S3Client({
 });
 
 class S3 {
-	bucket = env.S3_BUCKET_NAME;
+	bucket = env.AWS_BUCKET_NAME;
 
 	/**
-	 * Uploads an object to the S3 bucket specified in the env variable S3_BUCKET_NAME.
+	 * Uploads an object to the S3 bucket specified in the env variable AWS_BUCKET_NAME.
 	 * @param key - The key (path) for the object in the bucket.
 	 * @param body - The body of the object as a Buffer.
 	 * @returns A Promise that resolves when the upload is complete.
@@ -54,7 +54,7 @@ class S3 {
 	};
 
 	/**
-	 * Deletes an object from the S3 bucket specified in the env variable S3_BUCKET_NAME.
+	 * Deletes an object from the S3 bucket specified in the env variable AWS_BUCKET_NAME.
 	 * @param key - The key (path) of the object to delete.
 	 * @returns A Promise that resolves when the deletion is complete.
 	 */
