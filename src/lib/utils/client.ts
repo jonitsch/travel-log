@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
+import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
 import type { Image } from '$gen/prisma/client/client';
@@ -93,7 +93,8 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 				left: 90,
 				right: 90
 			},
-			duration: 500
+			duration: 500,
+			maxZoom: 13,
 		});
 	} else {
 		map.flyTo({

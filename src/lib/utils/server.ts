@@ -4,6 +4,7 @@ import exifr from 'exifr';
 import { stat } from 'fs/promises';
 import type { Prisma } from '@prisma/client';
 import { existsSync } from 'fs';
+import { env } from '$env/dynamic/private';
 
 export type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
 
@@ -37,8 +38,8 @@ export async function getImageData(name: string, path: string, journeyId: string
             console.log(`No valid Date found for ${path} in exifr or system data, using fallback Date.now()`);
         }
     }
+
     let imgData: imgCreateBody = {
-        path: path,
         fileName: name,
         fileType: type.ext,
         createdOn: createdOn,
@@ -49,4 +50,8 @@ export async function getImageData(name: string, path: string, journeyId: string
         journeyId: journeyId,
     }
     return imgData;
+}
+
+export function getImagePath(id: string, journeyId: string): string {
+    return `${env.IMAGE_FOLDER_PATH + journeyId}/${id}`
 }

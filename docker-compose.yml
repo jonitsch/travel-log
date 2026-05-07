@@ -49,6 +49,10 @@ services:
       IMGPROXY_LOCAL_FILESYSTEM_ROOT: /pictures
       IMGPROXY_KEY: ${IMGPROXY_KEY}
       IMGPROXY_SALT: ${IMGPROXY_SALT}
+      IMGPROXY_USE_S3: ${IMGPROXY_USE_S3}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_REGION: ${AWS_REGION}
     volumes:
       - ${IMAGE_FOLDER_PATH}:/pictures:ro
     restart: unless-stopped
