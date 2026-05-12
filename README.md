@@ -52,7 +52,7 @@ docker compose up -d
 | **AWS S3** | | | |
 | `AWS_ACCESS_KEY_ID` | AWS access key |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret key |
-| `S3_BUCKET_NAME` | S3 bucket for image storage | `my-travel-log-bucket`
+| `AWS_BUCKET_NAME` | S3 bucket for image storage | `my-travel-log-bucket`
 | `AWS_REGION` | AWS region for S3 | `eu-north-1`
 | **ImgProxy** | | | |
 | `IMGPROXY_URL` | ImgProxy service URL | `https://imgproxy.example.com`
