@@ -38,7 +38,6 @@ export const actions = {
 					password,
 				},
 				headers: request.headers,
-				method: 'POST',
 			});
 		} catch (err: any) {
 			console.log(`Login for user ${email} failed!`);
