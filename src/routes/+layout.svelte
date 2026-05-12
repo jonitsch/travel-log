@@ -67,11 +67,12 @@
 				>
 					<button
 						id="headerText"
-						class="oxygen-bold animate-slide-left page-header-button bg-{journey?.color ??
-							'gray-900'}/70 whitespace-nowrap"
+						class="oxygen-bold page-header-button bg-{journey?.color}/70 whitespace-nowrap {global.loadingJourney
+							? 'skeleton text-transparent'
+							: 'text-white'}"
 						onclick={() => switchToJourney(journey?.journeyId ?? '')}
 					>
-						{global.journeyData?.name}
+						{journey?.name ?? 'Placeholder'}
 					</button>
 				</div>
 			{/if}
@@ -85,7 +86,7 @@
 		{/if}
 
 		<!-- Right: Auth buttons -->
-		<div class="flex flex-1 min-w-0 flex-row items-center justify-end gap-2">
+		<div class="flex min-w-0 flex-1 flex-row items-center justify-end gap-2">
 			{#if user}
 				<div id="signOutButton" class="w-fit items-center">
 					<form

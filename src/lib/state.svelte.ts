@@ -19,7 +19,7 @@ type State = {
 	viewMode: ViewMode;
 	journeyData: JourneyData;
 	journeyId: string | undefined;
-	map: maplibregl.Map | null;
+	map: maplibregl.Map | undefined;
 	center: maplibregl.LngLatLike | undefined;
 	loadingJourney: boolean;
 	savedViewPort: {
@@ -36,7 +36,7 @@ export const global: State = $state({
 	viewMode: 'overview' as ViewMode,
 	journeyData: null,
 	journeyId: '',
-	map: null,
+	map: undefined,
 	center: undefined,
 	loadingJourney: false,
 	savedViewPort: null,

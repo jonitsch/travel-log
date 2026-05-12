@@ -5,7 +5,7 @@
 	import { global, type ViewMode } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import {
-		calcInitZoom,
+		calcOptimizedZoom,
 		defaultMapCenter,
 		switchToJourney,
 		switchToOverview
@@ -17,17 +17,14 @@
 	import HoverButton from './HoverButton.svelte';
 	import CreateJourneyModal from './modal/CreateJourneyModal.svelte';
 
-	interface Props {
-		mapContainer: HTMLDivElement;
-		journeys: Journey[];
-		map: maplibregl.Map;
-	}
-	let { map = $bindable(), mapContainer = $bindable(), journeys = $bindable() }: Props = $props();
+	let { journeys = $bindable() }: { journeys: Journey[] } = $props();
+
+	let map = $state<maplibregl.Map>();
 
 	let bounds = $state<maplibregl.LngLatBoundsLike | undefined>(),
 		center = $state<maplibregl.LngLatLike | undefined>(defaultMapCenter);
 
-	let initialZoom = calcInitZoom(innerWidth.current ?? 0),
+	let initialZoom = calcOptimizedZoom(innerWidth.current ?? 0),
 		zoom = $state<number>(initialZoom);
 
 	let createJourneyModal = $state<CreateJourneyModal>();
@@ -48,6 +45,7 @@
 	}
 
 	onMount(async () => {
+		if (!map) throw Error('Map failed to load!');
 		global.map = map;
 		map.addControl(attributionControl);
 		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
@@ -60,7 +58,7 @@
 			data: new Uint8Array([0, 0, 0, 0])
 		};
 		map.on('styleimagemissing', (e) => {
-			if (!map.hasImage(e.id)) {
+			if (map && !map.hasImage(e.id)) {
 				map.addImage(e.id, emptyImage);
 			}
 		});
@@ -77,7 +75,6 @@
 <div class="map-wrapper">
 	<MapLibre
 		bind:map
-		bind:mapContainer
 		bind:bounds
 		bind:zoom
 		bind:center
@@ -126,7 +123,7 @@
 							global.savedViewPort = {
 								center: center,
 								zoom: zoom,
-								bounds: bounds,
+								bounds: bounds
 							};
 							switchToJourney(journey.journeyId);
 						}}

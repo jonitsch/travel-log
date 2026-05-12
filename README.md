@@ -36,8 +36,49 @@ Use the provided `docker-compose.yml` file or to setup both the ImgProxy and MyS
 docker compose up -d
 ```
 
-### Notes
-Any Image Path that you try to sign and fetch with the **getImgProxyURL()** function must be relative to **{IMAGE_FOLDER_PATH}**!
-```typescript
-import { getImgProxyURL } from '$lib/imgproxy';
-```
+
+## Production
+
+### Environment Variables
+
+| Variable | Description | Example |
+| ----------- | ----------- | ----------- |
+| **Database** | | |
+| `DATABASE_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
+| `DATABASE_HOST` | Database host | `db.example.com`
+| `MYSQL_DATABASE` | Database name | `travel-log`
+| `MYSQL_USER` | Database user for application | `app-user`
+| `MYSQL_PASSWORD` | Database user password |
+| **AWS S3** | | |
+| `AWS_ACCESS_KEY_ID` | AWS access key |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key |
+| `AWS_BUCKET_NAME` | S3 bucket for image storage | `my-travel-log-bucket`
+| `AWS_REGION` | AWS region for S3 | `eu-north-1`
+| **ImgProxy** | | |
+| `IMGPROXY_URL` | ImgProxy service URL | `https://imgproxy.example.com`
+| `IMGPROXY_KEY` | ImgProxy signing key (hex string) | `crypto.randomBytes(32).toString('hex')`
+| `IMGPROXY_SALT` | ImgProxy salt (hex string) | `crypto.randomBytes(16).toString('hex')`
+| **Authentication** | | |
+| `BETTER_AUTH_URL` | Application base URL | `https://travel-log.example.com`
+| `BETTER_AUTH_SECRET` | BetterAuth secret | `openssl rand -base64 32`
+
+### Image Storage & Serving
+
+In production, images are stored in S3-Buckets and served through an imgproxy server running at Port 8080 with the following features:
+
+- **Authentication Required**: Only authenticated users can access images.
+- **S3 Integration**: Images are fetched directly from S3 based on the stored image path (`${journeyId}/${imageId}`).
+- **Resizing via ImgProxy**: The `/api/imgproxy` endpoint handles image resizing and format conversion.
+
+### Database Setup
+
+Use a managed MySQL service (e.g., AWS RDS) or a self-hosted MySQL instance.
+
+### S3 Bucket Configuration
+
+1. Create an S3 bucket for image storage.
+2. Configure IAM user/role with permissions:
+   - `s3:PutObject` - for uploading images
+   - `s3:GetObject` - for serving images
+   - `s3:DeleteObject` - for deleting images
+3. Store credentials in environment variables.

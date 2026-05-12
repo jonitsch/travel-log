@@ -1,6 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
+import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
 import type { Image } from '$gen/prisma/client/client';
@@ -19,20 +19,20 @@ export const imgHighlightColor = '#2DD4BE';
  * @param {string} format - desired format of the output image (defaults to "webp")
  */
 export async function getImgProxyURL(
-    id: string,
-    width?: number,
-    height?: number,
-    format?: string,
+	id: string,
+	width?: number,
+	height?: number,
+	format?: string,
 ): Promise<string> {
-    const params = new URLSearchParams({ id: id });
+	const params = new URLSearchParams({ id: id });
 
-    if (width) params.append('width', Math.round(width).toString());
-    if (height) params.append('height', Math.round(height).toString());
-    if (format) params.append('format', format);
+	if (width) params.append('width', Math.round(width).toString());
+	if (height) params.append('height', Math.round(height).toString());
+	if (format) params.append('format', format);
 
-    const response = await fetch(`/api/imgproxy?${params.toString()}`);
-    let url = await response.json();
-    return url;
+	const response = await fetch(`/api/imgproxy?${params.toString()}`);
+	const url = await response.json();
+	return url;
 }
 
 export function switchToOverview(): void {
@@ -47,8 +47,8 @@ export function switchToOverview(): void {
 			});
 		} else {
 			map.flyTo({
-				center: [13.388, 52.517],
-				zoom: 1.5,
+				center: defaultMapCenter,
+				zoom: calcOptimizedZoom(window.innerWidth),
 				speed: 1
 			});
 		}
@@ -93,7 +93,8 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 				left: 90,
 				right: 90
 			},
-			duration: 500
+			duration: 500,
+			maxZoom: 13,
 		});
 	} else {
 		map.flyTo({
@@ -199,7 +200,7 @@ export function getBBox(journey: JourneyData): LngLatBoundsLike | undefined {
 	return undefined;
 }
 
-export function calcInitZoom(width: number): number {
+export function calcOptimizedZoom(width: number): number {
 	let zoom = width * 0.002;
 	const MIN_ZOOM = 0.6;
 	const MAX_ZOOM = 1.2;

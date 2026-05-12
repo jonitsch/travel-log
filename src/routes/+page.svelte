@@ -1,16 +1,16 @@
 <script lang="ts">
 	import { Button } from '$lib/components/shadcn/button';
-	import { calcInitZoom, defaultMapCenter } from '$lib/utils/client';
+	import { calcOptimizedZoom, defaultMapCenter } from '$lib/utils/client';
 	import { MapLibre } from 'svelte-maplibre';
 	import { innerWidth } from 'svelte/reactivity/window';
 
 	let map = $state<maplibregl.Map>();
-	let zoom = $state<number>(calcInitZoom(innerWidth.current ?? 0));
+	let zoom = $state<number>(calcOptimizedZoom(innerWidth.current ?? 0));
 </script>
 
 <div class="flex size-full flex-col items-center bg-transparent">
 	<div
-		class="oxygen-bold h-fit w-full text-center text-[28px] text-gray-300 mb-2 sm:mb-4 lg:mb-7 sm:text-5xl md:text-6xl lg:text-7xl"
+		class="oxygen-bold mb-2 h-fit w-full text-center text-[28px] text-gray-300 sm:mb-4 sm:text-5xl md:text-6xl lg:mb-7 lg:text-7xl"
 	>
 		Welcome to Travel-Log!
 	</div>
