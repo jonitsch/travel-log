@@ -43,22 +43,22 @@ docker compose up -d
 
 | Variable | Description | Example |
 | ----------- | ----------- | ----------- |
-| **Database** | | | |
+| **Database** | | |
 | `DATABASE_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
 | `DATABASE_HOST` | Database host | `db.example.com`
 | `MYSQL_DATABASE` | Database name | `travel-log`
 | `MYSQL_USER` | Database user for application | `app-user`
 | `MYSQL_PASSWORD` | Database user password |
-| **AWS S3** | | | |
+| **AWS S3** | | |
 | `AWS_ACCESS_KEY_ID` | AWS access key |
 | `AWS_SECRET_ACCESS_KEY` | AWS secret key |
 | `AWS_BUCKET_NAME` | S3 bucket for image storage | `my-travel-log-bucket`
 | `AWS_REGION` | AWS region for S3 | `eu-north-1`
-| **ImgProxy** | | | |
+| **ImgProxy** | | |
 | `IMGPROXY_URL` | ImgProxy service URL | `https://imgproxy.example.com`
 | `IMGPROXY_KEY` | ImgProxy signing key (hex string) | `crypto.randomBytes(32).toString('hex')`
 | `IMGPROXY_SALT` | ImgProxy salt (hex string) | `crypto.randomBytes(16).toString('hex')`
-| **Authentication** | | | |
+| **Authentication** | | |
 | `BETTER_AUTH_URL` | Application base URL | `https://travel-log.example.com`
 | `BETTER_AUTH_SECRET` | BetterAuth secret | `openssl rand -base64 32`
 

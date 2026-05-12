@@ -13,14 +13,14 @@ export async function GET({ url, locals }) {
 	if (!id) throw new Error('ImgProxy API called without specifying image id!');
 
 	let img = await prisma.image.findUnique({
-		where: { id },
+		where: { id, userId: user.id },
 		select: {
 			journeyId: true
 		}
 	});
-	if (!img) throw new Error('The specified img id does not exist in the database!');
+	if (!img) throw new Error('The Image either does not exist or does not belong to the user!');
 
-	const prefix = dev ? 'local:///' : `s3://${env.AWS_BUCKET_NAME}/`
+	const prefix = dev ? 'local:///' : `s3://${env.AWS_BUCKET_NAME}/`;
 	const src = prefix + `${img.journeyId}/${id}`;
 
 	// optional parameters with default values

@@ -1,10 +1,10 @@
 import type { PageServerLoad, Actions } from './$types';
 import { prisma } from '$lib/server/prisma';
 import { env } from '$env/dynamic/private';
-import fs from 'fs/promises';
-import { redirect } from '@sveltejs/kit';
+import fs, { writeFile } from 'fs/promises';
+import { error, redirect } from '@sveltejs/kit';
 import type { Image, Journey } from '$gen/prisma/client/client';
-import { existsSync, writeFileSync } from 'fs';
+import { existsSync } from 'fs';
 import { getImageData, getImagePath, type imgCreateBody } from '$lib/utils/server';
 import z from 'zod';
 import { fail, message, setError, superValidate, withFiles } from 'sveltekit-superforms';
@@ -91,7 +91,7 @@ export const actions = {
 
 			return { success: true, journey };
 		} catch (err) {
-			throw err;
+			return error(500, `Something went wrong! ${err}`);
 		}
 	},
 	deleteJourney: async ({ request, locals }) => {
@@ -124,49 +124,59 @@ export const actions = {
 				}
 			};
 		} catch (err) {
-			throw err;
+			return error(500, `Something went wrong! ${err}`);
 		}
 	},
-	addImage: async ({ request }) => {
+	addImage: async ({ request, locals }) => {
 		const form = await superValidate(request, zod4(addImageSchema));
 		if (!form.valid) return fail(400, { form });
 
+		const { journeyId, files } = form.data;
+
+		let id = '';
+		let imgKey = '';
+
 		try {
-			const { journeyId, files } = form.data;
+			const user = locals.user;
+			if (!user) {
+				throw redirect(303, '/auth/login');
+			}
+
+			const owns = await prisma.journey.findUnique({
+				where: { journeyId, userId: user.id },
+				select: { journeyId: true }
+			});
+			if (!owns) return fail(403, { form });
 
 			const uploadFolder = dev ? `${env.IMAGE_FOLDER_PATH}${journeyId}/` : 'tmp/';
 
 			console.log(`Attempting to add Images at ${uploadFolder}`);
 
 			if (!existsSync(uploadFolder)) {
-				fs.mkdir(uploadFolder);
+				await fs.mkdir(uploadFolder);
 				console.warn(
 					`Upload Folder: \`${uploadFolder}\` did not exist at addImage action call and has now been created!`
 				);
 			}
 
+			let addedImgs: Image[] = [];
+
 			for (const file of files) {
+				id = crypto.randomUUID();
+				imgKey = journeyId + '/' + id;
+
 				if (!file.type.includes('image/') && file.type != 'application/octet-stream') {
 					const err = `${file.name} is of type ${file.type} instead of the expected types image/*, application/octet-stream`;
 					console.error(err);
 					return setError(form, 'files._errors', err);
 				}
 
-				const id = crypto.randomUUID();
-				const imgKey = journeyId + '/' + id;
-				const imgPath = getImagePath(id, journeyId);
+				const imgPath = uploadFolder + id;
 
-				writeFileSync(imgPath, Buffer.from(await file.arrayBuffer()));
+				await writeFile(imgPath, Buffer.from(await file.arrayBuffer()));
 
 				let imgData: imgCreateBody = await getImageData(file.name, imgPath, journeyId);
 				if (!imgData) return fail(500, { message: 'Image Upload failed' });
-
-				await prisma.image.create({
-					data: {
-						id: id,
-						...imgData
-					}
-				});
 
 				if (prod) {
 					await s3.upload({
@@ -176,6 +186,16 @@ export const actions = {
 
 					await fs.rm(imgPath); // remove temporary img file
 				}
+
+				const addedImg = await prisma.image.create({
+					data: {
+						id: id,
+						userId: user.id,
+						...imgData
+					}
+				});
+
+				addedImgs.push(addedImg);
 			}
 			console.log(
 				'Images added successfully:',
@@ -183,25 +203,49 @@ export const actions = {
 			);
 			return withFiles({ form, journeyId });
 		} catch (err) {
-			console.error(`Failed to add Images! ${err}`);
-			return message(form, err instanceof Error ? err.message : 'Unknown error', { status: 500 });
+			console.error(`Failed to add Images: ${err}`);
+
+			// Undo latest operation on Error
+			if (prod) {
+				await s3.delete({ key: imgKey });
+			} else {
+				const imgPath = getImagePath(id, journeyId);
+				await fs.rm(imgPath);
+			}
+
+			if (await prisma.image.findUnique({ where: { id } })) {
+				await prisma.image.delete({ where: { id } });
+			}
+
+			return message(form, 'Something went wrong!', { status: 500 });
 		}
 	},
-	deleteImage: async ({ request }) => {
+	deleteImage: async ({ request, locals }) => {
 		const form = await superValidate(request, zod4(deleteImageSchema));
 		if (!form.valid) return fail(400, { form });
+
 		try {
+			const user = locals.user;
+			if (!user) {
+				throw redirect(303, '/auth/login');
+			}
+
 			const { journeyId, imgIds } = form.data;
 			console.log(`Attempting to delete Images:`, imgIds);
 
 			let deletedImgs: Image[] = [];
 			for (const id of imgIds) {
-				const img = await prisma.image.delete({
+				const img = await prisma.image.findUnique({
 					where: {
 						id: id,
+						userId: user.id,
 						journeyId: journeyId
 					}
 				});
+				if (!img) return message(form, 'Image could not be found in Database!', { status: 404 });
+
+				await prisma.image.delete({ where: { id, userId: user.id } });
+
 				if (prod) {
 					await s3.delete({
 						key: `${img.journeyId}/${img.id}`
@@ -226,28 +270,42 @@ export const actions = {
 			return message(form, 'Something went wrong!', { status: 500 });
 		}
 	},
-	renameImage: async ({ request }) => {
+	renameImage: async ({ request, locals }) => {
 		const form = await superValidate(request, zod4(renameImageSchema));
 		if (!form.valid) return fail(400, { form });
+
 		try {
+			const user = locals.user;
+			if (!user) {
+				throw redirect(303, '/auth/login');
+			}
+
 			const { imgId, newName } = form.data;
 			console.log(`Attempting to rename Image: ${imgId}`);
 
-			const renamedImg = await prisma.image.update({
+			const img = await prisma.image.findUnique({
+				where: { id: imgId, userId: user.id },
+				select: { journeyId: true, id: true }
+			});
+
+			if (!img) return message(form, 'Image could not be found in Database!', { status: 404 });
+
+			const { journeyId, id } = img;
+
+			await prisma.image.update({
 				where: {
-					id: imgId
+					id: id,
+					journeyId: journeyId
 				},
 				data: {
 					fileName: newName
 				}
 			});
 
-			const journeyId = renamedImg.journeyId;
-
 			console.log(`Successfully renamed Image to: ${newName}`);
 			return { form, newName, journeyId };
 		} catch (err) {
-			return message(form, err instanceof Error ? err.message : 'Unknown error', { status: 500 });
+			return message(form, 'Something went wrong!', { status: 500 });
 		}
 	}
 } satisfies Actions;

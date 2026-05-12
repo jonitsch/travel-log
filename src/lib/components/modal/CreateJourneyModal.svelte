@@ -65,7 +65,7 @@
 			nameInput.style.width = '0px';
 			nameInput.style.width = `${Math.max(nameInput.scrollWidth, 130)}px`;
 		}
-		color;
+		
 		setPreviewColor();
 
 		// focus nameInput whenever its rendered on screen
@@ -132,7 +132,7 @@
 				</div>
 				<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
 					{#each twColors as twColor}
-						{#each { length: 5 } as el, i}
+						{#each { length: 5 } as _, i}
 							{@const currentColor = `${twColor}-${900 - i * 100}`}
 							<button
 								id={currentColor}
@@ -166,7 +166,7 @@
 			<!-- Submit -->
 			<div class="w-[90dvw] sm:w-[75dvw] lg:w-[56dvw]">
 				<input name="lng" bind:value={lng} type="hidden" />
-				<input name="lng" bind:value={lat} type="hidden" />
+				<input name="lat" bind:value={lat} type="hidden" />
 				<MapLibre
 					bind:map
 					bind:zoom
@@ -193,8 +193,8 @@
 					onclick={() => handleSubmit()}
 					class="{buttonStyle} flex-1"
 					class:disabled={!lng || !lat}
-					title={!color ? 'Choose a color first!' : ''}
-					disabled={!color}>Submit</button
+					title={!lng || !lat ? 'Choose a location first!' : ''}
+					disabled={!lng || !lat}>Submit</button
 				>
 			</div>
 		{:else if currentStep === 'Submit'}

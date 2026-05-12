@@ -47,9 +47,8 @@ class S3 {
 				console.error(
 					`Error from S3 while uploading object to ${bucket}.  ${caught.name}: ${caught.message}`
 				);
-			} else {
-				throw caught;
 			}
+			throw caught;
 		}
 	};
 
@@ -74,9 +73,8 @@ class S3 {
 				console.error(
 					`Error from S3 while deleting object from ${bucket}.  ${caught.name}: ${caught.message}`
 				);
-			} else {
-				throw caught;
 			}
+			throw caught;
 		}
 	};
 
@@ -98,9 +96,8 @@ class S3 {
 				console.error(
 					`Error from S3 while getting object from ${bucket}.  ${caught.name}: ${caught.message}`
 				);
-			} else {
-				throw caught;
 			}
+			throw caught;
 		}
 	};
 }

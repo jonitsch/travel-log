@@ -28,5 +28,6 @@ export const init: ServerInit = async () => {
         console.log('Database connection successful!');
     } catch (err) {
         console.error('Database connection failed!', err);
+        throw err;
     }
 }

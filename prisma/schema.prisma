@@ -20,6 +20,7 @@ model User {
   Account          Account[]
   Session          Session[]
   Journey          Journey[]
+  Images           Image[]
 
   @@map("user")
 }
@@ -77,6 +78,8 @@ model Image {
   createdOn DateTime
   fileType  String
   Journey   Journey  @relation(fields: [journeyId], references: [journeyId], map: "Image_journeyId_fkey", onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([journeyId], map: "Image_journeyId_fkey")
   @@map("image")

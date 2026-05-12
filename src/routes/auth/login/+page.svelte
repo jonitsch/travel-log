@@ -13,7 +13,10 @@
 	async function handleSignin() {
 		try {
 			const { error } = await authClient.signIn.email({ email, password });
-			if (error) message = error.message;
+			if (error) {
+				message = error.message;
+				return;
+			}
 			await invalidateAll();
 			goto('/map');
 		} catch (err) {

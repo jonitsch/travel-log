@@ -27,7 +27,6 @@ export const actions = {
 		const user = await prisma.user.findUnique({
 			where: { email }
 		})
-		console.log(user);
 		if (!user) {
 			form.valid = false;
 			return message(form, 'User not found!');

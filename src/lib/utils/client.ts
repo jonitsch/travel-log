@@ -31,7 +31,7 @@ export async function getImgProxyURL(
 	if (format) params.append('format', format);
 
 	const response = await fetch(`/api/imgproxy?${params.toString()}`);
-	let url = await response.json();
+	const url = await response.json();
 	return url;
 }
 
