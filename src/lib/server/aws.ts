@@ -1,6 +1,8 @@
 import {
 	DeleteObjectCommand,
+	DeleteObjectsCommand,
 	GetObjectCommand,
+	ListObjectsV2Command,
 	PutObjectCommand,
 	S3Client,
 	S3ServiceException
@@ -76,6 +78,44 @@ class S3 {
 			}
 			throw caught;
 		}
+	};
+
+	/**
+	 * Deletes all objects with the given prefix from the S3 bucket.
+	 * @param prefix - The prefix of the objects to delete.
+	 * @returns A Promise that resolves when all deletions are complete.
+	 */
+	public deletePrefix = async ({ prefix }: { prefix: string }) => {
+		const bucket = this.bucket;
+
+		let continuationToken: string | undefined;
+
+		do {
+			const listCommand = new ListObjectsV2Command({
+				Bucket: bucket,
+				Prefix: prefix,
+				ContinuationToken: continuationToken
+			});
+
+			const listResponse = await client.send(listCommand);
+
+			if (listResponse.Contents && listResponse.Contents.length > 0) {
+				const objects = listResponse.Contents.map((obj) => ({ Key: obj.Key }));
+
+				const deleteCommand = new DeleteObjectsCommand({
+					Bucket: bucket,
+					Delete: {
+						Objects: objects,
+						Quiet: true
+					}
+				});
+
+				const deleteResponse = await client.send(deleteCommand);
+				console.log(`Deleted ${objects.length} objects with prefix ${prefix}`);
+			}
+
+			continuationToken = listResponse.NextContinuationToken;
+		} while (continuationToken);
 	};
 
 	public get = async ({ key }: { key: string }) => {

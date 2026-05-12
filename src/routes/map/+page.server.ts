@@ -112,7 +112,7 @@ export const actions = {
 				const imageFolder = env.IMAGE_FOLDER_PATH + journeyId;
 				await fs.rm(imageFolder, { recursive: true });
 			} else {
-				await s3.delete({ key: journeyId });
+				await s3.deletePrefix({ prefix: `${journeyId}/` });
 			}
 			console.log(`Journey \`${journeyId}\` was successfully deleted!`);
 
@@ -127,6 +127,7 @@ export const actions = {
 			return error(500, `Something went wrong! ${err}`);
 		}
 	},
+
 	addImage: async ({ request, locals }) => {
 		const form = await superValidate(request, zod4(addImageSchema));
 		if (!form.valid) return fail(400, { form });
