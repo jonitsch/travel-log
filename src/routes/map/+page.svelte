@@ -75,7 +75,7 @@
 	</button>
 {/snippet}
 
-{#snippet subImgControl(args: { type: iconType, text: string, onclick: () => any, disabled?: boolean, scale?: number, color?: string, className?: string })}
+{#snippet subImgControl(args: { type: iconType, text: string, onclick: () => void, disabled?: boolean, scale?: number, color?: string, className?: string })}
 	{@const { type, text, onclick, disabled = false, scale, color, className } = args}
 	<button
 		class={[
