@@ -2,7 +2,12 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import { awaitImageRender, handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '$lib/utils/client';
+	import {
+		awaitImageRender,
+		handleImageSelection,
+		handleShowOnMapClick,
+		imgHighlightColor
+	} from '$lib/utils/client';
 	import { tick } from 'svelte';
 	import ErrorMessage from './ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
@@ -36,13 +41,15 @@
 		if (e.key === 'Enter') handleImageSelection(img.id);
 	}}
 	onclick={() => handleImageSelection(img.id)}
-	class="relative block size-full overflow-hidden rounded-md cursor-pointer"
+	class="relative block size-full cursor-pointer overflow-hidden rounded-md"
 	class:highlightBorder={imgSelected}
 >
+	{#if imgSelected}
+		<div class="highlightBorderOverlay"></div>
+	{/if}
 	{#if imgError}
 		<div class="flex size-full flex-col items-center rounded-md bg-red-900 p-3">
 			<div class="w-[90%] truncate text-white">{img.fileName}</div>
-			u
 			<div class="flex flex-1 items-center">
 				<ErrorMessage>
 					<div class="flex flex-col items-center justify-center text-center">
@@ -57,7 +64,7 @@
 			id="bookpic-{img.id}"
 			{src}
 			alt={img.fileName}
-			class="size-full object-cover min-w-20 min-h-30"
+			class="size-full min-h-30 min-w-20 object-cover"
 			onload={() =>
 				awaitImageRender(async () => {
 					await tick();
@@ -65,9 +72,6 @@
 				})}
 			onerror={() => (imgError = true)}
 		/>
-		{#if imgSelected}
-			<div class="highlightBorderOverlay"></div>
-		{/if}
 		{#if hovered || imgSelected}
 			{#if !global.imgSelectMode}
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
