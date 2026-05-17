@@ -6,6 +6,7 @@
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate } from '$lib/utils/client';
 	import SVGIcon from '$lib/components/SVGIcon.svelte';
+	import type { Image } from '$gen/prisma/client/client';
 
 	let book = $state<HTMLDivElement>(),
 		fullImageModal = $state<FullImageModal>();
@@ -15,6 +16,8 @@
 	let dayOf = (date: Date) => {
 		return date.toISOString().slice(0, 10);
 	}; // DD//MM//YYYY
+
+	let images: Image[] | undefined = $derived(global.journeyData?.image);
 </script>
 
 <div
@@ -27,8 +30,7 @@
 		{#each { length: 200 }}
 			<div id="skeletonImage" class="skeleton" style="width: 1fr; height: 300px;"></div>
 		{/each}
-	{:else if global.journeyData}
-		{@const images = global.journeyData.image}
+	{:else if images}
 		{(previousDate = null)}
 		{#if images.length > 0}
 			{#each images as img, i}

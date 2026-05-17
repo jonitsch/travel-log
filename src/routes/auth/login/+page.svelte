@@ -13,7 +13,10 @@
 	async function handleSignin() {
 		try {
 			const { error } = await authClient.signIn.email({ email, password });
-			if (error) message = error.message;
+			if (error) {
+				message = error.message;
+				return;
+			}
 			await invalidateAll();
 			goto('/map');
 		} catch (err) {
@@ -26,7 +29,10 @@
 <form
 	id="main"
 	class="animate-modal-in mt-15 flex size-full flex-row items-start justify-center gap-4"
-	onsubmit={() => handleSignin()}
+	onsubmit={(e) => {
+		e.preventDefault();
+		handleSignin();
+	}}
 >
 	<Card.Root class="-my-4 w-full max-w-sm">
 		<Card.Header>

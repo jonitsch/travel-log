@@ -1,3 +1,5 @@
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
@@ -29,7 +31,7 @@ export async function getImgProxyURL(
 	if (format) params.append('format', format);
 
 	const response = await fetch(`/api/imgproxy?${params.toString()}`);
-	let url = await response.json();
+	const url = await response.json();
 	return url;
 }
 
@@ -81,6 +83,24 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 		}, 200);
 	});
 	const bbox = getBBox(journey);
+	if (bbox) {
+		map.fitBounds(bbox, {
+			padding: {
+				top: 90,
+				bottom: 150,
+				left: 90,
+				right: 90
+			},
+			duration: 500,
+			maxZoom: 13,
+		});
+	} else {
+		map.flyTo({
+			center: [journey.lng, journey.lat],
+			zoom: 6
+		});
+	}
+	const geoJSON = await buildGeoJSON(journey);
 
 	// using timeout to await the resizing of the map container, fixes bbox offset issue
 	setTimeout(async () => {

@@ -50,12 +50,22 @@
 		color = undefined;
 	}
 
+	function handleInput(e: Event) {
+		const target = e.currentTarget as HTMLInputElement;
+		if (target.value.length) {
+			target.style.width = '0px';
+			target.style.width = `${Math.max(target.scrollWidth, 130)}px`;
+		} else {
+			target.style.width = 'auto';
+		}
+	}
+
 	$effect(() => {
 		if (currentStep === 'Name' && nameInput?.value.length) {
 			nameInput.style.width = '0px';
 			nameInput.style.width = `${Math.max(nameInput.scrollWidth, 130)}px`;
 		}
-		color;
+		
 		setPreviewColor();
 
 		// focus nameInput whenever its rendered on screen
@@ -95,19 +105,9 @@
 						maxlength={25}
 						autocomplete="off"
 						placeholder="Start with a name..."
-						class="{previewStyle} {color ? `bg-${color}` : 'bg-slate-900'}"
-						oninput={(e) => {
-							const target = e.currentTarget as HTMLInputElement;
-							if (target.value.length) {
-								target.style.width = '0px';
-								target.style.width = `${Math.max(target.scrollWidth, 130)}px`;
-							} else {
-								target.style.width = 'auto';
-							}
-						}}
-						onkeydown={(e) => {
-							if (e.key === 'Enter') handleSubmit();
-						}}
+						class="{previewStyle} bg-{color ?? 'slate-900'}"
+						oninput={(e) => handleInput(e)}
+						onkeydown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
 					/>
 					{@render previewTip()}
 				</div>
@@ -132,7 +132,7 @@
 				</div>
 				<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
 					{#each twColors as twColor}
-						{#each { length: 5 } as el, i}
+						{#each { length: 5 } as _, i}
 							{@const currentColor = `${twColor}-${900 - i * 100}`}
 							<button
 								id={currentColor}
@@ -166,7 +166,7 @@
 			<!-- Submit -->
 			<div class="w-[90dvw] sm:w-[75dvw] lg:w-[56dvw]">
 				<input name="lng" bind:value={lng} type="hidden" />
-				<input name="lng" bind:value={lat} type="hidden" />
+				<input name="lat" bind:value={lat} type="hidden" />
 				<MapLibre
 					bind:map
 					bind:zoom
@@ -193,8 +193,8 @@
 					onclick={() => handleSubmit()}
 					class="{buttonStyle} flex-1"
 					class:disabled={!lng || !lat}
-					title={!color ? 'Choose a color first!' : ''}
-					disabled={!color}>Submit</button
+					title={!lng || !lat ? 'Choose a location first!' : ''}
+					disabled={!lng || !lat}>Submit</button
 				>
 			</div>
 		{:else if currentStep === 'Submit'}

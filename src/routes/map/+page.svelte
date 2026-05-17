@@ -11,30 +11,57 @@
 	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
 
 	let { data }: PageProps = $props();
+
+	let { deleteImageForm, addImageForm, renameImageForm } = data;
+
 	let journeys = $state<Journey[]>(data.journeys);
 	let mapContainer = $state<HTMLDivElement>();
-	let map = $state<maplibregl.Map>();
 
 	let addImageModal = $state<AddImageModal>(),
 		deleteImageModal = $state<DeleteImageModal>(),
 		renameImageModal = $state<RenameImageModal>();
 
-	let currentSelection = $state<string[]>([]),
+	let cachedSelection = $state<string[]>([]),
 		allImagesSelected = $derived(
 			global.selectedImageIds.length === global.journeyData?.image.length
 		);
 
+	function handleSelectMode() {
+		global.imgSelectMode = !global.imgSelectMode;
+		if (!global.imgSelectMode) {
+			cachedSelection = global.selectedImageIds;
+			global.selectedImageIds = [];
+		} else {
+			global.selectedImageIds = cachedSelection;
+		}
+	}
+
 	function handleSelectAll() {
 		if (!allImagesSelected && global.journeyData) {
-			currentSelection = global.selectedImageIds;
+			cachedSelection = global.selectedImageIds;
 			global.selectedImageIds = global.journeyData.image.map((img) => img.id);
 		} else {
-			global.selectedImageIds = currentSelection;
+			global.selectedImageIds = cachedSelection;
 		}
+	}
+
+	function handleUnselectAll() {
+		if (global.selectedImageIds.length) {
+			cachedSelection = global.selectedImageIds;
+			global.selectedImageIds = [];
+		} else {
+			global.selectedImageIds = cachedSelection;
+		}
+	}
+
+	function handleRename() {
+		if (!(global.selectedImageIds.length === 1)) return;
+		const img = global.journeyData?.image.find((i) => i.id === global.selectedImageIds[0]);
+		if (img) renameImageModal?.openModal(img);
 	}
 </script>
 
-{#snippet imageControl(type: iconType, text: string, onclick: () => any)}
+{#snippet imgControl(type: iconType, text: string, onclick: () => any)}
 	<button
 		class={[
 			'flex w-fit flex-row items-center gap-1 rounded-md p-1',
@@ -46,6 +73,20 @@
 		<SVGIcon {type} color={global.loadingJourney ? 'none' : 'white'} hoverScale={false} />
 		{text}
 	</button>
+{/snippet}
+
+{#snippet subImgControl(args: { type: iconType, text: string, onclick: () => void, disabled?: boolean, scale?: number, color?: string, className?: string })}
+	{@const { type, text, onclick, disabled = false, scale, color, className } = args}
+	<button
+		class={[
+			'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
+			{ '*:invisible': global.loadingJourney }
+		]}
+		{disabled}
+		{onclick}
+	>
+		<SVGIcon {type} scale={scale ?? 0.85} {color} class={className} />{text}</button
+	>
 {/snippet}
 
 <div
@@ -97,67 +138,64 @@
 					? 'w-fit'
 					: 'w-full'} flex-row justify-between *:flex *:items-end *:gap-2"
 			>
-				<div class="*:items-center">
-					<button
-						class={[
-							'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
-							{ '*:invisible': global.loadingJourney }
-						]}
-						disabled={global.selectedImageIds.length === 0}
-						onclick={() => deleteImageModal?.openModal()}
-					>
-						<SVGIcon type="delete" scale={0.8} color="white" />Delete</button
-					>
-					<button
-						class={[
-							'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
-							{ '*:invisible': global.loadingJourney }
-						]}
-						disabled={!(global.selectedImageIds.length === 1)}
-						onclick={() => {
-							if (!(global.selectedImageIds.length === 1)) return;
-							const img = journey?.image.find((i) => i.id === global.selectedImageIds[0]);
-							if (img) renameImageModal?.openModal(img);
-						}}
-					>
-						<SVGIcon class="pt-0.75" type="rename" color="white" scale={0.85} />Rename</button
-					>
-				</div>
-				{#if global.imgSelectMode}
-					<div>
-						<button
-							class={[
-								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
-								{ '*:invisible': global.loadingJourney }
-							]}
-							aria-label="Select All"
-							onclick={() => handleSelectAll()}
-							><SVGIcon
-								class="pt-0.75"
-								type="selectAll"
-								color={allImagesSelected ? imgHighlightColor : 'white'}
-								scale={0.85}
-							/>Select all</button
-						>
-						<button
-							class={[
-								'flex flex-row gap-1 enabled:hover:underline disabled:cursor-auto! disabled:opacity-50',
-								{ '*:invisible': global.loadingJourney }
-							]}
-							aria-label="Unselect All"
-							onclick={() => (global.selectedImageIds = [])}
-							><SVGIcon class="pt-0.75" type="unselectAll" color="white" scale={0.85} />Unselect all</button
-						>
-						Selected:
-						<div class="w-[3ch]">{global.selectedImageIds.length}</div>
+				<div class="flex w-full flex-row items-end gap-2 py-2">
+					<div class="oxygen-bold flex flex-row items-end gap-2 text-5xl">
+						Images <div class="text-3xl font-light">{`(${journey.image.length})`}</div>
 					</div>
-				{/if}
+					<div class="flex w-fit flex-row items-center gap-3">
+						{@render imgControl('selectImages', 'Select Images', handleSelectMode)}
+						{@render imgControl('addImage', 'Add Images', () => addImageModal?.openModal())}
+					</div>
+				</div>
+
+				<div
+					class="flex {global.loadingJourney
+						? 'w-fit'
+						: 'w-full'} flex-row justify-between *:flex *:items-end *:gap-2"
+				>
+					<div class="*:items-center">
+						{@render subImgControl({
+							type: 'delete',
+							text: 'Delete',
+							onclick: () => deleteImageModal?.openModal(),
+							disabled: global.selectedImageIds.length === 0,
+							scale: 0.8
+						})}
+						{@render subImgControl({
+							type: 'rename',
+							text: 'Rename',
+							onclick: () => handleRename(),
+							disabled: !(global.selectedImageIds.length === 1),
+							color: 'white',
+							className: 'pt-0.75'
+						})}
+					</div>
+					{#if global.imgSelectMode}
+						<div>
+							{@render subImgControl({
+								type: 'selectAll',
+								text: 'Select all',
+								onclick: () => handleSelectAll(),
+								color: allImagesSelected ? imgHighlightColor : 'white',
+								className: 'pt-0.75'
+							})}
+							{@render subImgControl({
+								type: 'unselectAll',
+								text: 'Unselect all',
+								onclick: () => handleUnselectAll(),
+								className: 'pt-0.75'
+							})}
+							Selected:
+							<div class="w-[3ch]">{global.selectedImageIds.length}</div>
+						</div>
+					{/if}
+				</div>
 			</div>
 		</div>
 	{/if}
 	<div class="items-top flex size-full flex-col gap-4">
 		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
-			<Map bind:map={map!} bind:mapContainer bind:journeys />
+			<Map bind:journeys />
 		</div>
 	</div>
 	{#if global.viewMode === 'journey'}
@@ -178,6 +216,6 @@
 	{/if}
 </div>
 
-<AddImageModal bind:this={addImageModal} addImageForm={data.addImageForm} />
-<DeleteImageModal bind:this={deleteImageModal} deleteImageForm={data.deleteImageForm} />
-<RenameImageModal bind:this={renameImageModal} renameImageForm={data.renameImageForm} />
+<AddImageModal bind:this={addImageModal} {addImageForm} />
+<DeleteImageModal bind:this={deleteImageModal} {deleteImageForm} />
+<RenameImageModal bind:this={renameImageModal} {renameImageForm} />

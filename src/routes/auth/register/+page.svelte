@@ -23,13 +23,14 @@
 			<Card.Description>Enter your name, email and password to create an account!</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<div class="flex flex-col gap-6">
-				<div class="grid gap-2">
+			<div class="flex flex-col gap-6 *:grid *:gap-2">
+				<div>
 					<Label for="name">Name</Label>
 					<Input
 						id="name"
 						type="name"
 						name="name"
+						autocomplete="off"
 						bind:value={$form.name}
 						aria-invalid={$errors.name ? 'true' : undefined}
 						{...$constraints.name}
@@ -39,7 +40,7 @@
 						<small class="text-red-600">{$errors.name}</small>
 					{/if}
 				</div>
-				<div class="grid gap-2">
+				<div>
 					<Label for="email">Email</Label>
 					<Input
 						id="email"
@@ -60,7 +61,7 @@
 						</small>
 					{/if}
 				</div>
-				<div class="grid gap-2">
+				<div>
 					<div class="flex items-center">
 						<Label for="password">Password</Label>
 						<a href="##" class="ms-auto inline-block text-sm underline-offset-4 hover:underline">
