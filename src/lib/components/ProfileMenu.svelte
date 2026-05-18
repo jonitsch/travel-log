@@ -35,13 +35,13 @@
 				{ 'ring-[#ffffff1a] ring-2': open }
 			]}
 		>
-			{name} <SVGIcon type="profilePic" scale={1.1} />
+			{name} <SVGIcon type="profile" scale={1.1} />
 		</div>
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="bg-gray-900 w-fit mt-0.5" align="end">
 		<DropdownMenu.Group class="*:text-[16px]">
 			<DropdownMenu.Item>
-				<SVGIcon type="profilePic" color="white" hoverScale={false} />
+				<SVGIcon type="profile" color="white" hoverScale={false} />
 				View Profile
 			</DropdownMenu.Item>
 			<DropdownMenu.Item onclick={handleSignOut}>
