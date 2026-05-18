@@ -28,8 +28,9 @@
 	let open = $state(false),
 		images = $state<string[]>([]);
 
-	const { form, errors, message, enhance } = superForm(addImageForm);
+	const { form, errors, message, enhance } = $derived.by(() => superForm(addImageForm));
 
+	// svelte-ignore state_referenced_locally
 	const files = filesProxy(form, 'files');
 
 	$effect(() => {

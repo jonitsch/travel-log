@@ -1,5 +1,3 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
@@ -116,8 +114,7 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 			});
 		}
 	}, 50)
-
-	const geoJSON = await buildGeoJSON(journey);
+	
 	const data = {
 		...journey,
 		bbox: bbox,

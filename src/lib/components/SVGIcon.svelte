@@ -30,6 +30,7 @@
 	} & HTMLAttributes<HTMLDivElement>;
 	let { type, color = 'white', scale = 1, hoverScale = false, disabled, ...rest }: Props = $props();
 
+	// svelte-ignore state_referenced_locally
 	if (disabled) {
 		color = 'grey';
 		hoverScale = false;

@@ -96,47 +96,25 @@
 >
 	{#if global.viewMode === 'journey'}
 		{@const journey = global.journeyData}
-		<!------------------- MAP HEADER --------------------->
-		<div
-			class="animate-slide-left flex h-fit flex-col justify-between {global.loadingJourney
-				? 'gap-2 *:skeleton *:text-transparent'
-				: '*:text-white'}"
-		>
-			<div class="oxygen-bold truncate py-2 text-5xl">
-				{journey?.name ?? 'Loading Journey...'}
-			</div>
-			<div class="w-fit text-2xl font-light">
-				{timeRange(journey) ?? ''}
-			</div>
-		</div>
-		<!------------------- BOOK HEADER --------------------->
-		<div
-			class="animate-slide-left flex h-fit flex-col justify-between gap-2 {global.loadingJourney
-				? '*:skeleton *:text-transparent'
-				: '*:text-white'}"
-		>
-			<div class="flex w-full flex-row items-end gap-2 py-2">
-				<div class="oxygen-bold flex flex-row items-end gap-2 text-5xl">
-					Images <div class="text-3xl font-light">{`(${journey?.image.length ?? 0})`}</div>
-				</div>
-				<div class="flex w-fit flex-row items-center gap-3">
-					{@render imageControl('selectImages', 'Select Images', () => {
-						global.imgSelectMode = !global.imgSelectMode;
-						if (!global.imgSelectMode) {
-							currentSelection = global.selectedImageIds;
-							global.selectedImageIds = [];
-						} else {
-							global.selectedImageIds = currentSelection;
-						}
-					})}
-					{@render imageControl('addImage', 'Add Images', () => addImageModal?.openModal())}
-				</div>
-			</div>
-
+		{#if journey}
+			<!------------------- MAP HEADER --------------------->
 			<div
-				class="flex {global.loadingJourney
-					? 'w-fit'
-					: 'w-full'} flex-row justify-between *:flex *:items-end *:gap-2"
+				class="animate-slide-left flex h-fit flex-col justify-between {global.loadingJourney
+					? 'gap-2 *:skeleton *:text-transparent'
+					: '*:text-white'}"
+			>
+				<div class="oxygen-bold truncate py-2 text-5xl">
+					{journey.name}
+				</div>
+				<div class="w-fit text-2xl font-light">
+					{timeRange(journey)}
+				</div>
+			</div>
+			<!------------------- BOOK HEADER --------------------->
+			<div
+				class="animate-slide-left flex h-fit flex-col justify-between gap-2 {global.loadingJourney
+					? '*:skeleton *:text-transparent'
+					: '*:text-white'}"
 			>
 				<div class="flex w-full flex-row items-end gap-2 py-2">
 					<div class="oxygen-bold flex flex-row items-end gap-2 text-5xl">
@@ -191,7 +169,7 @@
 					{/if}
 				</div>
 			</div>
-		</div>
+		{/if}
 	{/if}
 	<div class="items-top flex size-full flex-col gap-4">
 		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
@@ -200,18 +178,7 @@
 	</div>
 	{#if global.viewMode === 'journey'}
 		<div id="bookContainer" class="animate-slide-right size-full overflow-y-auto">
-			{#if global.journeyData?.image.length}
-				<Book />
-			{:else}
-				<div
-					class="flex size-full flex-row items-center justify-center gap-3 rounded-md text-3xl {global.loadingJourney
-						? 'skeleton'
-						: 'bg-gray-900'}"
-				>
-					Add your first images!
-					<SVGIcon type="addImage" color="white" scale={2} hoverScale={false} />
-				</div>
-			{/if}
+			<Book />
 		</div>
 	{/if}
 </div>

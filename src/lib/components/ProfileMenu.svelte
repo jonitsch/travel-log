@@ -42,7 +42,7 @@
 		<DropdownMenu.Group class="*:text-[16px]">
 			<DropdownMenu.Item>
 				<SVGIcon type="profilePic" color="white" hoverScale={false} />
-				Change Profile Picture
+				View Profile
 			</DropdownMenu.Item>
 			<DropdownMenu.Item onclick={handleSignOut}>
 				<SVGIcon type="signOut" color="white" hoverScale={false} />

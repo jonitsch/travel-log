@@ -6,7 +6,6 @@
 
 	let { img, color }: { img: Image; color: string } = $props();
 
-	let map: maplibregl.Map | null = global.map;
 	let thisMarker = $state<maplibregl.Marker>();
 
 	let imageError = $state<boolean>(false),
