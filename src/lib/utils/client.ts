@@ -1,5 +1,3 @@
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
 import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
@@ -37,6 +35,11 @@ export async function getImgProxyURL(
 
 export function switchToOverview(): void {
 	const map = global.map;
+	global.journeyData = null;
+	global.journeyId = undefined;
+	global.loadingJourney = false;
+	global.selectedImageIds = [];
+	global.imgSelectMode = false;
 	if (map) {
 		map.setProjection({ type: 'globe' });
 		if (global.savedViewPort?.center && global.savedViewPort?.zoom) {
@@ -56,11 +59,6 @@ export function switchToOverview(): void {
 		throw new Error('Map not found!');
 	}
 	global.savedViewPort = null;
-	global.journeyData = null;
-	global.journeyId = undefined;
-	global.loadingJourney = false;
-	global.selectedImageIds = [];
-	global.imgSelectMode = false;
 	global.viewMode = 'overview';
 }
 
@@ -82,8 +80,6 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 			global.loadingJourney = false;
 		}, 200);
 	});
-	map._interactive;
-
 	const bbox = getBBox(journey);
 	if (bbox) {
 		map.fitBounds(bbox, {
@@ -99,12 +95,28 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 	}
 	const geoJSON = await buildGeoJSON(journey);
 
+	// using timeout to await the resizing of the map container, fixes bbox offset issue
+	setTimeout(async () => {
+		if (bbox) {
+			map.fitBounds(bbox, {
+				padding: 90,
+				duration: 500
+			});
+		} else {
+			map.flyTo({
+				center: [journey.lng, journey.lat],
+				zoom: 6
+			});
+		}
+	}, 50)
+	
 	const data = {
 		...journey,
 		bbox: bbox,
 		geoJSON: geoJSON
 	};
 	global.journeyData = data;
+
 	return data;
 }
 
@@ -119,6 +131,9 @@ function waitForStyle(map: maplibregl.Map): Promise<void> {
 export async function getJourneyData(journeyId: string): Promise<JourneyWithRelations> {
 	try {
 		const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
+		if (!res.ok) {
+			throw new Error(`Failed to fetch journey data: ${res.status} ${res.statusText}`);
+		}
 		let journey: JourneyWithRelations = await res.json();
 
 		journey.image.sort((a, b) => {
@@ -274,9 +289,9 @@ export function awaitImageRender(onRender: () => void) {
 	loaded();
 }
 
-export const timeRange = (journey: JourneyData) => {
-	if (!journey) throw Error('No Journey defined!');
-	if (journey.image.length === 0) return;
+export const timeRange = (journey: JourneyData | undefined) => {
+	if (!journey) return undefined;
+	if (journey.image.length === 0) return undefined;
 	let end = new Date(journey.image[journey.image.length - 1].createdOn);
 	let start = new Date(journey.image[0].createdOn);
 	return `${start.toLocaleDateString('de-DE', {
@@ -323,16 +338,3 @@ export const formattedDate = (
 			});
 	}
 };
-
-// shadcn
-
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs));
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WithoutChild<T> = T extends { child?: any } ? Omit<T, 'child'> : T;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WithoutChildren<T> = T extends { children?: any } ? Omit<T, 'children'> : T;
-export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
-export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };

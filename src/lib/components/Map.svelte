@@ -51,6 +51,11 @@
 		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
 		setAttributionControl(global.viewMode);
 
+		map.flyTo({
+			center: defaultMapCenter,
+			zoom: zoom,
+		});
+
 		// prevent non-critical styleimagemissing warnings in the browser
 		const emptyImage = {
 			width: 1,
@@ -72,7 +77,7 @@
 	});
 </script>
 
-<div class="map-wrapper">
+<div class="map-wrapper relative">
 	<MapLibre
 		bind:map
 		bind:bounds

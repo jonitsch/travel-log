@@ -105,7 +105,7 @@
 			</button>
 			<div class="flex h-dvh flex-col items-center justify-between p-5">
 				{#if img}
-					{@const { width, height, path, id, fileName, createdOn } = img}
+					{@const { width, height, id, fileName, createdOn } = img}
 					{#if imgRendered}
 						<div id="fileNameDisplay" class="animate-modal-in h-fit text-white">{img.fileName}</div>
 					{/if}

@@ -26,7 +26,7 @@
 	let open = $state(false),
 		images = $state<string[]>([]);
 
-	const { form, errors, message, enhance } = superForm(deleteImageForm);
+	const { form, errors, message, enhance } = $derived.by(() => superForm(deleteImageForm));
 
 	export function openModal() {
 		reset();

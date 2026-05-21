@@ -15,16 +15,20 @@
 ### Enviroment Variables
 | Variable | Description | Example (Generation) |
 | ----------- | ----------- | ----------- |
+| `NODE_ENV` | Your Current Enviroment (Dev) | 'development' |
+| **Database** | | |
 | `DATABASE_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
 | `DATABASE_HOST` | Your Database Hostname | `localhost` |
 | `MYSQL_DATABASE` | Your Database Name | `my-database` |
 | `MYSQL_USER` | Your Database User (for Prisma) | `prisma` |
 | `MYSQL_PASSWORD` | Your Database User`s Password |
 | `MYSQL_ROOT_PASSWORD` | Your Database`s Root Password |
+| **ImgProxy** | | |
 | `IMAGE_FOLDER_PATH` | The folder that will store your images (absolute path) | `C:/git/travel-log-data/pictures/` |
 | `IMGPROXY_URL` | Your ImgProxy Base URL | http://localhost:8080 |
 | `IMGPROXY_KEY` | Your ImgProxy Key | `crypto.randomBytes(32).toString('hex')` |
 | `IMGPROXY_SALT` | Your ImgProxy Salt | `crypto.randomBytes(16).toString('hex')` |
+| **Authentication** | | |
 | `BETTER_AUTH_URL` | Your Servers Base URL | http://localhost:5173 |
 | `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32`
 
@@ -43,6 +47,7 @@ docker compose up -d
 
 | Variable | Description | Example |
 | ----------- | ----------- | ----------- |
+| `NODE_ENV` | Your Current Enviroment (Prod) | 'production' |
 | **Database** | | |
 | `DATABASE_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
 | `DATABASE_HOST` | Database host | `db.example.com`
