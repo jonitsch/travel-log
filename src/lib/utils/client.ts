@@ -87,12 +87,7 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 	const bbox = getBBox(journey);
 	if (bbox) {
 		map.fitBounds(bbox, {
-			padding: {
-				top: 90,
-				bottom: 150,
-				left: 90,
-				right: 90
-			},
+			padding: 90,
 			duration: 500,
 			maxZoom: 13,
 		});

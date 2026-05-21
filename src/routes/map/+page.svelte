@@ -12,9 +12,9 @@
 
 	let { data }: PageProps = $props();
 
-	let { deleteImageForm, addImageForm, renameImageForm } = data;
+	let { deleteImageForm, addImageForm, renameImageForm } = $derived(data);
 
-	let journeys = $state<Journey[]>(data.journeys);
+	let journeys = $derived<Journey[]>(data.journeys);
 	let mapContainer = $state<HTMLDivElement>();
 
 	let addImageModal = $state<AddImageModal>(),
@@ -23,7 +23,8 @@
 
 	let cachedSelection = $state<string[]>([]),
 		allImagesSelected = $derived(
-			global.selectedImageIds.length === global.journeyData?.image.length
+			global.selectedImageIds.length === global.journeyData?.image.length &&
+				global.selectedImageIds.length > 0
 		);
 
 	function handleSelectMode() {
@@ -178,7 +179,7 @@
 	</div>
 	{#if global.viewMode === 'journey'}
 		<div id="bookContainer" class="animate-slide-right size-full overflow-y-auto">
-			<Book />
+			<Book {addImageModal} />
 		</div>
 	{/if}
 </div>

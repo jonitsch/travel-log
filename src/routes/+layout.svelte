@@ -41,7 +41,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div id="main" class="inset-0 flex h-screen w-screen flex-col gap-3 overflow-auto p-3">
+<div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-3">
 	<div
 		id="header"
 		class="flex h-fit w-full items-center justify-between gap-2 rounded-md bg-transparent whitespace-nowrap"

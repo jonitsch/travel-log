@@ -7,6 +7,9 @@
 	import { formattedDate } from '$lib/utils/client';
 	import SVGIcon from '$lib/components/SVGIcon.svelte';
 	import type { Image } from '$gen/prisma/client/client';
+	import AddImageModal from './modal/AddImageModal.svelte';
+
+	let { addImageModal }: { addImageModal: AddImageModal | undefined } = $props();
 
 	let book = $state<HTMLDivElement>(),
 		fullImageModal = $state<FullImageModal>();
@@ -60,12 +63,13 @@
 			>
 				No images yet!
 			</div>
-			<div
-				class="col-span-full flex h-75 flex-row items-center justify-center gap-3 rounded-md bg-slate-800 text-3xl"
+			<button
+				class="col-span-full flex h-75 items-center justify-center gap-3 rounded-md bg-slate-900 text-3xl hover:bg-slate-800"
+				onclick={() => addImageModal?.openModal()}
 			>
 				Add your first images!
 				<SVGIcon type="addImage" color="white" scale={2} hoverScale={false} />
-			</div>
+			</button>
 		{/if}
 	{/if}
 	<FullImageModal bind:this={fullImageModal} />

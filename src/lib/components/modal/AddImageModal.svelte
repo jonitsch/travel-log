@@ -28,9 +28,9 @@
 	let open = $state(false),
 		images = $state<string[]>([]);
 
-	const { form, errors, message, enhance } = superForm(addImageForm);
+	const { form, errors, message, enhance } = $derived.by(() => superForm(addImageForm));
 
-	const files = filesProxy(form, 'files');
+	const files = $derived.by(() => filesProxy(form, 'files'));
 
 	$effect(() => {
 		if (!$files?.length) {
