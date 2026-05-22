@@ -104,9 +104,9 @@
 				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
 			</div>
 
-			<div class="flex flex-row items-center justify-center gap-2">
+			<div class="flex flex-row min-w-full min-h-full items-center justify-center gap-2 *:flex-1">
 				{#each images as src, i}
-					{#if i < 4}
+					{#if i < 3}
 						<img
 							class="preview rounded-md object-cover"
 							{src}
@@ -118,8 +118,8 @@
 						<div class="preview placeholder"></div>
 					{/each}
 				{/each}
-				{#if images.length > 4}
-					<div class="preview placeholder text-2xl">+{images.length - 4}</div>
+				{#if images.length > 3}
+					<div class="preview placeholder text-2xl">+{images.length - 3}</div>
 				{/if}
 			</div>
 

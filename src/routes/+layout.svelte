@@ -19,22 +19,6 @@
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
 	}
-
-	async function handleSignOut() {
-		try {
-			global.viewMode = 'overview';
-			await authClient.signOut({
-				fetchOptions: {
-					onSuccess: async () => {
-						await invalidateAll();
-						goto('/');
-					}
-				}
-			});
-		} catch (err) {
-			throw err;
-		}
-	}
 </script>
 
 <svelte:head>

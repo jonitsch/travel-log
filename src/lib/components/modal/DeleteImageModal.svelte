@@ -57,7 +57,6 @@
 					global.selectedImageIds = [];
 					if (result.type === 'success' && result.data?.journeyId) {
 						await invalidateAll();
-						global.loadingJourney = true;
 						switchToJourney(result.data.journeyId);
 						open = false;
 					}

@@ -7,12 +7,11 @@
 	import { formattedDate } from '$lib/utils/client';
 	import SVGIcon from '$lib/components/utility/SVGIcon.svelte';
 	import type { Image } from '$gen/prisma/client/client';
-	import AddImageModal from './modal/AddImageModal.svelte';
+	import AddImageModal from '../modal/AddImageModal.svelte';
 
 	let { addImageModal }: { addImageModal: AddImageModal | undefined } = $props();
 
-	let book = $state<HTMLDivElement>(),
-		fullImageModal = $state<FullImageModal>();
+	let fullImageModal = $state<FullImageModal>();
 
 	// svelte-ignore non_reactive_update
 	let previousDate: string | null = null;
@@ -26,7 +25,6 @@
 <div
 	id="book"
 	class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden pr-3"
-	bind:this={book}
 >
 	{#if global.loadingJourney}
 		<div class="skeleton col-span-full py-1 text-2xl text-transparent">Placeholder</div>
