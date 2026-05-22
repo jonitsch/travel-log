@@ -10,19 +10,23 @@
 			return 0.00055 * innerWidth.current;
 		});
 
+	type Step = 'Name' | 'Color' | 'Coordinates' | 'Submit';
+	const steps: Step[] = ['Name', 'Color', 'Coordinates', 'Submit'];
+
 	let open = $state(false),
-		currentStep = $state<'Name' | 'Color' | 'Coordinates' | 'Submit'>('Name');
+		currentStep = $state<Step>('Name');
 
 	const twColors = ['red', 'yellow', 'emerald', 'blue', 'purple', 'pink'];
 	const buttonStyle =
 		'rounded-md border-b-4 border-b-gray-700 bg-gray-900 p-5 sm:text-4xl text-xl transition hover:-translate-y-1';
 
 	const previewStyle =
-		'w-full rounded-md border-b-4 border-b-black/40 px-3 py-2 text-center sm:text-6xl opacity-100 text-[25px]';
+		'rounded-md border-b-4 border-b-black/40 px-3 py-3 sm:py-4 text-[25px] sm:text-6xl opacity-100 text-center leading-snug';
 
 	let selectedColorElement = $state<HTMLButtonElement>(),
 		nameInput = $state<HTMLInputElement>(),
-		colorInput = $state<HTMLInputElement>();
+		colorInput = $state<HTMLInputElement>(),
+		form = $state<HTMLFormElement>();
 
 	let name = $state(''),
 		lng = $state<number>(),
@@ -58,27 +62,35 @@
 		}
 	}
 
+	function nextStep() {
+		const currentIndex = steps.indexOf(currentStep);
+		if (currentStep === 'Submit') {
+			form?.submit();
+		} else {
+			currentStep = steps[currentIndex + 1];
+		}
+	}
+
+	function prevStep() {
+		const currentIndex = steps.indexOf(currentStep);
+		if (currentStep === 'Name') {
+			open = false;
+			return;
+		}
+		currentStep = steps[currentIndex - 1];
+	}
+
 	$effect(() => {
 		if (currentStep === 'Name' && nameInput?.value.length) {
 			nameInput.style.width = '0px';
 			nameInput.style.width = `${Math.max(nameInput.scrollWidth, 130)}px`;
 		}
-		
+
 		setPreviewColor();
 
 		// focus nameInput whenever its rendered on screen
 		if (nameInput) nameInput.focus();
 	});
-
-	export function handleSubmit() {
-		if (currentStep === 'Name') {
-			currentStep = 'Color';
-		} else if (currentStep === 'Color') {
-			currentStep = 'Coordinates';
-		} else if (currentStep === 'Coordinates') {
-			currentStep = 'Submit';
-		}
-	}
 </script>
 
 {#snippet previewTip()}
@@ -88,146 +100,133 @@
 	></div>
 {/snippet}
 
+{#snippet formButton(text: string, type: 'fw' | 'bw', disabled?: boolean, disableTitle?: string)}
+	<button
+		type="button"
+		onclick={() => (type === 'fw' ? nextStep() : prevStep())}
+		class={buttonStyle}
+		class:disabled
+		title={type === 'fw' ? (disabled ? disableTitle : text) : ''}
+		{disabled}>{text}</button
+	>
+{/snippet}
+
 <Modal bind:open>
-	<div class="animate-slide-right flex h-[70dvh] flex-col items-center justify-between">
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div
+		class="animate-slide-right flex h-[70dvh] flex-col items-center justify-between"
+		onclick={() => (open = false)}
+	>
 		<!-- Modal body -->
-		{#if currentStep === 'Name'}
-			<!-- Name -->
-			<!-- svelte-ignore a11y_click_events_have_key_events -->
-			<!-- svelte-ignore a11y_no_static_element_interactions -->
-			<div class="flex flex-1 items-center justify-center" onclick={() => open = false}>
-				<button class="flex flex-col items-center" onclick={(e) => e.stopPropagation()}>
-					<input
-						id="nameInput"
-						bind:this={nameInput}
-						bind:value={name}
-						type="text"
-						maxlength={25}
-						autocomplete="off"
-						placeholder="Start with a name..."
-						class="{previewStyle} bg-{color ?? 'slate-900'}"
-						oninput={(e) => handleInput(e)}
-						onkeydown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
-					/>
-					{@render previewTip()}
-				</button>
-			</div>
-			<div>
-				<button
-					type="button"
-					onclick={() => handleSubmit()}
-					class={buttonStyle}
-					class:disabled={name.length === 0}
-					disabled={name.length === 0}>Choose Color</button
-				>
-			</div>
-		{:else if currentStep === 'Color'}
-			<!-- Color -->
-			<div class="flex h-full flex-1 flex-col items-center justify-center gap-5">
-				<div class="flex flex-col items-center">
-					<div class="{previewStyle} bg-{color ?? 'slate-900'}">
-						{name}
+
+		<div class="flex flex-1 items-center justify-center">
+			<div class="flex flex-col items-center gap-5" onclick={(e) => e.stopPropagation()}>
+				{#if currentStep === 'Name'}
+					<!-- Name -->
+					<div class="flex flex-1 flex-col items-center justify-center">
+						<input
+							bind:this={nameInput}
+							bind:value={name}
+							type="text"
+							maxlength={25}
+							autocomplete="off"
+							placeholder="Start with a name..."
+							class="{previewStyle} bg-{color ?? 'slate-900'}"
+							oninput={(e) => handleInput(e)}
+							onkeydown={(e) => (e.key === 'Enter' ? nextStep() : null)}
+						/>
+						{@render previewTip()}
 					</div>
-					{@render previewTip()}
-				</div>
-				<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
-					{#each twColors as twColor}
-						{#each { length: 5 } as _, i}
-							{@const currentColor = `${twColor}-${900 - i * 100}`}
-							<button
-								id={currentColor}
-								class="bg-{currentColor} size-12 rounded-full transition duration-100 ease-in-out hover:scale-[120%]"
-								aria-label="Select color {currentColor}"
-								class:selected={currentColor === color}
-								onclick={() => (color = currentColor)}
-								type="button"
-								title={currentColor}
-							></button>
+				{:else if currentStep === 'Color'}
+					<!-- Color -->
+					<div class="flex flex-col items-center">
+						<div class="{previewStyle} bg-{color ?? 'slate-900'} min-w-32.5">
+							{name}
+						</div>
+						{@render previewTip()}
+					</div>
+					<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
+						{#each twColors as twColor}
+							{#each { length: 5 } as _, i}
+								{@const currentColor = `${twColor}-${900 - i * 100}`}
+								<button
+									id={currentColor}
+									class="bg-{currentColor} size-12 rounded-full transition duration-100 ease-in-out hover:scale-[120%]"
+									aria-label="Select color {currentColor}"
+									class:selected={currentColor === color}
+									onclick={() => (color = currentColor)}
+									type="button"
+									title={currentColor}
+								></button>
+							{/each}
 						{/each}
-					{/each}
-				</div>
+					</div>
+					<div class="flex flex-row gap-2"></div>
+				{:else if currentStep === 'Coordinates'}
+					<!-- Submit -->
+					<div class="w-[90dvw] sm:w-[75dvw] lg:w-[56dvw]">
+						<input name="lng" bind:value={lng} type="hidden" />
+						<input name="lat" bind:value={lat} type="hidden" />
+						<MapLibre
+							bind:map
+							bind:zoom
+							style="https://tiles.openfreemap.org/styles/liberty"
+							class="map-canvas h-130 rounded-md"
+							onclick={(e) => {
+								if (!map) throw Error('Click on CreateJourneyModal-Map: Map not defined!');
+								lng = e.lngLat.lng;
+								lat = e.lngLat.lat;
+							}}
+							center={[0, 20]}
+						>
+							{#if lng && lat && color}
+								<JourneyMarker lngLat={[lng, lat]} popupText={name} {color} open />
+							{/if}
+						</MapLibre>
+					</div>
+				{:else if currentStep === 'Submit'}
+					<div class="flex flex-col items-center gap-15">
+						<div class="flex flex-1 flex-col items-center justify-center">
+							<div class="{previewStyle} flex bg-{color ?? 'gray-900'}">Create Journey?</div>
+							{@render previewTip()}
+						</div>
+						<form
+							action="?/addJourney"
+							method="POST"
+							class="flex flex-row items-center gap-2 whitespace-nowrap"
+							bind:this={form}
+						>
+							<input name="name" value={name} type="hidden" />
+							<input name="color" value={color} type="hidden" />
+							<input name="lng" value={lng} type="hidden" />
+							<input name="lat" value={lat} type="hidden" />
+						</form>
+					</div>
+				{/if}
 			</div>
-			<div class="flex flex-row gap-2">
-				<button type="button" onclick={() => (currentStep = 'Name')} class={buttonStyle}
-					>Edit Name
-				</button>
-				<button
-					type="button"
-					onclick={() => handleSubmit()}
-					class={buttonStyle}
-					class:disabled={!color}
-					title={!color ? 'Choose a color first!' : ''}
-					disabled={!color}
-				>
-					Choose Location
-				</button>
-			</div>
-		{:else if currentStep === 'Coordinates'}
-			<!-- Submit -->
-			<div class="w-[90dvw] sm:w-[75dvw] lg:w-[56dvw]">
-				<input name="lng" bind:value={lng} type="hidden" />
-				<input name="lat" bind:value={lat} type="hidden" />
-				<MapLibre
-					bind:map
-					bind:zoom
-					style="https://tiles.openfreemap.org/styles/liberty"
-					class="map-canvas h-130 rounded-md"
-					onclick={(e) => {
-						if (!map) throw Error('Click on CreateJourneyModal-Map: Map not defined!');
-						lng = e.lngLat.lng;
-						lat = e.lngLat.lat;
-					}}
-					center={[0, 20]}
-				>
-					{#if lng && lat && color}
-						<JourneyMarker lngLat={[lng, lat]} popupText={name} {color} open />
-					{/if}
-				</MapLibre>
-			</div>
-			<div class="flex w-full justify-between gap-2 whitespace-nowrap">
-				<button type="button" onclick={() => (currentStep = 'Color')} class="{buttonStyle} flex-1">
-					Change Color
-				</button>
-				<button
-					type="button"
-					onclick={() => handleSubmit()}
-					class="{buttonStyle} flex-1"
-					class:disabled={!lng || !lat}
-					title={!lng || !lat ? 'Choose a location first!' : ''}
-					disabled={!lng || !lat}>Submit</button
-				>
-			</div>
-		{:else if currentStep === 'Submit'}
-			<div class="flex flex-1 flex-col items-center justify-center">
-				<div
-					class="{previewStyle} flex bg-{color ?? 'gray-900'} py-6 text-4xl sm:text-6xl md:text-7xl"
-				>
-					Create Journey?
-				</div>
-				{@render previewTip()}
-			</div>
-			<form
-				action="?/addJourney"
-				method="POST"
-				class="flex flex-row items-center gap-2 whitespace-nowrap"
-			>
-				<input name="name" value={name} type="hidden" />
-				<input name="color" value={color} type="hidden" />
-				<input name="lng" value={lng} type="hidden" />
-				<input name="lat" value={lat} type="hidden" />
-				<button
-					type="submit"
-					class="{buttonStyle} flex-1"
-					class:disabled={!name || !color || !lng || !lat}
-					disabled={!name || !color || !lng || !lat}>Confirm</button
-				>
-				<button
-					type="button"
-					class="{buttonStyle} flex-1"
-					onclick={() => (currentStep = 'Coordinates')}>Cancel</button
-				>
-			</form>
-		{/if}
+		</div>
+		<div
+			class="flex w-full justify-center gap-2 whitespace-nowrap"
+			onclick={(e) => e.stopPropagation()}
+		>
+			{#if currentStep === 'Name'}
+				{@render formButton('Cancel', 'bw')}
+				{@render formButton('Choose Color', 'fw', !name, 'Enter a name first!')}
+			{/if}
+			{#if currentStep === 'Color'}
+				{@render formButton('Edit Name', 'bw')}
+				{@render formButton('Choose Location', 'fw', !color, 'Choose a color first!')}
+			{/if}
+			{#if currentStep === 'Coordinates'}
+				{@render formButton('Change Color', 'bw')}
+				{@render formButton('Submit', 'fw', !lng || !lat, 'Choose a location first!')}
+			{/if}
+			{#if currentStep === 'Submit'}
+				{@render formButton('Cancel', 'bw')}
+				{@render formButton('Change Location', 'fw', !name || !color || !lng || !lat)}
+			{/if}
+		</div>
 	</div>
 </Modal>
 

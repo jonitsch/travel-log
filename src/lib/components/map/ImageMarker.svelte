@@ -46,7 +46,7 @@
 					src={response}
 					alt={img.fileName}
 					class={[
-						'size-full cursor-pointer hover:z-50 hover:border-2 hover:border-black',
+						'size-full cursor-pointer hover:z-50 hover:border-2 hover:border-black object-cover',
 						{ 'ring-4 ring-(--img-highlight-color)': imgSelected }
 					]}
 					onerror={() => thisMarker?.remove()}
