@@ -1,10 +1,10 @@
 <script lang="ts">
-	import Map from '$lib/components/Map.svelte';
+	import Map from '$lib/components/map/Map.svelte';
 	import type { PageProps } from './$types';
 	import { global } from '$lib/state.svelte';
 	import { imgHighlightColor, timeRange } from '$lib/utils/client';
 	import type { Journey } from '$gen/prisma/client/client';
-	import SVGIcon, { type iconType } from '$lib/components/SVGIcon.svelte';
+	import SVGIcon, { type iconType } from '$lib/components/utility/SVGIcon.svelte';
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import Book from '$lib/components/Book.svelte';
 	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import SVGIcon from '../SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 
 	let {
 		children,

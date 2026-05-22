@@ -2,7 +2,7 @@
 	import { global } from '$lib/state.svelte';
 	import Modal from './Modal.svelte';
 	import { Button } from '../shadcn/button';
-	import SVGIcon from '../SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { switchToJourney } from '$lib/utils/client';
 	import type { Image } from '$gen/prisma/client/client';

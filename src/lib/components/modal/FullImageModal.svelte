@@ -3,10 +3,10 @@
 	import { global } from '$lib/state.svelte';
 	import { awaitImageRender, formattedDate } from '../../utils/client';
 	import { tick } from 'svelte';
-	import ErrorMessage from '../ErrorMessage.svelte';
+	import ErrorMessage from '../utility/ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
 	import Modal from './Modal.svelte';
-	import SVGIcon from '../SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 
 	let open = $state(false);
 	let imgRendered = $state(false);

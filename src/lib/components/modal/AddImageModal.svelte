@@ -3,7 +3,7 @@
 	import Modal from './Modal.svelte';
 	import { Button } from '../shadcn/button';
 	import { Input } from '../shadcn/input';
-	import SVGIcon from '../SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
 	import { switchToJourney } from '$lib/utils/client';

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { MapLibre } from 'svelte-maplibre';
-	import JourneyMarker from '../JourneyMarker.svelte';
+	import JourneyMarker from '../map/JourneyMarker.svelte';
 	import Modal from './Modal.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
 

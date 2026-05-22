@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SVGIcon from './SVGIcon.svelte';
+	import SVGIcon from './utility/SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { goto, invalidateAll } from '$app/navigation';

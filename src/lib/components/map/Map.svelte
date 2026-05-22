@@ -10,12 +10,12 @@
 		switchToJourney,
 		switchToOverview
 	} from '$lib/utils/client';
-	import SVGIcon from './SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 	import type { Journey } from '$gen/prisma/client/client';
 	import JourneyMarker from './JourneyMarker.svelte';
 	import ImageMarker from './ImageMarker.svelte';
-	import HoverButton from './HoverButton.svelte';
-	import CreateJourneyModal from './modal/CreateJourneyModal.svelte';
+	import HoverButton from '../utility/HoverButton.svelte';
+	import CreateJourneyModal from '../modal/CreateJourneyModal.svelte';
 
 	let { journeys = $bindable() }: { journeys: Journey[] } = $props();
 

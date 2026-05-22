@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
+	import ErrorMessage from '$lib/components/utility/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$lib/utils/client';
 	import FullImageModal from '$lib/components/modal/FullImageModal.svelte';
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate } from '$lib/utils/client';
-	import SVGIcon from '$lib/components/SVGIcon.svelte';
+	import SVGIcon from '$lib/components/utility/SVGIcon.svelte';
 	import type { Image } from '$gen/prisma/client/client';
 	import AddImageModal from './modal/AddImageModal.svelte';
 

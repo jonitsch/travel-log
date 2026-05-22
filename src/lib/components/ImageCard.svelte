@@ -1,6 +1,6 @@
 <script lang="ts">
 	import FullImageModal from './modal/FullImageModal.svelte';
-	import SVGIcon from './SVGIcon.svelte';
+	import SVGIcon from './utility/SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
 	import {
 		awaitImageRender,
@@ -9,7 +9,7 @@
 		imgHighlightColor
 	} from '$lib/utils/client';
 	import { tick } from 'svelte';
-	import ErrorMessage from './ErrorMessage.svelte';
+	import ErrorMessage from './utility/ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
 
 	interface Props {
