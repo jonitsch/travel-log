@@ -20,7 +20,7 @@ export async function getImgProxyURL(
 	id: string,
 	width?: number,
 	height?: number,
-	format?: string,
+	format?: string
 ): Promise<string> {
 	const params = new URLSearchParams({ id: id });
 
@@ -81,35 +81,13 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 		}, 200);
 	});
 	const bbox = getBBox(journey);
-	if (bbox) {
-		map.fitBounds(bbox, {
-			padding: 90,
-			duration: 500,
-			maxZoom: 13,
-		});
-	} else {
-		map.flyTo({
-			center: [journey.lng, journey.lat],
-			zoom: 6
-		});
-	}
 	const geoJSON = await buildGeoJSON(journey);
 
 	// using timeout to await the resizing of the map container, fixes bbox offset issue
 	setTimeout(async () => {
-		if (bbox) {
-			map.fitBounds(bbox, {
-				padding: 90,
-				duration: 500
-			});
-		} else {
-			map.flyTo({
-				center: [journey.lng, journey.lat],
-				zoom: 6
-			});
-		}
-	}, 50)
-	
+		fitJourneyBounds(journey);
+	}, 50);
+
 	const data = {
 		...journey,
 		bbox: bbox,
@@ -118,6 +96,25 @@ export async function switchToJourney(journeyId: string): Promise<JourneyData> {
 	global.journeyData = data;
 
 	return data;
+}
+
+function fitJourneyBounds(journey: JourneyWithRelations) {
+	const bbox = getBBox(journey);
+	const map = global.map;
+	if (!map) return;
+
+	if (bbox) {
+		map.fitBounds(bbox, {
+			padding: 90,
+			duration: 500,
+			maxZoom: 13
+		});
+	} else {
+		map.flyTo({
+			center: [journey.lng, journey.lat],
+			zoom: 6
+		});
+	}
 }
 
 function waitForStyle(map: maplibregl.Map): Promise<void> {
@@ -253,13 +250,10 @@ export function handleShowOnMapClick(img: Image) {
 	const map = global.map;
 	const imgSelected = isImgSelected(img.id);
 	const imgShownOnMap = global.imgShownOnMap === img.id;
+	
 	if (imgShownOnMap && imgSelected) {
-		const bbox = getBBox(global.journeyData);
-		if (!bbox) return;
-		map.fitBounds(bbox, {
-			padding: 90,
-			duration: 1000
-		});
+		if (!global.journeyData) return;
+		fitJourneyBounds(global.journeyData)
 		global.imgShownOnMap = '';
 	} else {
 		global.imgShownOnMap = img.id;

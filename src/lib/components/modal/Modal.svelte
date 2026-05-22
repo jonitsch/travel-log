@@ -1,11 +1,12 @@
 <script lang="ts">
-	import { onDestroy, onMount, type Snippet } from 'svelte';
+	import { type Snippet } from 'svelte';
 
 	let {
 		children,
 		open = $bindable(),
-		onclose
-	}: { children: Snippet; open: boolean; onclose?: () => void } = $props();
+		onclose,
+		contentClass
+	}: { children: Snippet; open: boolean; onclose?: () => void; contentClass?: string } = $props();
 
 	let modal = $state<HTMLDivElement>();
 
@@ -27,13 +28,13 @@
 		id="modalBackdrop"
 		role="dialog"
 		tabindex="0"
-		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default items-center justify-center gap-5 bg-black/90"
+		class="fixed inset-0 z-9999 flex h-dvh w-dvw cursor-default items-center justify-center bg-black/90"
 		onclick={() => (open = false)}
 		onkeydown={(e) => {
 			if (e.key === 'Escape') open = false;
 		}}
 	>
-		<div id="modalContent" class="animate-modal-in" onclick={(e) => e.stopPropagation()}>
+		<div id="modalContent" class="animate-modal-in {contentClass}" onclick={(e) => e.stopPropagation()}>
 			{@render children?.()}
 		</div>
 	</div>

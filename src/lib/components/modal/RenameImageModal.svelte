@@ -7,6 +7,7 @@
 	import { switchToJourney } from '$lib/utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 	import Input from '../shadcn/input/input.svelte';
+	import ModalBody from './ModalBody.svelte';
 
 	let {
 		renameImageForm
@@ -28,7 +29,7 @@
 		img = $state<Image>(),
 		newName = $state<string>();
 
-	const { form, errors, message, enhance } = superForm(renameImageForm);
+	const { form, errors, message, enhance } = $derived.by(() => superForm(renameImageForm));
 
 	export function openModal(inputImg: Image) {
 		reset();
@@ -42,55 +43,48 @@
 		$form.newName = '';
 		$errors.imgId = [];
 		$errors.newName = [];
+		$message = undefined;
 	}
 </script>
 
 <Modal bind:open onclose={reset}>
 	{#if img}
-		<div
-			class="relative flex w-xl flex-col gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
-		>
-			<button
-				type="button"
-				class="absolute top-1 right-1 z-99 flex size-8 items-center justify-center rounded-full p-2 text-white/70 hover:bg-white/10"
-				onclick={() => (open = false)}
-				aria-label="Close modal"
-			>
-				<SVGIcon type="x" color="white" scale={0.8} />
-			</button>
-			<div class="flex h-fit flex-col items-center">
-				<SVGIcon type="rename" color="white" scale={2.5} hoverScale={false} />
-				<span class="text-4xl">Rename Image</span>
-			</div>
-			<form
-				id="renameImageForm"
-				action="?/renameImage"
-				method="POST"
-				class="flex h-fit flex-row items-center justify-center gap-2"
-				use:enhance={{
-					onResult: async ({ result }) => {
-						global.selectedImageIds = [];
-						if (result.type === 'success' && result.data?.journeyId) {
-							global.loadingJourney = true;
-							switchToJourney(result.data.journeyId);
-							open = false;
+		<ModalBody bind:open>
+			<div class="relative flex w-xl flex-col gap-5 max-w-[80dvw]">
+				<div class="flex h-fit flex-col items-center">
+					<SVGIcon type="rename" color="white" scale={2.5} hoverScale={false} />
+					<span class="text-4xl">Rename Image</span>
+				</div>
+				<form
+					id="renameImageForm"
+					action="?/renameImage"
+					method="POST"
+					class="flex h-fit flex-row items-center justify-center gap-2"
+					use:enhance={{
+						onResult: async ({ result }) => {
+							global.selectedImageIds = [];
+							if (result.type === 'success' && result.data?.journeyId) {
+								global.loadingJourney = true;
+								switchToJourney(result.data.journeyId);
+								open = false;
+							}
 						}
-					}
-				}}
-			>
-				<Input class="text-center" type="text" bind:value={newName} name="newName" />
-				<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}
-					>Confirm</Button
+					}}
 				>
-				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
-				{#if $errors.imgId}
-					<small class="text-red-600" role="alert">{$errors.imgId[0]}</small>
-				{/if}
-				<input type="hidden" value={img.id} name="imgId" />
-			</form>
+					<Input class="text-center" type="text" bind:value={newName} name="newName" />
+					<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}
+						>Confirm</Button
+					>
+					<Button type="button" onclick={() => (open = false)}>Cancel</Button>
+					{#if $errors.imgId}
+						<small class="text-red-600" role="alert">{$errors.imgId[0]}</small>
+					{/if}
+					<input type="hidden" value={img.id} name="imgId" />
+				</form>
+			</div>
 			{#if $message}
-				<small class="text-red-600">{$message}</small>
+				<small class="mt-1 flex w-full justify-center text-red-600">{$message}</small>
 			{/if}
-		</div>
+		</ModalBody>
 	{/if}
 </Modal>

@@ -70,9 +70,10 @@
 			{ 'bg-gray-900': global.imgSelectMode && type === 'selectImages' && !global.loadingJourney }
 		]}
 		{onclick}
+		title={innerWidth < 768 ? text : ''}
 	>
 		<SVGIcon {type} color={global.loadingJourney ? 'none' : 'white'} hoverScale={false} />
-		{text}
+		<div class="max-md:hidden">{text}</div>
 	</button>
 {/snippet}
 
@@ -85,9 +86,11 @@
 		]}
 		{disabled}
 		{onclick}
+		title={text}
 	>
-		<SVGIcon {type} scale={scale ?? 0.85} {color} class={className} />{text}</button
-	>
+		<SVGIcon {type} scale={scale ?? 0.85} {color} class={className} />
+		<div class="max-md:hidden">{text}</div>
+	</button>
 {/snippet}
 
 <div
@@ -164,8 +167,10 @@
 								onclick: () => handleUnselectAll(),
 								className: 'pt-0.75'
 							})}
-							Selected:
-							<div class="w-[3ch]">{global.selectedImageIds.length}</div>
+							<div class="flex max-sm:hidden">
+								Selected:
+								<div class="w-[3ch]">{global.selectedImageIds.length}</div>
+							</div>
 						</div>
 					{/if}
 				</div>

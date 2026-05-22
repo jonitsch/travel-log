@@ -4,9 +4,7 @@
 	import Modal from './Modal.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
 
-	let modal = $state<Modal>(),
-		form = $state<HTMLFormElement>(),
-		map = $state<maplibregl.Map>(),
+	let map = $state<maplibregl.Map>(),
 		zoom = $derived.by<number>(() => {
 			if (!innerWidth.current) return 1.1;
 			return 0.00055 * innerWidth.current;
@@ -85,18 +83,20 @@
 
 {#snippet previewTip()}
 	<div
-		class="{topBorderColor} border-t-36 border-r-36 border-l-36
+		class="{topBorderColor} border-t-22 border-r-22 border-l-22
 				border-r-transparent border-l-transparent"
 	></div>
 {/snippet}
 
-<Modal bind:this={modal} bind:open>
+<Modal bind:open>
 	<div class="animate-slide-right flex h-[70dvh] flex-col items-center justify-between">
 		<!-- Modal body -->
 		{#if currentStep === 'Name'}
 			<!-- Name -->
-			<div class="flex h-full flex-1 items-center justify-center">
-				<div class="flex flex-col items-center">
+			<!-- svelte-ignore a11y_click_events_have_key_events -->
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div class="flex flex-1 items-center justify-center" onclick={() => open = false}>
+				<button class="flex flex-col items-center" onclick={(e) => e.stopPropagation()}>
 					<input
 						id="nameInput"
 						bind:this={nameInput}
@@ -110,7 +110,7 @@
 						onkeydown={(e) => (e.key === 'Enter' ? handleSubmit() : null)}
 					/>
 					{@render previewTip()}
-				</div>
+				</button>
 			</div>
 			<div>
 				<button
@@ -207,7 +207,6 @@
 				{@render previewTip()}
 			</div>
 			<form
-				bind:this={form}
 				action="?/addJourney"
 				method="POST"
 				class="flex flex-row items-center gap-2 whitespace-nowrap"

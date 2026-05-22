@@ -87,11 +87,11 @@
 	});
 </script>
 
-<Modal bind:open>
+<Modal bind:open contentClass="size-full">
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	{#if global.journeyData}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<div class="flex w-dvw flex-row items-center justify-between px-5" onclick={() => closeModal()}>
+		<div class="flex flex-row gap-1 max-w-full items-center justify-between px-2" onclick={() => closeModal()}>
 			<button
 				class="navArrow animate-slide-left"
 				aria-label="View previous Image"
@@ -103,7 +103,7 @@
 			>
 				<SVGIcon type="leftArrow" color="white" hoverScale={false} />
 			</button>
-			<div class="flex h-dvh flex-col items-center justify-between p-5">
+			<div class="flex h-dvh flex-col items-center justify-between py-5">
 				{#if img}
 					{@const { width, height, id, fileName, createdOn } = img}
 					{#if imgRendered}
@@ -120,7 +120,7 @@
 								id="fullpic-{id}"
 								src={response}
 								alt={fileName}
-								class="animate-modal-in block max-h-[75dvh] max-w-[85dvw] min-w-[15dvw]"
+								class="animate-modal-in block max-h-[75dvh] flex-1"
 								class:opacity-0={!imgRendered}
 								class:opacity-100={imgRendered}
 								loading="eager"
@@ -164,6 +164,9 @@
 <style>
 	.navArrow {
 		padding: 20px;
+		@media (max-width: 768px) {
+			padding: 10px;
+		}
 		border-radius: 50%;
 		opacity: 80%;
 	}
