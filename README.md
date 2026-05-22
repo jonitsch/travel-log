@@ -17,8 +17,8 @@
 | ----------- | ----------- | ----------- |
 | `NODE_ENV` | Your Current Enviroment (Dev) | 'development' |
 | **Database** | | |
-| `DATABASE_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
-| `DATABASE_HOST` | Your Database Hostname | `localhost` |
+| `MYSQL_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
+| `MYSQL_HOST` | Your Database Hostname | `localhost` |
 | `MYSQL_DATABASE` | Your Database Name | `my-database` |
 | `MYSQL_USER` | Your Database User (for Prisma) | `prisma` |
 | `MYSQL_PASSWORD` | Your Database User`s Password |
@@ -49,8 +49,8 @@ docker compose up -d
 | ----------- | ----------- | ----------- |
 | `NODE_ENV` | Your Current Enviroment (Prod) | 'production' |
 | **Database** | | |
-| `DATABASE_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
-| `DATABASE_HOST` | Database host | `db.example.com`
+| `MYSQL_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
+| `MYSQL_HOST` | Database host | `db.example.com`
 | `MYSQL_DATABASE` | Database name | `travel-log`
 | `MYSQL_USER` | Database user for application | `app-user`
 | `MYSQL_PASSWORD` | Database user password |
