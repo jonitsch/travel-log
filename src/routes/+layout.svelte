@@ -9,8 +9,8 @@
 	import { authClient } from '$lib/auth-client';
 	import { goto, invalidateAll } from '$app/navigation';
 	import type { User } from 'better-auth';
-	import SVGIcon from '$lib/components/SVGIcon.svelte';
 	import { fade } from 'svelte/transition';
+	import ProfileMenu from '$lib/components/ProfileMenu.svelte';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
@@ -19,29 +19,13 @@
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
 	}
-
-	async function handleSignOut() {
-		try {
-			global.viewMode = 'overview';
-			await authClient.signOut({
-				fetchOptions: {
-					onSuccess: async () => {
-						await invalidateAll();
-						goto('/');
-					}
-				}
-			});
-		} catch (err) {
-			throw err;
-		}
-	}
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div id="main" class="inset-0 flex h-screen w-screen flex-col gap-3 overflow-auto p-3">
+<div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-3">
 	<div
 		id="header"
 		class="flex h-fit w-full items-center justify-between gap-2 rounded-md bg-transparent whitespace-nowrap"
@@ -88,22 +72,7 @@
 		<!-- Right: Auth buttons -->
 		<div class="flex min-w-0 flex-1 flex-row items-center justify-end gap-2">
 			{#if user}
-				<div id="signOutButton" class="w-fit items-center">
-					<form
-						onsubmit={(e) => {
-							e.preventDefault();
-							handleSignOut();
-						}}
-					>
-						<button
-							type="submit"
-							class="oxygen-bold flex page-header-button flex-row items-center gap-2 bg-gray-900 transition-all duration-100 ease-in-out"
-						>
-							<SVGIcon type="signOut" color="white" hoverScale={false} scale={0.9} />
-							Sign Out
-						</button>
-					</form>
-				</div>
+				<ProfileMenu name={user.name} />
 			{:else}
 				<div id="loginButton" class="flex w-fit items-center">
 					<a href="/auth/login" class="oxygen-bold page-header-button bg-gray-900">Login</a>

@@ -3,11 +3,12 @@
 	import Modal from './Modal.svelte';
 	import { Button } from '../shadcn/button';
 	import { Input } from '../shadcn/input';
-	import SVGIcon from '../SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
 	import { switchToJourney } from '$lib/utils/client';
 	import { invalidateAll } from '$app/navigation';
+	import ModalBody from './ModalBody.svelte';
 
 	let {
 		addImageForm
@@ -28,9 +29,9 @@
 	let open = $state(false),
 		images = $state<string[]>([]);
 
-	const { form, errors, message, enhance } = superForm(addImageForm);
+	const { form, errors, message, enhance } = $derived.by(() => superForm(addImageForm));
 
-	const files = filesProxy(form, 'files');
+	const files = $derived.by(() => filesProxy(form, 'files'));
 
 	$effect(() => {
 		if (!$files?.length) {
@@ -59,21 +60,13 @@
 </script>
 
 <Modal bind:open onclose={reset}>
-	<div class="max-w-90dvw relative">
-		<button
-			type="button"
-			class="absolute top-1 right-1 z-99 flex size-8 items-center justify-center rounded-full p-2 text-white/70 hover:bg-white/10"
-			onclick={() => (open = false)}
-			aria-label="Close modal"
-		>
-			<SVGIcon type="x" color="white" scale={0.8} />
-		</button>
+	<ModalBody bind:open>
 		<form
 			id="addImageForm"
 			action="?/addImage"
 			method="POST"
 			enctype="multipart/form-data"
-			class="flex h-fit flex-col items-center justify-center gap-5 rounded-md border-b-3 border-b-gray-950 bg-slate-900 p-5 opacity-70"
+			class="flex h-fit flex-col items-center justify-center gap-5 max-w-[80dvw]"
 			use:enhance={{
 				onResult: async ({ result }) => {
 					if (result.type === 'success' && result.data?.journeyId) {
@@ -91,12 +84,12 @@
 				<span class="text-4xl">Add Images</span>
 				<SVGIcon type="addImage" color="white" scale={2.5} hoverScale={false} />
 			</div>
-			<div class="flex flex-row w-full gap-2">
-				<div class="flex flex-col flex-1 w-auto gap-1">
+			<div class="flex w-full flex-row gap-2">
+				<div class="flex w-auto flex-1 flex-row gap-1">
 					<Input
 						name="files"
 						type="file"
-						class="w-auto cursor-pointer hover:ring-2 hover:ring-white"
+						class="min-w-25 cursor-pointer hover:ring-2 hover:ring-white"
 						accept="image/*"
 						aria-invalid={$errors.files ? 'true' : undefined}
 						multiple
@@ -111,9 +104,9 @@
 				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
 			</div>
 
-			<div class="flex flex-row items-center justify-center gap-2">
+			<div class="flex flex-row min-w-full min-h-full items-center justify-center gap-2 *:flex-1">
 				{#each images as src, i}
-					{#if i < 4}
+					{#if i < 3}
 						<img
 							class="preview rounded-md object-cover"
 							{src}
@@ -125,8 +118,8 @@
 						<div class="preview placeholder"></div>
 					{/each}
 				{/each}
-				{#if images.length > 4}
-					<div class="preview placeholder text-2xl">+{images.length - 4}</div>
+				{#if images.length > 3}
+					<div class="preview placeholder text-2xl">+{images.length - 3}</div>
 				{/if}
 			</div>
 
@@ -135,7 +128,7 @@
 				<small class="text-red-600">{$message}</small>
 			{/if}
 		</form>
-	</div>
+	</ModalBody>
 </Modal>
 
 <style>

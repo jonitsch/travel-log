@@ -10,12 +10,12 @@
 		switchToJourney,
 		switchToOverview
 	} from '$lib/utils/client';
-	import SVGIcon from './SVGIcon.svelte';
+	import SVGIcon from '../utility/SVGIcon.svelte';
 	import type { Journey } from '$gen/prisma/client/client';
 	import JourneyMarker from './JourneyMarker.svelte';
 	import ImageMarker from './ImageMarker.svelte';
-	import HoverButton from './HoverButton.svelte';
-	import CreateJourneyModal from './modal/CreateJourneyModal.svelte';
+	import HoverButton from '../utility/HoverButton.svelte';
+	import CreateJourneyModal from '../modal/CreateJourneyModal.svelte';
 
 	let { journeys = $bindable() }: { journeys: Journey[] } = $props();
 
@@ -51,6 +51,11 @@
 		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
 		setAttributionControl(global.viewMode);
 
+		map.flyTo({
+			center: defaultMapCenter,
+			zoom: zoom,
+		});
+
 		// prevent non-critical styleimagemissing warnings in the browser
 		const emptyImage = {
 			width: 1,
@@ -72,7 +77,7 @@
 	});
 </script>
 
-<div class="map-wrapper">
+<div class="map-wrapper relative">
 	<MapLibre
 		bind:map
 		bind:bounds

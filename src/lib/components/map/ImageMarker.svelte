@@ -6,7 +6,6 @@
 
 	let { img, color }: { img: Image; color: string } = $props();
 
-	let map: maplibregl.Map | null = global.map;
 	let thisMarker = $state<maplibregl.Marker>();
 
 	let imageError = $state<boolean>(false),
@@ -35,19 +34,19 @@
 		<Marker
 			bind:marker={thisMarker}
 			lngLat={[img.lng, img.lat]}
-			class="flex size-7 items-center justify-center rounded-lg focus:outline-2 focus:outline-black"
+			class="flex size-7 items-center justify-center *:rounded-lg focus:outline-2 focus:outline-black"
 			onclick={() => handleImageSelection(img.id)}
 			ondblclick={() => handleDoubleClick()}
 		>
 			{#await getImgProxyURL(img.id, img.width * 0.05, img.height * 0.05)}
-				<div class="h-full w-full bg-{color} rounded-lg"></div>
+				<div class="h-full w-full bg-{color}"></div>
 			{:then response}
 				<img
 					id="mappic-{img.id}"
 					src={response}
 					alt={img.fileName}
 					class={[
-						'size-full cursor-pointer rounded-lg hover:z-50 hover:border-2 hover:border-black',
+						'size-full cursor-pointer hover:z-50 hover:border-2 hover:border-black object-cover',
 						{ 'ring-4 ring-(--img-highlight-color)': imgSelected }
 					]}
 					onerror={() => thisMarker?.remove()}

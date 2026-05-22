@@ -306,6 +306,7 @@ export const actions = {
 			console.log(`Successfully renamed Image to: ${newName}`);
 			return { form, newName, journeyId };
 		} catch (err) {
+			console.error(err);
 			return message(form, 'Something went wrong!', { status: 500 });
 		}
 	}

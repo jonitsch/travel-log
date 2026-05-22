@@ -1,15 +1,17 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
-	import ErrorMessage from '$lib/components/ErrorMessage.svelte';
+	import ErrorMessage from '$lib/components/utility/ErrorMessage.svelte';
 	import { getImgProxyURL } from '$lib/utils/client';
 	import FullImageModal from '$lib/components/modal/FullImageModal.svelte';
 	import ImageCard from '$lib/components/ImageCard.svelte';
 	import { formattedDate } from '$lib/utils/client';
-	import SVGIcon from '$lib/components/SVGIcon.svelte';
+	import SVGIcon from '$lib/components/utility/SVGIcon.svelte';
 	import type { Image } from '$gen/prisma/client/client';
+	import AddImageModal from '../modal/AddImageModal.svelte';
 
-	let book = $state<HTMLDivElement>(),
-		fullImageModal = $state<FullImageModal>();
+	let { addImageModal }: { addImageModal: AddImageModal | undefined } = $props();
+
+	let fullImageModal = $state<FullImageModal>();
 
 	// svelte-ignore non_reactive_update
 	let previousDate: string | null = null;
@@ -23,7 +25,6 @@
 <div
 	id="book"
 	class="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2 overflow-x-hidden pr-3"
-	bind:this={book}
 >
 	{#if global.loadingJourney}
 		<div class="skeleton col-span-full py-1 text-2xl text-transparent">Placeholder</div>
@@ -60,12 +61,13 @@
 			>
 				No images yet!
 			</div>
-			<div
-				class="col-span-full flex h-75 flex-row items-center justify-center gap-3 rounded-md bg-slate-800 text-3xl"
+			<button
+				class="col-span-full flex h-75 items-center justify-center gap-3 rounded-md bg-slate-900 text-3xl hover:bg-slate-800"
+				onclick={() => addImageModal?.openModal()}
 			>
 				Add your first images!
 				<SVGIcon type="addImage" color="white" scale={2} hoverScale={false} />
-			</div>
+			</button>
 		{/if}
 	{/if}
 	<FullImageModal bind:this={fullImageModal} />

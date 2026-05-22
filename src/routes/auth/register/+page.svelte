@@ -8,7 +8,7 @@
 
 	let { data }: { data: PageData } = $props();
 
-	const { form, errors, constraints, message, enhance } = superForm(data.form);
+	const { form, errors, constraints, message, enhance } = $derived.by(() => superForm(data.form));
 </script>
 
 <form
