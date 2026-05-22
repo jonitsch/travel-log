@@ -40,10 +40,6 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="bg-gray-900 w-fit mt-0.5" align="end">
 		<DropdownMenu.Group class="*:text-[16px]">
-			<DropdownMenu.Item>
-				<SVGIcon type="profile" color="white" hoverScale={false} />
-				View Profile
-			</DropdownMenu.Item>
 			<DropdownMenu.Item onclick={handleSignOut}>
 				<SVGIcon type="signOut" color="white" hoverScale={false} />
 				Sign Out
