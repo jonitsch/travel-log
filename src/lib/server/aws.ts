@@ -9,7 +9,7 @@ import {
 } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
 
-const isProduction = process.env.NODE_ENV === 'production';
+const isProduction = true;
 
 let client: S3Client | undefined;
 

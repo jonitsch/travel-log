@@ -10,8 +10,8 @@ import z from 'zod';
 import { fail, message, setError, superValidate, withFiles } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { s3 } from '$lib/server/aws';
+import { dev } from '$app/environment';
 
-const dev = env.NODE_ENV != 'production';
 const prod = !dev;
 
 const addImageSchema = z.object({
@@ -174,18 +174,18 @@ export const actions = {
 
 				const imgPath = uploadFolder + id;
 
-				await writeFile(imgPath, Buffer.from(await file.arrayBuffer()));
+				const buffer = Buffer.from(await file.arrayBuffer());
 
-				let imgData: imgCreateBody = await getImageData(file.name, imgPath, journeyId);
+				let imgData: imgCreateBody = await getImageData(file.name, buffer, journeyId);
 				if (!imgData) return fail(500, { message: 'Image Upload failed' });
 
 				if (prod) {
 					await s3.upload({
 						key: imgKey,
-						body: Buffer.from(await file.arrayBuffer())
+						body: buffer
 					});
-
-					await fs.rm(imgPath); // remove temporary img file
+				} else {
+					await writeFile(imgPath, buffer);
 				}
 
 				const addedImg = await prisma.image.create({

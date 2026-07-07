@@ -25,7 +25,8 @@
 	} = $props();
 
 	let open = $state(false),
-		images = $state<string[]>([]);
+		images = $state<string[]>([]),
+		deleting = $state(false);
 
 	const { form, errors, message, enhance } = $derived.by(() => superForm(deleteImageForm));
 
@@ -41,6 +42,7 @@
 		$errors.journeyId = [];
 		$errors.imgIds = {};
 		$message = '';
+		deleting = false;
 	}
 </script>
 
@@ -59,8 +61,12 @@
 						await invalidateAll();
 						switchToJourney(result.data.journeyId);
 						open = false;
+						deleting = false;
 					}
 				}
+			}}
+			onsubmit={() => {
+				deleting = true;
 			}}
 		>
 			<div class="flex flex-col items-center gap-1">
@@ -68,10 +74,14 @@
 				<span class="text-4xl">Delete Image{$form.imgIds.length === 1 ? '' : 's'}?</span>
 			</div>
 			<div class="flex w-full flex-row gap-2 *:flex-1">
-				<Button type="submit" class="bg-green-600" disabled={$form.imgIds.length === 0}
-					>Confirm</Button
+				<Button type="submit" class="bg-green-600" disabled={$form.imgIds.length === 0 || deleting}
+					>{#if deleting}
+						<SVGIcon type="spinner" fill="none" />
+					{:else}
+						Confirm
+					{/if}</Button
 				>
-				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
+				<Button type="button" onclick={() => (open = false)} disabled={deleting}>Cancel</Button>
 			</div>
 			{#if $errors.imgIds?._errors}
 				<small class="text-red-600" role="alert">{$errors.imgIds}</small>

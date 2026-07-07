@@ -1,12 +1,11 @@
 <script lang="ts">
-	import Map from '$lib/components/map/Map.svelte';
+	import { onDestroy } from 'svelte';
 	import { global, type JourneyData } from '$lib/state.svelte';
 	import { imgHighlightColor, timeRange } from '$lib/utils/client';
 	import SVGIcon, { type iconType } from '$lib/components/utility/SVGIcon.svelte';
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
 	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
-	import { onDestroy } from 'svelte';
 
 	let {
 		addImageModal,
@@ -19,7 +18,6 @@
 	} = $props();
 
 	let journey = $derived<JourneyData>(global.journeyData);
-	let mapContainer = $state<HTMLDivElement>();
 
 	let cachedSelection = $state<string[]>([]),
 		allImagesSelected = $derived(

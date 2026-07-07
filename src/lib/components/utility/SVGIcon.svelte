@@ -17,7 +17,8 @@
 		| 'x'
 		| 'selectAll'
 		| 'unselectAll'
-		| 'profile';
+		| 'profile'
+		| 'spinner';
 
 	type Props = {
 		type: iconType;
@@ -29,6 +30,9 @@
 		disabled?: boolean;
 	} & HTMLAttributes<HTMLDivElement>;
 	let { type, color = 'white', scale = 1, hoverScale = false, disabled, ...rest }: Props = $props();
+
+	const classMap = new Map<string, string>();
+	classMap.set('spinner', 'h-4 w-4 animate-spin');
 
 	// svelte-ignore state_referenced_locally
 	if (disabled) {
@@ -46,6 +50,7 @@
 			fill={color}
 			stroke={color}
 			xmlns="http://www.w3.org/2000/svg"
+			class={classMap.get(type)}
 		>
 			{#if type === 'fullscreen'}
 				<path
@@ -194,6 +199,10 @@
 						d="M12 6.92969C9.93 6.92969 8.25 8.60969 8.25 10.6797C8.25 12.7097 9.84 14.3597 11.95 14.4197C11.98 14.4197 12.02 14.4197 12.04 14.4197C12.06 14.4197 12.09 14.4197 12.11 14.4197C12.12 14.4197 12.13 14.4197 12.13 14.4197C14.15 14.3497 15.74 12.7097 15.75 10.6797C15.75 8.60969 14.07 6.92969 12 6.92969Z"
 					></path>
 				</g>
+			{/if}
+			{#if type === 'spinner'}
+				<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+				<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
 			{/if}
 		</svg>
 	{/if}

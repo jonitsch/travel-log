@@ -2,10 +2,8 @@ import { readFileSync } from 'fs';
 import { prisma } from '$lib/server/prisma.js';
 import { redirect } from '@sveltejs/kit';
 import { s3 } from '$lib/server/aws.js';
-import { env } from '$env/dynamic/private';
 import { getImagePath } from '$lib/utils/server.js';
-
-const dev = env.NODE_ENV != 'production';
+import { dev } from '$app/environment';
 
 export const GET = async ({ params, locals }) => {
 	const user = locals.user;
