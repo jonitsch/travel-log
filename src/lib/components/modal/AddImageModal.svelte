@@ -168,7 +168,7 @@
 					{/each}
 				{/each}
 				{#if images.length > 3}
-					<div class="preview placeholder text-2xl">+{images.length - 3}</div>
+					<div class="preview placeholder sm:text-2xl">+{images.length - 3}</div>
 				{/if}
 			</div>
 

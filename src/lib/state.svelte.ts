@@ -20,7 +20,6 @@ type State = {
 	journeyData: JourneyData;
 	journeyId: string | undefined;
 	map: maplibregl.Map | undefined;
-	center: maplibregl.LngLatLike | undefined;
 	loadingJourney: boolean;
 	savedViewPort: {
 		zoom: number | undefined;
@@ -37,7 +36,6 @@ export const global: State = $state({
 	journeyData: null,
 	journeyId: '',
 	map: undefined,
-	center: undefined,
 	loadingJourney: false,
 	savedViewPort: null,
 	selectedImageIds: [],
