@@ -43,6 +43,8 @@ docker compose up -d
 
 ## Production
 
+<img width="1280" height="720" alt="Travel-Log Production Infrastructure" src="https://github.com/user-attachments/assets/038fedc0-4435-46f7-a159-6eaeb7ec1d79" />
+
 ### Environment Variables
 
 | Variable | Description | Example |

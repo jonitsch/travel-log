@@ -220,7 +220,7 @@
 				{@render formButton('Submit', 'fw', !lng || !lat, 'Choose a location first!')}
 			{/if}
 			{#if currentStep === 'Submit'}
-				{@render formButton('Change Location', 'bw')}
+				{@render formButton('Cancel', 'bw')}
 				{@render formButton('Confirm', 'fw', !name || !color || !lng || !lat)}
 			{/if}
 		</div>
