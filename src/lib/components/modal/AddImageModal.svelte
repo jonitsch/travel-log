@@ -123,7 +123,7 @@
 							type="file"
 							class="min-w-25 cursor-pointer hover:ring-2 hover:ring-white"
 							accept="image/*"
-							aria-invalid={$errors.files ? 'true' : undefined}
+							aria-invalid={$errors.files?._errors?.length ? 'true' : undefined}
 							multiple
 							oninput={(e) => ($form.files = Array.from(e.currentTarget.files ?? []))}
 						/>
