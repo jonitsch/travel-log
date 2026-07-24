@@ -115,7 +115,7 @@
 	<!-- svelte-ignore a11y_click_events_have_key_events -->
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
-		class="animate-slide-right flex h-[70dvh] flex-col items-center justify-between"
+		class="animate-slide-right flex h-[70dvh] flex-col items-center justify-between gap-5"
 		onclick={() => (open = false)}
 	>
 		<!-- Modal body -->
@@ -162,12 +162,9 @@
 							{/each}
 						{/each}
 					</div>
-					<div class="flex flex-row gap-2"></div>
 				{:else if currentStep === 'Coordinates'}
 					<!-- Submit -->
 					<div class="w-[90dvw] sm:w-[75dvw] lg:w-[56dvw]">
-						<input name="lng" bind:value={lng} type="hidden" />
-						<input name="lat" bind:value={lat} type="hidden" />
 						<MapLibre
 							bind:map
 							bind:zoom

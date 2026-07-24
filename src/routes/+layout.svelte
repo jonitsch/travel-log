@@ -6,8 +6,7 @@
 	import { switchToJourney, switchToOverview } from '$lib/utils/client';
 	import type { PageData } from './$types';
 	import { type Snippet } from 'svelte';
-	import { authClient } from '$lib/auth-client';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import type { User } from 'better-auth';
 	import { fade } from 'svelte/transition';
 	import ProfileMenu from '$lib/components/ProfileMenu.svelte';
@@ -61,13 +60,6 @@
 				</div>
 			{/if}
 		</div>
-
-		<!-- Center: Welcome -->
-		{#if user && global.viewMode === 'overview'}
-			<div class="flex flex-1 items-center justify-center" transition:fade={{ duration: 150 }}>
-				<div class="text-center">Welcome, {user.name}!</div>
-			</div>
-		{/if}
 
 		<!-- Right: Auth buttons -->
 		<div class="flex min-w-0 flex-1 flex-row items-center justify-end gap-2">

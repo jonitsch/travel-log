@@ -1,4 +1,4 @@
-import { fileTypeFromFile } from 'file-type';
+import { fileTypeFromBuffer } from 'file-type';
 import sharp from 'sharp';
 import exifr from 'exifr';
 import { stat } from 'fs/promises';
@@ -11,43 +11,36 @@ export type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
 
 export async function getImageData(
 	name: string,
-	path: string,
+	buffer: Buffer,
 	journeyId: string
 ): Promise<imgCreateBody> {
-	if (!existsSync(path)) throw Error('404: Image not found!');
-	let type = await fileTypeFromFile(path).catch((err) => console.error(err));
+	if (!buffer) throw Error('No buffer specified!');
+	let type = await fileTypeFromBuffer(buffer).catch((err) => console.error(err));
 	if (!type) return Error('File Type could not be determined!');
-	let metaData: sharp.Metadata = await sharp(path).metadata(),
+	let metaData: sharp.Metadata = await sharp(buffer).metadata(),
 		coords:
 			| {
 					latitude: number;
 					longitude: number;
 			  }
 			| undefined;
-	if (await exifr.gps(path)) {
-		coords = await exifr.gps(path);
+	if (await exifr.gps(buffer)) {
+		coords = await exifr.gps(buffer);
 	}
 	// exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
 	let exifrDates: {
 		DateTimeOriginal: string;
 		CreateDate: string;
 		ModifyDate: string;
-	} = await exifr.parse(path, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
+	} = await exifr.parse(buffer, ['DateTimeOriginal', 'CreateDate', 'ModifyDate']);
 	let createdOn: Date;
 	if (exifrDates) {
 		createdOn = new Date(
 			exifrDates.DateTimeOriginal ?? exifrDates.CreateDate ?? exifrDates.ModifyDate
 		);
 	} else {
-		let systemDates = await stat(path);
-		if (systemDates) {
-			createdOn = new Date(systemDates.birthtime ?? systemDates.mtime ?? systemDates.ctime);
-		} else {
-			createdOn = new Date(Date.now());
-			console.log(
-				`No valid Date found for ${path} in exifr or system data, using fallback Date.now()`
-			);
-		}
+		createdOn = new Date();
+		console.log(`No valid Date found within buffer, using fallback Date.now()`);
 	}
 
 	let imgData: imgCreateBody = {
