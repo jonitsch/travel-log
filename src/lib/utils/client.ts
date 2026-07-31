@@ -253,7 +253,7 @@ export function handleShowOnMapClick(img: Image) {
 	
 	if (imgShownOnMap && imgSelected) {
 		if (!global.journeyData) return;
-		fitJourneyBounds(global.journeyData)
+		fitJourneyBounds(global.journeyData);
 		global.imgShownOnMap = '';
 	} else {
 		global.imgShownOnMap = img.id;

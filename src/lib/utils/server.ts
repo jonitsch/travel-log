@@ -1,9 +1,7 @@
 import { fileTypeFromBuffer } from 'file-type';
 import sharp from 'sharp';
 import exifr from 'exifr';
-import { stat } from 'fs/promises';
 import type { Prisma } from '@prisma/client';
-import { existsSync } from 'fs';
 import { env } from '$env/dynamic/private';
 import { join } from 'path';
 
