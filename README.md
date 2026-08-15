@@ -13,24 +13,29 @@
 - [vscode-icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
 
 ### Enviroment Variables
-| Variable | Description | Example (Generation) |
+| Variable | Description | Example |
 | ----------- | ----------- | ----------- |
-| `NODE_ENV` | Your Current Enviroment (Dev) | 'development' |
+| `NODE_ENV` | Your Current Enviroment (Dev) | `development` |
 | **Database** | | |
-| `MYSQL_URL` | Your Database URL | mysql://`username`:`password`@localhost:3306/db |
 | `MYSQL_HOST` | Your Database Hostname | `localhost` |
 | `MYSQL_DATABASE` | Your Database Name | `my-database` |
 | `MYSQL_USER` | Your Database User (for Prisma) | `prisma` |
 | `MYSQL_PASSWORD` | Your Database User`s Password |
 | `MYSQL_ROOT_PASSWORD` | Your Database`s Root Password |
+| `MYSQL_URL` | Your Database URL | mysql://`MYSQL_USER`:`MYSQL_PASSWORD`@`MYSQL_HOST`/`MYSQL_DATABASE` |
 | **ImgProxy** | | |
 | `IMAGE_FOLDER_PATH` | The folder that will store your images (absolute path) | `C:/git/travel-log-data/pictures/` |
-| `IMGPROXY_URL` | Your ImgProxy Base URL | http://localhost:8080 |
+| `IMGPROXY_URL` | Your ImgProxy Base URL | `http://localhost:8080` |
 | `IMGPROXY_KEY` | Your ImgProxy Key | `crypto.randomBytes(32).toString('hex')` |
 | `IMGPROXY_SALT` | Your ImgProxy Salt | `crypto.randomBytes(16).toString('hex')` |
 | **Authentication** | | |
-| `BETTER_AUTH_URL` | Your Servers Base URL | http://localhost:5173 |
+| `BETTER_AUTH_URL` | Your Servers Base URL | `http://localhost:5173` |
 | `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32`
+
+Optional:  
+| Variable | Description
+| ----------- | ----------- |
+| `TEST_S3` | Set this variable to 'true' to locally test S3-Image handling, note that you will also have to set `IMGPROXY_USE_S3` to 'true' |
 
 ### Run ImgProxy-, MySQL- and PHPMyAdmin-Container locally
 
@@ -49,7 +54,7 @@ docker compose up -d
 
 | Variable | Description | Example |
 | ----------- | ----------- | ----------- |
-| `NODE_ENV` | Your Current Enviroment (Prod) | 'production' |
+| `NODE_ENV` | Your Current Enviroment (Prod) | `production` **(!)** |
 | **Database** | | |
 | `MYSQL_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
 | `MYSQL_HOST` | Database host | `db.example.com`
@@ -65,6 +70,7 @@ docker compose up -d
 | `IMGPROXY_URL` | ImgProxy service URL | `https://imgproxy.example.com`
 | `IMGPROXY_KEY` | ImgProxy signing key (hex string) | `crypto.randomBytes(32).toString('hex')`
 | `IMGPROXY_SALT` | ImgProxy salt (hex string) | `crypto.randomBytes(16).toString('hex')`
+| `IMGPROXY_USE_S3` | Allows ImgProxy to accept S3 images | `true` **(!)**
 | **Authentication** | | |
 | `BETTER_AUTH_URL` | Application base URL | `https://travel-log.example.com`
 | `BETTER_AUTH_SECRET` | BetterAuth secret | `openssl rand -base64 32`

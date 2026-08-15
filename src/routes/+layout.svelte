@@ -8,8 +8,8 @@
 	import { type Snippet } from 'svelte';
 	import { goto } from '$app/navigation';
 	import type { User } from 'better-auth';
-	import { fade } from 'svelte/transition';
 	import ProfileMenu from '$lib/components/ProfileMenu.svelte';
+	import { SvelteToast, type SvelteToastOptions } from '@zerodevx/svelte-toast';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
@@ -18,21 +18,28 @@
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
 	}
+
+	const options: SvelteToastOptions = { theme: {
+		'--toastBorderRadius': '12px',
+		'--toastBarBackground': 'rgba(255, 255, 255, 0.85)'
+	} }
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-3">
+<SvelteToast {options} />
+
+<div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-2">
 	<div
 		id="header"
-		class="flex h-fit w-full items-center justify-between gap-2 rounded-md bg-transparent whitespace-nowrap"
+		class="flex w-full items-center justify-between gap-2 rounded-md whitespace-nowrap"
 	>
 		<!-- Left: Title/Logo -->
-		<div class="flex min-w-0 flex-1 flex-row items-center justify-start gap-2">
+		<div class="flex min-w-0 flex-row items-center justify-start gap-2">
 			{#if true}
-				<div id="mainHeader" class="items-center bg-transparent">
+				<div id="mainHeader" class="items-center">
 					<button
 						id="headerText"
 						class="oxygen-bold page-header-button bg-gray-900"
@@ -62,7 +69,7 @@
 		</div>
 
 		<!-- Right: Auth buttons -->
-		<div class="flex min-w-0 flex-1 flex-row items-center justify-end gap-2">
+		<div class="flex min-w-0 flex-row items-center justify-end gap-2">
 			{#if user}
 				<ProfileMenu name={user.name} />
 			{:else}

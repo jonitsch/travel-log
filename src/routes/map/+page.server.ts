@@ -4,14 +4,11 @@ import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import { error, redirect } from '@sveltejs/kit';
 import type { Image, Journey } from '$gen/prisma/client/client';
-import { getImagePath } from '$lib/utils/server';
+import { getImagePath, useS3 } from '$lib/utils/server';
 import z from 'zod';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { s3 } from '$lib/server/aws';
-import { dev } from '$app/environment';
-
-const prod = !dev;
 
 const addImageSchema = z.object({
 	journeyId: z.string(),
@@ -83,7 +80,7 @@ export const actions = {
 				name: res.name,
 				color: res.color
 			};
-			if (dev) {
+			if (!useS3) {
 				await fs.mkdir(env.IMAGE_FOLDER_PATH + journeyId);
 				console.log(`Successfully created Image Folder: \`${env.IMAGE_FOLDER_PATH + journeyId}\``);
 			}
@@ -108,7 +105,7 @@ export const actions = {
 					userId: user.id
 				}
 			});
-			if (dev) {
+			if (!useS3) {
 				const imageFolder = env.IMAGE_FOLDER_PATH + journeyId;
 				await fs.rm(imageFolder, { recursive: true });
 			} else {
@@ -125,56 +122,6 @@ export const actions = {
 			};
 		} catch (err) {
 			return error(500, `Something went wrong! ${err}`);
-		}
-	},
-	deleteImage: async ({ request, locals }) => {
-		const form = await superValidate(request, zod4(deleteImageSchema));
-		if (!form.valid) return fail(400, { form });
-
-		try {
-			const user = locals.user;
-			if (!user) {
-				throw redirect(303, '/auth/login');
-			}
-
-			const { journeyId, imgIds } = form.data;
-			console.log(`Attempting to delete Images:`, imgIds);
-
-			let deletedImgs: Image[] = [];
-			for (const id of imgIds) {
-				const img = await prisma.image.findUnique({
-					where: {
-						id: id,
-						userId: user.id,
-						journeyId: journeyId
-					}
-				});
-				if (!img) return message(form, 'Image could not be found in Database!', { status: 404 });
-
-				await prisma.image.delete({ where: { id, userId: user.id } });
-
-				if (prod) {
-					await s3.delete({
-						key: `${img.journeyId}/${img.id}`
-					});
-				} else {
-					const imgPath = getImagePath(img.id, img.journeyId);
-					await fs.rm(imgPath);
-				}
-
-				deletedImgs.push(img);
-			}
-
-			console.log(
-				`Successfully deleted Images:`,
-				deletedImgs.map((i) => i.id)
-			);
-			return { form, deletedImgs, journeyId };
-		} catch (err) {
-			console.log('Failed to delete Images:', form.data.imgIds);
-			console.error(err);
-
-			return message(form, 'Something went wrong!', { status: 500 });
 		}
 	},
 	renameImage: async ({ request, locals }) => {

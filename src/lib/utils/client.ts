@@ -2,6 +2,7 @@ import type { FeatureCollection, LineString } from 'geojson';
 import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
 import type { Image } from '$gen/prisma/client/client';
+import { toast } from '@zerodevx/svelte-toast';
 
 export const defaultMapCenter: LngLatLike = [13.388, 52.517];
 
@@ -250,7 +251,7 @@ export function handleShowOnMapClick(img: Image) {
 	const map = global.map;
 	const imgSelected = isImgSelected(img.id);
 	const imgShownOnMap = global.imgShownOnMap === img.id;
-	
+
 	if (imgShownOnMap && imgSelected) {
 		if (!global.journeyData) return;
 		fitJourneyBounds(global.journeyData);
@@ -332,3 +333,8 @@ export const formattedDate = (
 			});
 	}
 };
+
+// TOAST THEMES
+
+export const toastSuccess = (msg: string) => toast.push(msg, { theme: { '--toastBackground': 'oklch(39.3% 0.095 152.535)' } });
+export const toastFailure = (msg: string) => toast.push(msg, { theme: { '--toastBackground': 'oklch(39.6% 0.141 25.723)' } });

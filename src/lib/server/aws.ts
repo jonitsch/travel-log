@@ -8,14 +8,12 @@ import {
 	S3ServiceException
 } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
+import { useS3 } from '$lib/utils/server';
 
-import { dev } from '$app/environment';
-
-const isProduction = !dev;
 
 let client: S3Client | undefined;
 
-if (isProduction) {
+if (useS3) {
     client = new S3Client({
         region: env.AWS_REGION,
         credentials: {
@@ -151,4 +149,4 @@ const stub = {
     get: async () => Promise.reject(disabledError)
 };
 
-export const s3 = isProduction ? new S3() : (stub as unknown as S3);
+export const s3 = useS3 ? new S3() : (stub as unknown as S3);

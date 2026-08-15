@@ -29,6 +29,7 @@
 		"@types/express": "^5.0.4",
 		"@types/heic-convert": "^2.1.0",
 		"@types/node": "^24.3.0",
+		"@zerodevx/svelte-toast": "^0.9.6",
 		"bits-ui": "^2.16.1",
 		"clsx": "^2.1.1",
 		"eslint": "^9.18.0",

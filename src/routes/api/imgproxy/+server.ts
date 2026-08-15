@@ -2,7 +2,7 @@ import { json, redirect } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import { createHmac } from 'node:crypto';
 import { prisma } from '$lib/server/prisma.js';
-import { dev } from '$app/environment';
+import { useS3 } from '$lib/utils/server.js';
 
 export async function GET({ url, locals }) {
 	const user = locals.user;
@@ -20,7 +20,7 @@ export async function GET({ url, locals }) {
 	});
 	if (!img) throw new Error('The Image either does not exist or does not belong to the user!');
 
-	const prefix = dev ? 'local:///' : `s3://${env.AWS_BUCKET_NAME}/`;
+	const prefix = useS3 ? `s3://${env.AWS_BUCKET_NAME}/` : 'local:///';
 	const src = prefix + `${img.journeyId}/${id}`;
 
 	// optional parameters with default values

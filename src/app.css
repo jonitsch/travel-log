@@ -322,3 +322,13 @@ button {
 		@apply bg-background text-foreground;
 	}
 }
+
+// Toast
+
+:global(.log.info) {
+    --toastBackground: green;
+}
+:global(.log.warn) {
+	--toastBackground: red;
+}
+

@@ -4,8 +4,11 @@ import exifr from 'exifr';
 import type { Prisma } from '@prisma/client';
 import { env } from '$env/dynamic/private';
 import { join } from 'path';
+import { dev } from '$app/env';
 
 export type imgCreateBody = Prisma.Args<typeof prisma.image, 'create'>['data'];
+
+export const useS3 = !dev || env.TEST_S3 === 'true';
 
 export async function getImageData(
 	name: string,
