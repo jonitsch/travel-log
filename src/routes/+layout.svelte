@@ -9,7 +9,7 @@
 	import { goto } from '$app/navigation';
 	import type { User } from 'better-auth';
 	import ProfileMenu from '$lib/components/ProfileMenu.svelte';
-	import { SvelteToast, type SvelteToastOptions } from '@zerodevx/svelte-toast';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
@@ -18,20 +18,17 @@
 	if (browser) {
 		displayMode = document.getElementById('html')?.className;
 	}
-
-	const options: SvelteToastOptions = { theme: {
-		'--toastBorderRadius': '12px',
-		'--toastBarBackground': 'rgba(255, 255, 255, 0.85)'
-	} }
 </script>
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<SvelteToast {options} />
+<div class="toast-container">
+	<SvelteToast />
+</div>
 
-<div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-2">
+<div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-3">
 	<div
 		id="header"
 		class="flex w-full items-center justify-between gap-2 rounded-md whitespace-nowrap"
@@ -49,7 +46,7 @@
 					</button>
 				</div>
 			{/if}
-			{#if global.viewMode === 'journey'}
+			{#if global.viewMode === 'journey' && global.journeyData}
 				{@const journey = global.journeyData}
 				<div
 					id="journeyHeader"
@@ -57,12 +54,12 @@
 				>
 					<button
 						id="headerText"
-						class="oxygen-bold page-header-button bg-{journey?.color}/70 whitespace-nowrap {global.loadingJourney
+						class="oxygen-bold page-header-button bg-{journey.color}/70 whitespace-nowrap {global.loadingJourney
 							? 'skeleton text-transparent'
 							: 'text-white'}"
-						onclick={() => switchToJourney(journey?.journeyId ?? '')}
+						onclick={() => switchToJourney(journey.journeyId)}
 					>
-						{journey?.name ?? 'Placeholder'}
+						{journey.name}
 					</button>
 				</div>
 			{/if}
@@ -90,3 +87,15 @@
 		</text>
 	</div>
 </div>
+
+<style>
+	.toast-container {
+		--toastWidth: fit-content;
+		--toastMinHeight: 2.5rem;
+		--toastMsgPadding: 0.55rem 0.75rem;
+		--toastBarBackground: rgba(255, 255, 255, 0.75);
+		--toastBorderRadius: 10px;
+		--toastContainerTop: 3.5rem;
+		--toastContainerRight: 12px;
+	}
+</style>

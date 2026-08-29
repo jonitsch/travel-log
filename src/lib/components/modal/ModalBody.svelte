@@ -7,13 +7,15 @@
 		open = $bindable(),
 		showCloseButton = true,
 		title,
-		icon
+		icon,
+		alignment = 'row'
 	}: {
 		children: Snippet;
 		open: boolean;
 		showCloseButton?: boolean;
 		title?: string;
 		icon?: iconType;
+		alignment?: 'row' | 'col';
 	} = $props();
 </script>
 
@@ -30,10 +32,16 @@
 			<SVGIcon type="x" color="white" scale={0.8} />
 		</button>
 	{/if}
-	<div class="flex w-fit h-fit flex-col items-center justify-center gap-5">
-		<div class="flex flex-row items-center gap-1">
-			{#if title}<span class="text-4xl">{title}</span>{/if}
-			{#if icon}<SVGIcon type={icon} color="white" scale={2.5} hoverScale={false} />{/if}
+	<div class="flex h-fit w-fit flex-col items-center justify-center gap-5">
+		<div class="flex flex-{alignment} items-center gap-1">
+			{#if alignment === 'row'}
+				{#if title}<span class="text-4xl">{title}</span>{/if}
+				{#if icon}<SVGIcon type={icon} color="white" scale={2.5} hoverScale={false} />{/if}
+			{/if}
+			{#if alignment === 'col'}
+				{#if icon}<SVGIcon type={icon} color="white" scale={2.5} hoverScale={false} />{/if}
+				{#if title}<span class="text-4xl">{title}</span>{/if}
+			{/if}
 		</div>
 		{@render children?.()}
 	</div>

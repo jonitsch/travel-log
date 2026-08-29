@@ -42,7 +42,7 @@ class S3 {
 
         try {
             const response = await client!.send(command);
-            console.log(response);
+            return response
         } catch (caught) {
             if (caught instanceof S3ServiceException && caught.name === 'EntityTooLarge') {
                 console.error(
@@ -69,8 +69,7 @@ class S3 {
         });
 
         try {
-            const response = await client!.send(command);
-            console.log(response);
+            await client!.send(command);
         } catch (caught) {
             if (caught instanceof S3ServiceException) {
                 console.error(
@@ -126,8 +125,6 @@ class S3 {
 
         try {
             const response = await client!.send(command);
-            console.log(response);
-
             return response;
         } catch (caught) {
             if (caught instanceof S3ServiceException) {

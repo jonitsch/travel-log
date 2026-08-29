@@ -24,19 +24,17 @@
 		>;
 	} = $props();
 
-	let open = $state(false),
+	let imgIds = $derived(global.selectedImageIds),
+		open = $state(false),
 		deleting = $state(false);
 
 	const { form } = $derived.by(() => superForm(deleteImageForm));
 
 	export function openModal() {
-		reset();
 		open = true;
-		$form.imgIds = global.selectedImageIds;
 	}
 	function reset() {
 		$form.journeyId = '';
-		$form.imgIds = [];
 		deleting = false;
 	}
 
@@ -50,7 +48,7 @@
 		try {
 			deleting = true;
 
-			const deletions = $form.imgIds.map(async (id) => {
+			const deletions = imgIds.map(async (id) => {
 				const fd = new FormData();
 
 				fd.append('id', id);
@@ -61,7 +59,12 @@
 					body: fd
 				});
 
-				if (res.ok) toastSuccess(`Image deleted successfully!`);
+				if (!res.ok) {
+					const errorText = await res.text();
+					throw new Error(errorText || `Delete failed (${res.status})`);
+				}
+
+				toastSuccess(`Image deleted successfully!`);
 
 				return res.json();
 			});
@@ -76,6 +79,7 @@
 			deleting = false;
 			open = false;
 			reset();
+			global.selectedImageIds = [];
 		}
 	}
 </script>
@@ -83,15 +87,16 @@
 <Modal bind:open onclose={reset}>
 	<ModalBody
 		bind:open
-		title={`Delete Image${$form.imgIds.length === 1 ? '' : `s (${$form.imgIds.length})`}?`}
+		title={`Delete Image${imgIds.length === 1 ? '' : `s (${imgIds.length})`}?`}
 		icon="delete"
+		alignment ="col"
 	>
 		<div class="flex w-full flex-row gap-2 *:flex-1">
 			<Button
 				type="button"
 				onclick={deleteImages}
 				class="bg-green-600"
-				disabled={$form.imgIds.length === 0 || deleting}
+				disabled={imgIds.length === 0 || deleting}
 				>{#if deleting}
 					<SVGIcon type="spinner" fill="none" />
 				{:else}
@@ -100,10 +105,5 @@
 			</Button>
 			<Button type="button" onclick={() => (open = false)} disabled={deleting}>Cancel</Button>
 		</div>
-
-		<input type="hidden" value={global.journeyId} name="journeyId" />
-		{#each $form.imgIds as _, i}
-			<input type="hidden" bind:value={$form.imgIds[i]} name="imgIds" />
-		{/each}
 	</ModalBody>
 </Modal>

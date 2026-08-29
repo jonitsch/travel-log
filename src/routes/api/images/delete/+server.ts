@@ -20,9 +20,6 @@ export const POST = async ({ request, locals }) => {
 		const user = locals.user;
 		if (!user) return new Response('Unauthorized', { status: 401 });
 
-		const rdm = randomInt(3);
-		if (rdm === 2) throw Error('test');
-
 		if (!id || !journeyId) return new Response('Missing data', { status: 400 });
 
 		const journey = await prisma.journey.findFirst({ where: { journeyId } });
@@ -42,7 +39,15 @@ export const POST = async ({ request, locals }) => {
 		return json({ id, key });
 	} catch (err) {
 		console.error(`Failed to delete Image: ${err}`);
-		return new Response('Something went wrong!', { status: 500 });
+		return new Response(
+			JSON.stringify({ error: err instanceof Error ? err.message : 'Unknown error!' }),
+			{
+				status: 500,
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}
+		);
 	} finally {
 		global.loadingJourney = false;
 	}

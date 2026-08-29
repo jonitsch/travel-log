@@ -69,7 +69,16 @@ export const POST = async ({ request, locals }) => {
 			await prisma.image.delete({ where: { id } });
 		}
 
-		return new Response('Something went wrong!', { status: 500 });
+		console.error(`Failed to delete Image: ${err}`);
+		return new Response(
+			JSON.stringify({ error: err instanceof Error ? err.message : 'Unknown error!' }),
+			{
+				status: 500,
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}
+		);
 	} finally {
 		global.loadingJourney = false;
 	}

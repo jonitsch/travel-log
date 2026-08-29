@@ -49,7 +49,7 @@
 
 <Modal bind:open onclose={reset}>
 	{#if img}
-		<ModalBody bind:open title="Rename Image" icon="rename">
+		<ModalBody bind:open title="Rename Image" icon="rename" alignment ="col">
 			<form
 				id="renameImageForm"
 				action="?/renameImage"

@@ -289,6 +289,18 @@ export const timeRange = (journey: JourneyData | undefined) => {
 	if (journey.image.length === 0) return undefined;
 	let end = new Date(journey.image[journey.image.length - 1].createdOn);
 	let start = new Date(journey.image[0].createdOn);
+
+	if (start.getFullYear() === end.getFullYear()) {
+		return `${start.toLocaleDateString('de-DE', {
+		day: '2-digit',
+		month: '2-digit',
+	})} - ${end.toLocaleDateString('de-DE', {
+		day: '2-digit',
+		month: '2-digit',
+		year: 'numeric'
+	})}`
+	}
+
 	return `${start.toLocaleDateString('de-DE', {
 		day: '2-digit',
 		month: '2-digit',

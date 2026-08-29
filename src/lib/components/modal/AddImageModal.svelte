@@ -3,14 +3,12 @@
 	import Modal from './Modal.svelte';
 	import { Button } from '../shadcn/button';
 	import { Input } from '../shadcn/input';
-	import SVGIcon from '../utility/SVGIcon.svelte';
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
 	import { switchToJourney, toastFailure, toastSuccess } from '$lib/utils/client';
 	import { invalidateAll } from '$app/navigation';
 	import ModalBody from './ModalBody.svelte';
 	import { fade } from 'svelte/transition';
-	import { toast } from '@zerodevx/svelte-toast';
 
 	let {
 		addImageForm
@@ -73,7 +71,12 @@
 					body: fd
 				});
 
-				if (res.ok) toastSuccess('Image uploaded successfully!');
+				if (!res.ok) {
+					const errorText = await res.text();
+					throw new Error(errorText || `Delete failed (${res.status})`);
+				}
+				
+				toastSuccess('Image uploaded successfully!');
 
 				progress += 1;
 				return res.json();
