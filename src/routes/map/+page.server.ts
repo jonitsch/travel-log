@@ -24,6 +24,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 	if (!user) {
 		throw redirect(303, '/auth/login');
 	}
+
 	const journeys: Journey[] = await prisma.journey.findMany({
 		include: {
 			marker: true,
@@ -33,8 +34,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 			userId: user.id
 		}
 	});
+	
 	const addImageForm = await superValidate(zod4(addImageSchema));
 	const deleteImageForm = await superValidate(zod4(deleteImageSchema));
+
 	return {
 		journeys: journeys,
 		user: user,
@@ -49,11 +52,13 @@ export const actions = {
 			const user = locals.user;
 			if (!user) throw redirect(303, '/auth/login');
 
-			const data = await request.formData();
-			const name = `${data.get('name')}`;
-			const lng = parseFloat(`${data.get('lng')}`);
-			const lat = parseFloat(`${data.get('lat')}`);
-			const color = `${data.get('color')}`;
+			const fd = await request.formData();
+			
+			const name = `${fd.get('name')}`;
+			const lng = parseFloat(`${fd.get('lng')}`);
+			const lat = parseFloat(`${fd.get('lat')}`);
+			const color = `${fd.get('color')}`;
+
 			const journeyId = `${name.toLowerCase().slice(0, 4)}-${crypto.randomUUID()}`;
 			const userId = user.id;
 
@@ -109,7 +114,7 @@ export const actions = {
 			} else {
 				await s3.deletePrefix({ prefix: `${journeyId}/` });
 			}
-			
+
 			console.log(`Journey \`${journeyId}\` was successfully deleted!`);
 
 			return {
