@@ -3,6 +3,7 @@ import { type LngLatBoundsLike, type LngLatLike } from 'maplibre-gl';
 import { global, type JourneyData, type JourneyWithRelations } from '$lib/state.svelte';
 import type { Image } from '$gen/prisma/client/client';
 import { toast } from '@zerodevx/svelte-toast';
+import { requestApi } from '$lib/api/client';
 
 export const defaultMapCenter: LngLatLike = [13.388, 52.517];
 
@@ -29,9 +30,10 @@ export async function getImgProxyURL(
 	if (height) params.append('height', Math.round(height).toString());
 	if (format) params.append('format', format);
 
-	const response = await fetch(`/api/imgproxy?${params.toString()}`);
-	const url = await response.json();
-	return url;
+	return await requestApi<string>(`/api/imgproxy?${params.toString()}`, { method: 'GET' }, {
+		expectEnvelope: false,
+		fallbackError: 'Failed to generate image preview URL.'
+	});
 }
 
 export function switchToOverview(): void {
@@ -128,11 +130,11 @@ function waitForStyle(map: maplibregl.Map): Promise<void> {
 
 export async function getJourneyData(journeyId: string): Promise<JourneyWithRelations> {
 	try {
-		const res = await fetch(`/api/journeys?journeyId=${journeyId}`);
-		if (!res.ok) {
-			throw new Error(`Failed to fetch journey data: ${res.status} ${res.statusText}`);
-		}
-		let journey: JourneyWithRelations = await res.json();
+		const journey = await requestApi<JourneyWithRelations>(`/api/journeys?journeyId=${journeyId}`, {
+			method: 'GET'
+		}, {
+			fallbackError: 'Failed to fetch journey data.'
+		});
 
 		journey.image.sort((a, b) => {
 			if (a.createdOn < b.createdOn) {

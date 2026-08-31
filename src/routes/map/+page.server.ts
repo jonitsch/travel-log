@@ -6,7 +6,7 @@ import { error, redirect } from '@sveltejs/kit';
 import type { Journey } from '$gen/prisma/client/client';
 import { useS3 } from '$lib/utils/server';
 import z from 'zod';
-import { fail, message, superValidate } from 'sveltekit-superforms';
+import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { s3 } from '$lib/server/aws';
 
@@ -69,11 +69,13 @@ export const actions = {
 					userId: userId
 				}
 			});
+
 			const journey = {
 				journeyId: res.journeyId,
 				name: res.name,
 				color: res.color
 			};
+
 			if (!useS3) {
 				await fs.mkdir(env.IMAGE_FOLDER_PATH + journeyId);
 				console.log(`Successfully created Image Folder: \`${env.IMAGE_FOLDER_PATH + journeyId}\``);
@@ -93,18 +95,21 @@ export const actions = {
 			const data = await request.formData();
 			const journeyId = `${data.get('journeyId')}`;
 			console.log(`Attempting to delete Journey \`${journeyId}\`...`);
+
 			const res = await prisma.journey.delete({
 				where: {
 					journeyId: journeyId,
 					userId: user.id
 				}
 			});
+
 			if (!useS3) {
 				const imageFolder = env.IMAGE_FOLDER_PATH + journeyId;
 				await fs.rm(imageFolder, { recursive: true });
 			} else {
 				await s3.deletePrefix({ prefix: `${journeyId}/` });
 			}
+			
 			console.log(`Journey \`${journeyId}\` was successfully deleted!`);
 
 			return {

@@ -10,6 +10,7 @@
 	import ModalBody from './ModalBody.svelte';
 	import FormButton from '../form/FormButton.svelte';
 	import { fade } from 'svelte/transition';
+	import { ClientApiError, requestApi } from '$lib/api/client';
 
 	let {
 		addImageForm
@@ -67,15 +68,14 @@
 				fd.append('file', file);
 				fd.append('journeyId', journeyId);
 
-				const res = await fetch(`/api/images?method=upload`, {
-					method: 'POST',
-					body: fd
-				});
-
-				const payload = await res.json().catch(() => null);
-				if (!res.ok || !payload?.ok) {
-					throw new Error(payload?.error || `Upload failed (${res.status})`);
-				}
+				const payload = await requestApi<{ id: string; key: string; journeyId: string }>(
+					`/api/images?method=upload`,
+					{
+						method: 'POST',
+						body: fd
+					},
+					{ fallbackError: 'Image upload failed.' }
+				);
 
 				toastSuccess('Image uploaded successfully!');
 
@@ -85,7 +85,8 @@
 
 			await Promise.all(uploads);
 		} catch (err) {
-			toastFailure('Something went wrong!');
+			const message = err instanceof ClientApiError ? err.message : 'Something went wrong!';
+			toastFailure(message);
 			console.error('Upload failed:', err);
 		} finally {
 			await invalidateAll();

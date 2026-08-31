@@ -6,6 +6,7 @@
 	import { invalidateAll } from '$app/navigation';
 	import ModalBody from './ModalBody.svelte';
 	import FormButton from '../form/FormButton.svelte';
+	import { ClientApiError, requestApi } from '$lib/api/client';
 
 	let {
 		deleteImageForm
@@ -53,15 +54,14 @@
 				fd.append('id', id);
 				fd.append('journeyId', journeyId);
 
-				const res = await fetch(`/api/images?method=delete`, {
-					method: 'POST',
-					body: fd
-				});
-
-				const payload = await res.json().catch(() => null);
-				if (!res.ok || !payload?.ok) {
-					throw new Error(payload?.error || `Delete failed (${res.status})`);
-				}
+				const payload = await requestApi<{ id: string; key: string; journeyId: string }>(
+					`/api/images?method=delete`,
+					{
+						method: 'POST',
+						body: fd
+					},
+					{ fallbackError: 'Image deletion failed.' }
+				);
 
 				toastSuccess(`Image deleted successfully!`);
 
@@ -70,8 +70,9 @@
 
 			await Promise.all(deletions);
 		} catch (err) {
-			toastFailure('Something went wrong!');
-			console.error('Upload failed:', err);
+			const message = err instanceof ClientApiError ? err.message : 'Something went wrong!';
+			toastFailure(message);
+			console.error('Delete failed:', err);
 		} finally {
 			await invalidateAll();
 			global.journeyData = await switchToJourney(journeyId);

@@ -45,6 +45,30 @@ Use the provided `docker-compose.yml` file or to setup both the ImgProxy and MyS
 docker compose up -d
 ```
 
+## Client-side API response handling
+
+The frontend uses a centralized client API wrapper at `src/lib/api/client.ts` to unify request execution, response parsing, and error handling.
+
+### How it works
+
+- `requestApi()` wraps `fetch()` and safely parses JSON responses.
+- Success responses are normalized to the app's common `{ ok: true, data: ... }` shape.
+- Failed requests throw `ClientApiError` with a consistent message and status information.
+- Callers can still trigger user-facing toasts locally while keeping API logic centralized.
+
+### Example
+
+```ts
+import { requestApi } from '$lib/api/client';
+
+const journey = await requestApi<JourneyWithRelations>(`/api/journeys?journeyId=${journeyId}`, {
+  method: 'GET'
+}, {
+  fallbackError: 'Failed to fetch journey data.'
+});
+```
+
+This keeps fetch logic out of individual Svelte components and ensures the UI handles responses/errors consistently across journeys, uploads, deletes, and renames.
 
 ## Production
 

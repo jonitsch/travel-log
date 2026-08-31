@@ -6,6 +6,7 @@
 	import Input from '../shadcn/input/input.svelte';
 	import ModalBody from './ModalBody.svelte';
 	import FormButton from '../form/FormButton.svelte';
+	import { ClientApiError, requestApi } from '$lib/api/client';
 
 	let open = $state(false),
 		img = $state<Image>(),
@@ -36,24 +37,22 @@
 			fd.append('imgId', img.id);
 			fd.append('newName', newName);
 
-			const res = await fetch(`/api/images?method=rename`, {
-				method: 'POST',
-				body: fd
-			});
-
-			const payload = await res.json().catch(() => null);
-			if (!res.ok || !payload?.ok) {
-				throw new Error(payload?.error || `Rename failed (${res.status})`);
-			}
+			const payload = await requestApi<{ imgId: string; newName: string; journeyId: string }>(
+				`/api/images?method=rename`,
+				{
+					method: 'POST',
+					body: fd
+				},
+				{ fallbackError: 'Image rename failed.' }
+			);
 
 			global.selectedImageIds = [];
 			toastSuccess('Image renamed successfully!');
-			global.loadingJourney = true;
 			await switchToJourney(payload.journeyId);
 			open = false;
 		} catch (err) {
 			console.error(err);
-			errorMessage = err instanceof Error ? err.message : 'Something went wrong!';
+			errorMessage = err instanceof ClientApiError ? err.message : 'Something went wrong!';
 			toastFailure(errorMessage || 'Something went wrong!');
 		} finally {
 			saving = false;
