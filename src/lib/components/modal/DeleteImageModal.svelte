@@ -1,12 +1,11 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
 	import Modal from './Modal.svelte';
-	import { Button } from '../shadcn/button';
-	import SVGIcon from '../utility/SVGIcon.svelte';
 	import { superForm, type SuperValidated } from 'sveltekit-superforms';
 	import { switchToJourney, toastFailure, toastSuccess } from '$lib/utils/client';
 	import { invalidateAll } from '$app/navigation';
 	import ModalBody from './ModalBody.svelte';
+	import FormButton from '../form/FormButton.svelte';
 
 	let {
 		deleteImageForm
@@ -54,19 +53,19 @@
 				fd.append('id', id);
 				fd.append('journeyId', journeyId);
 
-				const res = await fetch('/api/images/delete', {
+				const res = await fetch(`/api/images?method=delete`, {
 					method: 'POST',
 					body: fd
 				});
 
-				if (!res.ok) {
-					const errorText = await res.text();
-					throw new Error(errorText || `Delete failed (${res.status})`);
+				const payload = await res.json().catch(() => null);
+				if (!res.ok || !payload?.ok) {
+					throw new Error(payload?.error || `Delete failed (${res.status})`);
 				}
 
 				toastSuccess(`Image deleted successfully!`);
 
-				return res.json();
+				return payload;
 			});
 
 			await Promise.all(deletions);
@@ -79,7 +78,6 @@
 			deleting = false;
 			open = false;
 			reset();
-			global.selectedImageIds = [];
 		}
 	}
 </script>
@@ -89,21 +87,18 @@
 		bind:open
 		title={`Delete Image${imgIds.length === 1 ? '' : `s (${imgIds.length})`}?`}
 		icon="delete"
-		alignment ="col"
+		alignment="col"
 	>
 		<div class="flex w-full flex-row gap-2 *:flex-1">
-			<Button
+			<FormButton
+				variant="confirm"
 				type="button"
 				onclick={deleteImages}
-				class="bg-green-600"
 				disabled={imgIds.length === 0 || deleting}
-				>{#if deleting}
-					<SVGIcon type="spinner" fill="none" />
-				{:else}
-					Confirm
-				{/if}
-			</Button>
-			<Button type="button" onclick={() => (open = false)} disabled={deleting}>Cancel</Button>
+				loading={deleting}
+				label="Confirm"
+			/>
+			<FormButton variant="cancel" type="button" onclick={() => (open = false)} disabled={deleting} label="Cancel" />
 		</div>
 	</ModalBody>
 </Modal>

@@ -39,7 +39,7 @@
 				{#if icon}<SVGIcon type={icon} color="white" scale={2.5} hoverScale={false} />{/if}
 			{/if}
 			{#if alignment === 'col'}
-				{#if icon}<SVGIcon type={icon} color="white" scale={2.5} hoverScale={false} />{/if}
+				{#if icon}<SVGIcon type={icon} color="white" scale={3.5} hoverScale={false} />{/if}
 				{#if title}<span class="text-4xl">{title}</span>{/if}
 			{/if}
 		</div>

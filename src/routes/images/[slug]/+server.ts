@@ -2,8 +2,7 @@ import { readFileSync } from 'fs';
 import { prisma } from '$lib/server/prisma.js';
 import { redirect } from '@sveltejs/kit';
 import { s3 } from '$lib/server/aws.js';
-import { getImagePath } from '$lib/utils/server.js';
-import { dev } from '$app/environment';
+import { getImagePath, useS3 } from '$lib/utils/server.js';
 
 export const GET = async ({ params, locals }) => {
 	const user = locals.user;
@@ -12,8 +11,6 @@ export const GET = async ({ params, locals }) => {
 	}
 
 	const id = params.slug;
-	
-	console.log('Attempting to access image id: ' + id);
 
 	const img = await prisma.image.findUnique({
 		where: {
@@ -29,7 +26,7 @@ export const GET = async ({ params, locals }) => {
 
 	let file: BodyInit;
 
-	if (dev) {
+	if (!useS3) {
 		const imgPath = getImagePath(img.id, img.journeyId);
 		file = readFileSync(imgPath);
 	} else {

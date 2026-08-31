@@ -3,6 +3,7 @@
 	import JourneyMarker from '../map/JourneyMarker.svelte';
 	import Modal from './Modal.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
+	import { enhance } from '$app/forms';
 
 	let map = $state<maplibregl.Map>(),
 		zoom = $derived.by<number>(() => {

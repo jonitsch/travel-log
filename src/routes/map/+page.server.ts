@@ -3,8 +3,8 @@ import { prisma } from '$lib/server/prisma';
 import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import { error, redirect } from '@sveltejs/kit';
-import type { Image, Journey } from '$gen/prisma/client/client';
-import { getImagePath, useS3 } from '$lib/utils/server';
+import type { Journey } from '$gen/prisma/client/client';
+import { useS3 } from '$lib/utils/server';
 import z from 'zod';
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
@@ -17,10 +17,6 @@ const addImageSchema = z.object({
 const deleteImageSchema = z.object({
 	journeyId: z.string(),
 	imgIds: z.array(z.string())
-});
-const renameImageSchema = z.object({
-	imgId: z.string(),
-	newName: z.string()
 });
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -39,13 +35,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 	});
 	const addImageForm = await superValidate(zod4(addImageSchema));
 	const deleteImageForm = await superValidate(zod4(deleteImageSchema));
-	const renameImageForm = await superValidate(zod4(renameImageSchema));
 	return {
 		journeys: journeys,
 		user: user,
 		addImageForm: addImageForm,
-		deleteImageForm: deleteImageForm,
-		renameImageForm: renameImageForm
+		deleteImageForm: deleteImageForm
 	};
 };
 
@@ -62,7 +56,7 @@ export const actions = {
 			const color = `${data.get('color')}`;
 			const journeyId = `${name.toLowerCase().slice(0, 4)}-${crypto.randomUUID()}`;
 			const userId = user.id;
-			
+
 			console.log(`Attempting to create new Journey \`${journeyId}\`...`);
 
 			const res = await prisma.journey.create({
@@ -122,38 +116,6 @@ export const actions = {
 			};
 		} catch (err) {
 			return error(500, `Something went wrong! ${err}`);
-		}
-	},
-	renameImage: async ({ request, locals }) => {
-		const form = await superValidate(request, zod4(renameImageSchema));
-		if (!form.valid) return fail(400, { form });
-
-		try {
-			const user = locals.user;
-			if (!user) {
-				throw redirect(303, '/auth/login');
-			}
-
-			const { imgId, newName } = form.data;
-			console.log(`Attempting to rename Image: ${imgId}`);
-
-			const img = await prisma.image.findUnique({
-				where: { id: imgId, userId: user.id },
-				select: { id: true }
-			});
-
-			if (!img) return message(form, 'Image could not be found in Database!', { status: 404 });
-
-			await prisma.image.update({
-				where: { id: img.id },
-				data: { fileName: newName }
-			});
-
-			console.log(`Successfully renamed Image to: ${newName}`);
-			return { form, newName };
-		} catch (err) {
-			console.error(err);
-			return message(form, 'Something went wrong!', { status: 500 });
 		}
 	}
 } satisfies Actions;

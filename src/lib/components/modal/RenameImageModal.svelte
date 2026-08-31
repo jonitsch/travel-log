@@ -1,35 +1,17 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
 	import Modal from './Modal.svelte';
-	import { Button } from '../shadcn/button';
-	import SVGIcon from '../utility/SVGIcon.svelte';
-	import { superForm, type SuperValidated } from 'sveltekit-superforms';
-	import { switchToJourney } from '$lib/utils/client';
+	import { switchToJourney, toastFailure, toastSuccess } from '$lib/utils/client';
 	import type { Image } from '$gen/prisma/client/client';
 	import Input from '../shadcn/input/input.svelte';
 	import ModalBody from './ModalBody.svelte';
-
-	let {
-		renameImageForm
-	}: {
-		renameImageForm: SuperValidated<
-			{
-				imgId: string;
-				newName: string;
-			},
-			any,
-			{
-				imgId: string;
-				newName: string;
-			}
-		>;
-	} = $props();
+	import FormButton from '../form/FormButton.svelte';
 
 	let open = $state(false),
 		img = $state<Image>(),
-		newName = $state<string>();
-
-	const { form, errors, message, enhance } = $derived.by(() => superForm(renameImageForm));
+		newName = $state<string>(),
+		saving = $state(false),
+		errorMessage = $state<string>('');
 
 	export function openModal(inputImg: Image) {
 		reset();
@@ -39,45 +21,69 @@
 	}
 	function reset() {
 		img = undefined;
-		$form.imgId = '';
-		$form.newName = '';
-		$errors.imgId = [];
-		$errors.newName = [];
-		$message = undefined;
+		newName = undefined;
+		errorMessage = '';
+		saving = false;
+	}
+
+	async function renameImage() {
+		if (!img || !newName) return;
+		saving = true;
+		errorMessage = '';
+
+		try {
+			const fd = new FormData();
+			fd.append('imgId', img.id);
+			fd.append('newName', newName);
+
+			const res = await fetch(`/api/images?method=rename`, {
+				method: 'POST',
+				body: fd
+			});
+
+			const payload = await res.json().catch(() => null);
+			if (!res.ok || !payload?.ok) {
+				throw new Error(payload?.error || `Rename failed (${res.status})`);
+			}
+
+			global.selectedImageIds = [];
+			toastSuccess('Image renamed successfully!');
+			global.loadingJourney = true;
+			await switchToJourney(payload.journeyId);
+			open = false;
+		} catch (err) {
+			console.error(err);
+			errorMessage = err instanceof Error ? err.message : 'Something went wrong!';
+			toastFailure(errorMessage || 'Something went wrong!');
+		} finally {
+			saving = false;
+		}
 	}
 </script>
 
 <Modal bind:open onclose={reset}>
 	{#if img}
-		<ModalBody bind:open title="Rename Image" icon="rename" alignment ="col">
-			<form
-				id="renameImageForm"
-				action="?/renameImage"
-				method="POST"
-				class="flex h-fit flex-row items-center justify-center gap-2"
-				use:enhance={{
-					onResult: async ({ result }) => {
-						global.selectedImageIds = [];
-						if (result.type === 'success' && result.data?.journeyId) {
-							global.loadingJourney = true;
-							switchToJourney(result.data.journeyId);
-							open = false;
-						}
-					}
-				}}
-			>
+		<ModalBody bind:open title="Rename Image" icon="rename" alignment="col">
+			<div class="flex h-fit flex-row items-center justify-center gap-2">
 				<Input class="text-center" type="text" bind:value={newName} name="newName" />
-				<Button type="submit" class="bg-green-600" disabled={img.fileName === newName}
-					>Confirm</Button
-				>
-				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
-				{#if $errors.imgId}
-					<small class="text-red-600" role="alert">{$errors.imgId[0]}</small>
-				{/if}
-				<input type="hidden" value={img.id} name="imgId" />
-			</form>
-			{#if $message}
-				<small class="mt-1 flex w-full justify-center text-red-600">{$message}</small>
+				<FormButton
+					variant="confirm"
+					type="button"
+					onclick={renameImage}
+					disabled={img.fileName === newName || saving}
+					loading={saving}
+					label="Confirm"
+				/>
+				<FormButton
+					variant="cancel"
+					type="button"
+					onclick={() => (open = false)}
+					disabled={saving}
+					label="Cancel"
+				/>
+			</div>
+			{#if errorMessage}
+				<small class="mt-1 flex w-full justify-center text-red-600">{errorMessage}</small>
 			{/if}
 		</ModalBody>
 	{/if}

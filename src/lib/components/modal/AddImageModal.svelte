@@ -8,6 +8,7 @@
 	import { switchToJourney, toastFailure, toastSuccess } from '$lib/utils/client';
 	import { invalidateAll } from '$app/navigation';
 	import ModalBody from './ModalBody.svelte';
+	import FormButton from '../form/FormButton.svelte';
 	import { fade } from 'svelte/transition';
 
 	let {
@@ -66,20 +67,20 @@
 				fd.append('file', file);
 				fd.append('journeyId', journeyId);
 
-				const res = await fetch('/api/images/upload', {
+				const res = await fetch(`/api/images?method=upload`, {
 					method: 'POST',
 					body: fd
 				});
 
-				if (!res.ok) {
-					const errorText = await res.text();
-					throw new Error(errorText || `Delete failed (${res.status})`);
+				const payload = await res.json().catch(() => null);
+				if (!res.ok || !payload?.ok) {
+					throw new Error(payload?.error || `Upload failed (${res.status})`);
 				}
-				
+
 				toastSuccess('Image uploaded successfully!');
 
 				progress += 1;
-				return res.json();
+				return payload;
 			});
 
 			await Promise.all(uploads);
@@ -125,13 +126,14 @@
 					/>
 				</div>
 
-				<Button
+				<FormButton
+					variant="confirm"
 					type="button"
 					onclick={uploadImages}
-					class="bg-green-600"
-					disabled={images.length === 0}>Upload</Button
-				>
-				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
+					disabled={images.length === 0}
+					label="Upload"
+				/>
+				<FormButton variant="cancel" type="button" onclick={() => (open = false)} label="Cancel" />
 			{:else}
 				<div class="h-5 w-full overflow-hidden rounded bg-gray-700" transition:fade>
 					<div

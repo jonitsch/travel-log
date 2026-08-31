@@ -11,7 +11,7 @@
 
 	let { data }: PageProps = $props();
 
-	let { deleteImageForm, addImageForm, renameImageForm } = $derived(data);
+	let { deleteImageForm, addImageForm } = $derived(data);
 
 	let journeys = $derived<Journey[]>(data.journeys);
 
@@ -42,4 +42,4 @@
 
 <AddImageModal bind:this={addImageModal} {addImageForm} />
 <DeleteImageModal bind:this={deleteImageModal} {deleteImageForm} />
-<RenameImageModal bind:this={renameImageModal} {renameImageForm} />
+<RenameImageModal bind:this={renameImageModal} />
