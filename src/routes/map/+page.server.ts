@@ -53,7 +53,7 @@ export const actions = {
 			if (!user) throw redirect(303, '/auth/login');
 
 			const fd = await request.formData();
-			
+
 			const name = `${fd.get('name')}`;
 			const lng = parseFloat(`${fd.get('lng')}`);
 			const lat = parseFloat(`${fd.get('lat')}`);

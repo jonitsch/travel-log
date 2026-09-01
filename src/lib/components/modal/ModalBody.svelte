@@ -4,6 +4,7 @@
 
 	let {
 		children,
+		subHeader,
 		open = $bindable(),
 		showCloseButton = true,
 		title,
@@ -12,6 +13,7 @@
 		iconScale
 	}: {
 		children: Snippet;
+		subHeader?: Snippet;
 		open: boolean;
 		showCloseButton?: boolean;
 		title?: string;
@@ -34,15 +36,32 @@
 			<SVGIcon type="x" color="white" scale={0.8} />
 		</button>
 	{/if}
-	<div class="flex h-fit w-fit flex-col items-center justify-center gap-5">
-		<div class="flex flex-{alignment} items-center gap-1">
-			{#if alignment === 'row'}
-				{#if title}<span class="text-4xl">{title}</span>{/if}
-				{#if icon}<SVGIcon type={icon} color="white" scale={iconScale ?? 2.5} hoverScale={false} />{/if}
-			{/if}
-			{#if alignment === 'col'}
-				{#if icon}<SVGIcon type={icon} color="white" scale={iconScale ?? 3.5} hoverScale={false} />{/if}
-				{#if title}<span class="text-4xl">{title}</span>{/if}
+	<div class="flex h-fit w-fit flex-col gap-5">
+		<div class="flex flex-col gap-3 items-center">
+			<div class="flex flex-{alignment} items-center gap-1">
+				{#if alignment === 'row'}
+					{#if title}<span class="text-4xl">{title}</span>{/if}
+					{#if icon}<SVGIcon
+							type={icon}
+							color="white"
+							scale={iconScale ?? 2.5}
+							hoverScale={false}
+						/>{/if}
+				{/if}
+				{#if alignment === 'col'}
+					{#if icon}<SVGIcon
+							type={icon}
+							color="white"
+							scale={iconScale ?? 3.5}
+							hoverScale={false}
+						/>{/if}
+					{#if title}<span class="text-4xl">{title}</span>{/if}
+				{/if}
+			</div>
+			{#if subHeader}
+				<p class="w-full text-center text-sm text-slate-300">
+					{@render subHeader()}
+				</p>
 			{/if}
 		</div>
 		{@render children?.()}

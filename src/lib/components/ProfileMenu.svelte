@@ -3,12 +3,14 @@
 	import { global } from '$lib/state.svelte';
 	import { authClient } from '$lib/auth-client';
 	import { goto, invalidateAll } from '$app/navigation';
+	import WhatsNewModal from '$lib/components/modal/WhatsNewModal.svelte';
 
 	import * as DropdownMenu from '$lib/components/shadcn/dropdown-menu/index';
 
 	let { name }: { name: string } = $props();
 
 	let open = $state(false);
+	let whatsNewModal = $state<WhatsNewModal>();
 
 	async function handleSignOut() {
 		try {
@@ -40,6 +42,10 @@
 	</DropdownMenu.Trigger>
 	<DropdownMenu.Content class="bg-gray-900 w-fit mt-0.5" align="end">
 		<DropdownMenu.Group class="*:text-[16px]">
+			<DropdownMenu.Item onclick={() => whatsNewModal?.openModal()}>
+				<SVGIcon type="lightBulb" color="white" hoverScale={false} />
+				What's New
+			</DropdownMenu.Item>
 			<DropdownMenu.Item onclick={handleSignOut}>
 				<SVGIcon type="signOut" color="white" hoverScale={false} />
 				Sign Out
@@ -47,3 +53,5 @@
 		</DropdownMenu.Group>
 	</DropdownMenu.Content>
 </DropdownMenu.Root>
+
+<WhatsNewModal bind:this={whatsNewModal} />
