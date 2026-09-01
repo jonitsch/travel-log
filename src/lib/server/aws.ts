@@ -8,12 +8,12 @@ import {
 	S3ServiceException
 } from '@aws-sdk/client-s3';
 import { env } from '$env/dynamic/private';
+import { useS3 } from '$lib/utils/server';
 
-const isProduction = process.env.NODE_ENV === 'production';
 
 let client: S3Client | undefined;
 
-if (isProduction) {
+if (useS3) {
     client = new S3Client({
         region: env.AWS_REGION,
         credentials: {
@@ -42,7 +42,7 @@ class S3 {
 
         try {
             const response = await client!.send(command);
-            console.log(response);
+            return response
         } catch (caught) {
             if (caught instanceof S3ServiceException && caught.name === 'EntityTooLarge') {
                 console.error(
@@ -69,8 +69,7 @@ class S3 {
         });
 
         try {
-            const response = await client!.send(command);
-            console.log(response);
+            await client!.send(command);
         } catch (caught) {
             if (caught instanceof S3ServiceException) {
                 console.error(
@@ -126,8 +125,6 @@ class S3 {
 
         try {
             const response = await client!.send(command);
-            console.log(response);
-
             return response;
         } catch (caught) {
             if (caught instanceof S3ServiceException) {
@@ -149,4 +146,4 @@ const stub = {
     get: async () => Promise.reject(disabledError)
 };
 
-export const s3 = isProduction ? new S3() : (stub as unknown as S3);
+export const s3 = useS3 ? new S3() : (stub as unknown as S3);

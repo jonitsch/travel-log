@@ -3,12 +3,14 @@
 	import Modal from './Modal.svelte';
 	import { Button } from '../shadcn/button';
 	import { Input } from '../shadcn/input';
-	import SVGIcon from '../utility/SVGIcon.svelte';
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
-	import { switchToJourney } from '$lib/utils/client';
+	import { switchToJourney, toastFailure, toastSuccess } from '$lib/utils/client';
 	import { invalidateAll } from '$app/navigation';
 	import ModalBody from './ModalBody.svelte';
+	import FormButton from '../form/FormButton.svelte';
+	import { fade } from 'svelte/transition';
+	import { ClientApiError, requestApi } from '$lib/api/client';
 
 	let {
 		addImageForm
@@ -26,12 +28,74 @@
 		>;
 	} = $props();
 
-	let open = $state(false),
-		images = $state<string[]>([]);
-
-	const { form, errors, message, enhance } = $derived.by(() => superForm(addImageForm));
+	const { form } = $derived.by(() => superForm(addImageForm));
 
 	const files = $derived.by(() => filesProxy(form, 'files'));
+
+	let open = $state(false),
+		images = $state<string[]>([]),
+		uploading = $state(false),
+		total = $derived($files.length),
+		progress = $state(0);
+
+	export function openModal() {
+		reset();
+		open = true;
+	}
+	function reset() {
+		images = [];
+		$form.files = [];
+		uploading = false;
+		total = 0;
+		progress = 0;
+	}
+
+	async function uploadImages() {
+		if (!$files?.length) return;
+
+		open = true;
+		global.loadingJourney = true;
+
+		const journeyId = global.journeyId;
+		if (!journeyId) throw Error('Missing journey id!');
+
+		try {
+			uploading = true;
+
+			const uploads = $form.files.map(async (file) => {
+				const fd = new FormData();
+
+				fd.append('file', file);
+				fd.append('journeyId', journeyId);
+
+				const payload = await requestApi<{ id: string; key: string; journeyId: string }>(
+					`/api/images?method=upload`,
+					{
+						method: 'POST',
+						body: fd
+					},
+					{ fallbackError: 'Image upload failed.' }
+				);
+
+				toastSuccess('Image uploaded successfully!');
+
+				progress += 1;
+				return payload;
+			});
+
+			await Promise.all(uploads);
+		} catch (err) {
+			const message = err instanceof ClientApiError ? err.message : 'Something went wrong!';
+			toastFailure(message);
+			console.error('Upload failed:', err);
+		} finally {
+			await invalidateAll();
+			global.journeyData = await switchToJourney(journeyId);
+			uploading = false;
+			open = false;
+			reset();
+		}
+	}
 
 	$effect(() => {
 		if (!$files?.length) {
@@ -46,94 +110,72 @@
 			urls.forEach(URL.revokeObjectURL);
 		};
 	});
-
-	export function openModal() {
-		reset();
-		open = true;
-	}
-	function reset() {
-		images = [];
-		$form.files = [];
-		$errors.journeyId = [];
-		$errors.files = {};
-	}
 </script>
 
 <Modal bind:open onclose={reset}>
-	<ModalBody bind:open>
-		<form
-			id="addImageForm"
-			action="?/addImage"
-			method="POST"
-			enctype="multipart/form-data"
-			class="flex h-fit flex-col items-center justify-center gap-5 max-w-[80dvw]"
-			use:enhance={{
-				onResult: async ({ result }) => {
-					if (result.type === 'success' && result.data?.journeyId) {
-						await invalidateAll();
-						reset();
-						global.loadingJourney = true;
-						const data = await switchToJourney(result.data.journeyId);
-						global.journeyData = data;
-						open = false;
-					}
-				}
-			}}
-		>
-			<div class="flex flex-row items-center gap-1">
-				<span class="text-4xl">Add Images</span>
-				<SVGIcon type="addImage" color="white" scale={2.5} hoverScale={false} />
-			</div>
-			<div class="flex w-full flex-row gap-2">
+	<ModalBody bind:open title="Add Images" icon="addImage">
+		<div class="flex w-full flex-row items-center gap-2">
+			{#if !uploading}
 				<div class="flex w-auto flex-1 flex-row gap-1">
 					<Input
 						name="files"
 						type="file"
 						class="min-w-25 cursor-pointer hover:ring-2 hover:ring-white"
 						accept="image/*"
-						aria-invalid={$errors.files ? 'true' : undefined}
 						multiple
 						oninput={(e) => ($form.files = Array.from(e.currentTarget.files ?? []))}
 					/>
-					{#each $errors.files?._errors as error}
-						<small class="text-red-500">{error}</small>
-					{/each}
 				</div>
 
-				<Button type="submit" class="bg-green-600" disabled={images.length === 0}>Upload</Button>
-				<Button type="button" onclick={() => (open = false)}>Cancel</Button>
-			</div>
+				<FormButton
+					variant="confirm"
+					type="button"
+					onclick={uploadImages}
+					disabled={images.length === 0}
+					label="Upload"
+				/>
+				<FormButton variant="cancel" type="button" onclick={() => (open = false)} label="Cancel" />
+			{:else}
+				<div class="h-5 w-full overflow-hidden rounded bg-gray-700" transition:fade>
+					<div
+						class="h-full bg-green-500 transition-all duration-300"
+						style="width: {total ? (progress / total) * 100 : 0}%"
+					></div>
+				</div>
 
-			<div class="flex flex-row min-w-full min-h-full items-center justify-center gap-2 *:flex-1">
-				{#each images as src, i}
-					{#if i < 3}
-						<img
-							class="preview rounded-md object-cover"
-							{src}
-							alt="File Upload Preview Image #{i + 1}"
-						/>
-					{/if}
-				{:else}
-					{#each { length: 4 }}
-						<div class="preview placeholder"></div>
-					{/each}
-				{/each}
-				{#if images.length > 3}
-					<div class="preview placeholder text-2xl">+{images.length - 3}</div>
-				{/if}
-			</div>
-
-			<input type="hidden" value={global.journeyId} name="journeyId" />
-			{#if $message}
-				<small class="text-red-600">{$message}</small>
+				<div class="w-fit text-sm whitespace-nowrap text-white">
+					{progress} / {total}
+				</div>
 			{/if}
-		</form>
+		</div>
+
+		<div class="flex min-h-full min-w-full flex-row items-center justify-center gap-2 *:flex-1">
+			{#each images as src, i}
+				{#if i < 3}
+					<img
+						class="preview max-w-[15dvw] rounded-md object-cover"
+						{src}
+						alt="File Upload Preview Image #{i + 1}"
+					/>
+				{/if}
+			{:else}
+				{#each { length: 4 }}
+					<div class="preview placeholder"></div>
+				{/each}
+			{/each}
+			{#if images.length > 3}
+				<div class="preview placeholder sm:text-2xl">+{images.length - 3}</div>
+			{/if}
+		</div>
+
+		<input type="hidden" value={global.journeyId} name="journeyId" />
 	</ModalBody>
 </Modal>
 
 <style>
 	.preview {
-		width: 15dvw;
+		min-width: 15dvw;
+		max-width: 15dvw;
 		height: 15dvw;
 	}
 	.placeholder {

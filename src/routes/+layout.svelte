@@ -6,11 +6,10 @@
 	import { switchToJourney, switchToOverview } from '$lib/utils/client';
 	import type { PageData } from './$types';
 	import { type Snippet } from 'svelte';
-	import { authClient } from '$lib/auth-client';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import type { User } from 'better-auth';
-	import { fade } from 'svelte/transition';
 	import ProfileMenu from '$lib/components/ProfileMenu.svelte';
+	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
 	let displayMode: string | undefined = $state('');
@@ -25,15 +24,19 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
+<div class="toast-container">
+	<SvelteToast />
+</div>
+
 <div id="main" class="inset-0 flex h-dvh w-dvw flex-col gap-3 overflow-auto p-3">
 	<div
 		id="header"
-		class="flex h-fit w-full items-center justify-between gap-2 rounded-md bg-transparent whitespace-nowrap"
+		class="flex w-full items-center justify-between gap-2 rounded-md whitespace-nowrap"
 	>
 		<!-- Left: Title/Logo -->
-		<div class="flex min-w-0 flex-1 flex-row items-center justify-start gap-2">
+		<div class="flex min-w-0 flex-row items-center justify-start gap-2">
 			{#if true}
-				<div id="mainHeader" class="items-center bg-transparent">
+				<div id="mainHeader" class="items-center">
 					<button
 						id="headerText"
 						class="oxygen-bold page-header-button bg-gray-900"
@@ -43,7 +46,7 @@
 					</button>
 				</div>
 			{/if}
-			{#if global.viewMode === 'journey'}
+			{#if global.viewMode === 'journey' && global.journeyData}
 				{@const journey = global.journeyData}
 				<div
 					id="journeyHeader"
@@ -51,26 +54,19 @@
 				>
 					<button
 						id="headerText"
-						class="oxygen-bold page-header-button bg-{journey?.color}/70 whitespace-nowrap {global.loadingJourney
+						class="oxygen-bold page-header-button bg-{journey.color}/70 whitespace-nowrap {global.loadingJourney
 							? 'skeleton text-transparent'
 							: 'text-white'}"
-						onclick={() => switchToJourney(journey?.journeyId ?? '')}
+						onclick={() => switchToJourney(journey.journeyId)}
 					>
-						{journey?.name ?? 'Placeholder'}
+						{journey.name}
 					</button>
 				</div>
 			{/if}
 		</div>
 
-		<!-- Center: Welcome -->
-		{#if user && global.viewMode === 'overview'}
-			<div class="flex flex-1 items-center justify-center" transition:fade={{ duration: 150 }}>
-				<div class="text-center">Welcome, {user.name}!</div>
-			</div>
-		{/if}
-
 		<!-- Right: Auth buttons -->
-		<div class="flex min-w-0 flex-1 flex-row items-center justify-end gap-2">
+		<div class="flex min-w-0 flex-row items-center justify-end gap-2">
 			{#if user}
 				<ProfileMenu name={user.name} />
 			{:else}
@@ -91,3 +87,15 @@
 		</text>
 	</div>
 </div>
+
+<style>
+	.toast-container {
+		--toastWidth: fit-content;
+		--toastMinHeight: 2.5rem;
+		--toastMsgPadding: 0.55rem 0.75rem;
+		--toastBarBackground: rgba(255, 255, 255, 0.75);
+		--toastBorderRadius: 10px;
+		--toastContainerTop: 3.5rem;
+		--toastContainerRight: 12px;
+	}
+</style>

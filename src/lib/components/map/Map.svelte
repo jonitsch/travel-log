@@ -31,9 +31,11 @@
 
 	let attributionControl = $state<maplibregl.AttributionControl>(
 		new maplibregl.AttributionControl({
-			compact: true
+			compact: true,
+			
 		})
 	);
+
 	function setAttributionControl(viewMode: ViewMode) {
 		if (viewMode === 'overview') {
 			attributionControl._container.classList.add('maplibregl-compact-show');
@@ -47,6 +49,7 @@
 	onMount(async () => {
 		if (!map) throw Error('Map failed to load!');
 		global.map = map;
+		
 		map.addControl(attributionControl);
 		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
 		setAttributionControl(global.viewMode);
@@ -69,12 +72,11 @@
 		});
 	});
 
-	$effect(() => {
-		global.center = center;
+/* 	$effect(() => {
 		// close or open attributionControl whenever global.viewMode changes
 		let currentMode = global.viewMode;
 		setAttributionControl(currentMode);
-	});
+	}); */
 </script>
 
 <div class="map-wrapper relative">

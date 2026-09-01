@@ -6,31 +6,32 @@
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import Book from '$lib/components/book/Book.svelte';
 	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
+	import JourneySettingsModal from '$lib/components/modal/JourneySettingsModal.svelte';
 	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
-	import BookHeader from '$lib/components/book/BookHeader.svelte';
+	import JourneyHeader from '$lib/components/book/JourneyHeader.svelte';
 
 	let { data }: PageProps = $props();
 
-	let { deleteImageForm, addImageForm, renameImageForm } = $derived(data);
+	let { deleteImageForm, addImageForm } = $derived(data);
 
 	let journeys = $derived<Journey[]>(data.journeys);
-	let mapContainer = $state<HTMLDivElement>();
 
 	let addImageModal = $state<AddImageModal>(),
 		deleteImageModal = $state<DeleteImageModal>(),
-		renameImageModal = $state<RenameImageModal>();
+		renameImageModal = $state<RenameImageModal>(),
+		journeySettingsModal = $state<JourneySettingsModal>();
 </script>
 
 <div
 	class="grid size-full {global.viewMode === 'journey'
 		? 'grid-cols-[35%_1fr] grid-rows-[auto_1fr]'
-		: ''} gap-4 overflow-hidden"
+		: ''} gap-3 overflow-hidden"
 >
 	{#if global.viewMode === 'journey'}
-		<BookHeader {addImageModal} {renameImageModal} {deleteImageModal} />
+		<JourneyHeader {addImageModal} {renameImageModal} {deleteImageModal} {journeySettingsModal} />
 	{/if}
 	<div class="items-top flex size-full flex-col gap-4">
-		<div id="mapContainer" class="size-full" bind:this={mapContainer}>
+		<div id="mapContainer" class="size-full">
 			<Map bind:journeys />
 		</div>
 	</div>
@@ -43,4 +44,5 @@
 
 <AddImageModal bind:this={addImageModal} {addImageForm} />
 <DeleteImageModal bind:this={deleteImageModal} {deleteImageForm} />
-<RenameImageModal bind:this={renameImageModal} {renameImageForm} />
+<RenameImageModal bind:this={renameImageModal} />
+<JourneySettingsModal bind:this={journeySettingsModal} />

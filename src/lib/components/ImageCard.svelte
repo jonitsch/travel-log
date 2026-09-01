@@ -28,7 +28,31 @@
 		),
 		imgShownOnMap = $derived<boolean>(global.imgShownOnMap === img.id);
 
-	let hovered = $state<boolean>(false);
+	let hovered = $state(false);
+
+	$effect(() => {
+		const handleKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Control') {
+				global.imgSelectMode = true;
+			}
+		};
+
+		const handleKeyUp = (event: KeyboardEvent) => {
+			if (event.key === 'Control') {
+				if (global.selectedImageIds.length < 2) {
+					global.imgSelectMode = false;
+				}
+			}
+		};
+
+		window.addEventListener('keydown', handleKeyDown);
+		window.addEventListener('keyup', handleKeyUp);
+
+		return () => {
+			window.removeEventListener('keydown', handleKeyDown);
+			window.removeEventListener('keyup', handleKeyUp);
+		};
+	});
 </script>
 
 <div

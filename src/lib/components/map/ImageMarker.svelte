@@ -39,7 +39,7 @@
 			ondblclick={() => handleDoubleClick()}
 		>
 			{#await getImgProxyURL(img.id, img.width * 0.05, img.height * 0.05)}
-				<div class="h-full w-full bg-{color}"></div>
+				<div class="h-full w-full" style={`background-color: ${color};`}></div>
 			{:then response}
 				<img
 					id="mappic-{img.id}"
@@ -47,7 +47,7 @@
 					alt={img.fileName}
 					class={[
 						'size-full cursor-pointer hover:z-50 hover:border-2 hover:border-black object-cover',
-						{ 'ring-4 ring-(--img-highlight-color)': imgSelected }
+						{ 'ring-4 ring-highlight': imgSelected }
 					]}
 					onerror={() => thisMarker?.remove()}
 				/>
@@ -55,9 +55,3 @@
 		</Marker>
 	{/if}
 {/if}
-
-<style>
-	.highlighted {
-		border: solid 3px var(--img-highlight-color);
-	}
-</style>

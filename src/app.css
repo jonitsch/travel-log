@@ -35,6 +35,10 @@
   @apply hover:translate-y-0.5 transition-all duration-100 ease-in-out;
 }
 
+@theme {
+  --color-highlight: #2DD4BE;
+}
+
 /* SCROLLBAR */
 /* Firefox */
 * {
@@ -322,3 +326,13 @@ button {
 		@apply bg-background text-foreground;
 	}
 }
+
+// Toast
+
+:global(.log.info) {
+    --toastBackground: green;
+}
+:global(.log.warn) {
+	--toastBackground: red;
+}
+
