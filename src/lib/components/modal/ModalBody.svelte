@@ -8,7 +8,8 @@
 		showCloseButton = true,
 		title,
 		icon,
-		alignment = 'row'
+		alignment = 'row',
+		iconScale
 	}: {
 		children: Snippet;
 		open: boolean;
@@ -16,6 +17,7 @@
 		title?: string;
 		icon?: iconType;
 		alignment?: 'row' | 'col';
+		iconScale?: number;
 	} = $props();
 </script>
 
@@ -36,10 +38,10 @@
 		<div class="flex flex-{alignment} items-center gap-1">
 			{#if alignment === 'row'}
 				{#if title}<span class="text-4xl">{title}</span>{/if}
-				{#if icon}<SVGIcon type={icon} color="white" scale={2.5} hoverScale={false} />{/if}
+				{#if icon}<SVGIcon type={icon} color="white" scale={iconScale ?? 2.5} hoverScale={false} />{/if}
 			{/if}
 			{#if alignment === 'col'}
-				{#if icon}<SVGIcon type={icon} color="white" scale={3.5} hoverScale={false} />{/if}
+				{#if icon}<SVGIcon type={icon} color="white" scale={iconScale ?? 3.5} hoverScale={false} />{/if}
 				{#if title}<span class="text-4xl">{title}</span>{/if}
 			{/if}
 		</div>

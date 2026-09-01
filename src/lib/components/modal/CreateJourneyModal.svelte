@@ -3,6 +3,7 @@
 	import JourneyMarker from '../map/JourneyMarker.svelte';
 	import Modal from './Modal.svelte';
 	import { innerWidth } from 'svelte/reactivity/window';
+	import JourneyColorGrid from '../utility/JourneyColorGrid.svelte';
 
 	let map = $state<maplibregl.Map>(),
 		zoom = $derived.by<number>(() => {
@@ -35,6 +36,7 @@
 		topBorderColor = $derived(
 			color ? `border-t-${color} opacity-30` : 'border-t-slate-900 opacity-80'
 		);
+		
 	function setPreviewColor() {
 		if (selectedColorElement && colorInput) {
 			const currentColor = window.getComputedStyle(selectedColorElement).backgroundColor;
@@ -146,22 +148,7 @@
 						</div>
 						{@render previewTip()}
 					</div>
-					<div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
-						{#each twColors as twColor}
-							{#each { length: 5 } as _, i}
-								{@const currentColor = `${twColor}-${900 - i * 100}`}
-								<button
-									id={currentColor}
-									class="bg-{currentColor} size-12 rounded-full transition duration-100 ease-in-out hover:scale-[120%]"
-									aria-label="Select color {currentColor}"
-									class:selected={currentColor === color}
-									onclick={() => (color = currentColor)}
-									type="button"
-									title={currentColor}
-								></button>
-							{/each}
-						{/each}
-					</div>
+					<JourneyColorGrid bind:color />
 				{:else if currentStep === 'Coordinates'}
 					<!-- Submit -->
 					<div class="w-[90dvw] sm:w-[75dvw] lg:w-[56dvw]">
@@ -234,11 +221,6 @@
 		translate: none;
 		cursor: auto;
 	}
-	.selected {
-		box-shadow: inset 0px 0px 0px 4px #0000009e;
-		transform: scale(1.4);
-	}
-
 	input:focus {
 		outline: none !important;
 		box-shadow: none !important; /* emerald focus ring */

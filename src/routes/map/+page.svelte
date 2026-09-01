@@ -6,6 +6,7 @@
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import Book from '$lib/components/book/Book.svelte';
 	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
+	import JourneySettingsModal from '$lib/components/modal/JourneySettingsModal.svelte';
 	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
 	import JourneyHeader from '$lib/components/book/JourneyHeader.svelte';
 
@@ -17,7 +18,8 @@
 
 	let addImageModal = $state<AddImageModal>(),
 		deleteImageModal = $state<DeleteImageModal>(),
-		renameImageModal = $state<RenameImageModal>();
+		renameImageModal = $state<RenameImageModal>(),
+		journeySettingsModal = $state<JourneySettingsModal>();
 </script>
 
 <div
@@ -26,7 +28,7 @@
 		: ''} gap-3 overflow-hidden"
 >
 	{#if global.viewMode === 'journey'}
-		<JourneyHeader {addImageModal} {renameImageModal} {deleteImageModal} />
+		<JourneyHeader {addImageModal} {renameImageModal} {deleteImageModal} {journeySettingsModal} />
 	{/if}
 	<div class="items-top flex size-full flex-col gap-4">
 		<div id="mapContainer" class="size-full">
@@ -43,3 +45,4 @@
 <AddImageModal bind:this={addImageModal} {addImageForm} />
 <DeleteImageModal bind:this={deleteImageModal} {deleteImageForm} />
 <RenameImageModal bind:this={renameImageModal} />
+<JourneySettingsModal bind:this={journeySettingsModal} />

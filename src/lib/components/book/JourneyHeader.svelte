@@ -1,21 +1,23 @@
 <script lang="ts">
 	import { global, type JourneyData } from '$lib/state.svelte';
 	import { imgHighlightColor, timeRange } from '$lib/utils/client';
-	import SVGIcon, { type iconType } from '$lib/components/utility/SVGIcon.svelte';
 	import AddImageModal from '$lib/components/modal/AddImageModal.svelte';
 	import DeleteImageModal from '$lib/components/modal/DeleteImageModal.svelte';
 	import RenameImageModal from '$lib/components/modal/RenameImageModal.svelte';
+	import JourneySettingsModal from '$lib/components/modal/JourneySettingsModal.svelte';
 	import Header from './Header.svelte';
 	import JourneyHeaderButton from './JourneyHeaderButton.svelte';
 
 	let {
 		addImageModal,
 		deleteImageModal,
-		renameImageModal
+		renameImageModal,
+		journeySettingsModal
 	}: {
 		addImageModal: AddImageModal | undefined;
 		deleteImageModal: DeleteImageModal | undefined;
 		renameImageModal: RenameImageModal | undefined;
+		journeySettingsModal: JourneySettingsModal | undefined;
 	} = $props();
 
 	let journey = $derived<JourneyData>(global.journeyData);
@@ -58,15 +60,17 @@
 		{#snippet buttons()}
 			<JourneyHeaderButton
 				type="calendar"
-				text={timeRange(journey) ?? 'Set Time Range'}
+				text={timeRange(journey) ?? 'No dated images yet!'}
 				scale={0.75}
 				collapseOnMobile={false}
 			/>
-			<JourneyHeaderButton type="settings" text="Settings" scale={0.75} iconAnchor="right" />
-			<form action="?/deleteJourney" method="POST">
-				<input type="hidden" name="journeyId" value={journey.journeyId} />
-				<button type="submit">test delete</button>
-			</form>
+			<JourneyHeaderButton
+				type="settings"
+				text="Settings"
+				scale={0.75}
+				iconAnchor="right"
+				onclick={() => journeySettingsModal?.openModal()}
+			/>
 		{/snippet}
 	</Header>
 	<!------------------- BOOK HEADER --------------------->

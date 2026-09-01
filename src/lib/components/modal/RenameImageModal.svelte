@@ -63,7 +63,7 @@
 <Modal bind:open onclose={reset}>
 	{#if img}
 		<ModalBody bind:open title="Rename Image" icon="rename" alignment="col">
-			<div class="flex h-fit flex-row items-center justify-center gap-2">
+			<div class="flex h-fit items-center justify-center gap-2 w-[min(26rem,80vw)]">
 				<Input class="text-center" type="text" bind:value={newName} name="newName" />
 				<FormButton
 					variant="confirm"
@@ -81,9 +81,6 @@
 					label="Cancel"
 				/>
 			</div>
-			{#if errorMessage}
-				<small class="mt-1 flex w-full justify-center text-red-600">{errorMessage}</small>
-			{/if}
 		</ModalBody>
 	{/if}
 </Modal>

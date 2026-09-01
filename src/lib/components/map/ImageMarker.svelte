@@ -39,7 +39,7 @@
 			ondblclick={() => handleDoubleClick()}
 		>
 			{#await getImgProxyURL(img.id, img.width * 0.05, img.height * 0.05)}
-				<div class="h-full w-full bg-{color}"></div>
+				<div class="h-full w-full" style={`background-color: ${color};`}></div>
 			{:then response}
 				<img
 					id="mappic-{img.id}"

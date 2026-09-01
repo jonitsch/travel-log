@@ -2,7 +2,7 @@
 	import { Button } from '$lib/components/shadcn/button';
 	import SVGIcon from '$lib/components/utility/SVGIcon.svelte';
 
-	type FormButtonVariant = 'confirm' | 'cancel';
+	type FormButtonVariant = 'confirm' | 'cancel' | 'delete';
 
 	type Props = {
 		variant: FormButtonVariant;
@@ -26,6 +26,7 @@
 
 	const variantClass = {
 		confirm: 'bg-green-600 hover:bg-green-500',
+		delete: 'bg-red-700 hover:bg-red-600 text-white',
 		cancel: ''
 	};
 </script>
@@ -34,6 +35,6 @@
 	{#if loading}
 		<SVGIcon type="spinner" fill="none" />
 	{:else}
-		{label ?? (variant === 'confirm' ? 'Confirm' : 'Cancel')}
+		{label ?? (variant === 'confirm' ? 'Confirm' : variant === 'cancel' ? 'Cancel' : 'Delete')}
 	{/if}
 </Button>
