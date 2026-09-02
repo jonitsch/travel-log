@@ -64,7 +64,10 @@
 				<div>
 					<div class="flex items-center">
 						<Label for="password">Password</Label>
-						<a href="##" class="ms-auto inline-block text-sm underline-offset-4 hover:underline">
+						<a
+							href="/auth/forgot-password"
+							class="ms-auto inline-block text-sm underline-offset-4 hover:underline"
+						>
 							Forgot your password?
 						</a>
 					</div>

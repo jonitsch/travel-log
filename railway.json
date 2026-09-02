@@ -4,6 +4,6 @@
         "builder": "RAILPACK"
     },
     "deploy": {
-        "startCommand": "node build index.js && npx prisma generate"
+        "startCommand": "npx prisma migrate deploy && node build"
     }
 }
