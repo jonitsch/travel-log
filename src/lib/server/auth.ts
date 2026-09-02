@@ -3,6 +3,7 @@ import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { prisma } from './prisma';
 import type { User } from '$gen/prisma/client/client';
 import { env } from '$env/dynamic/private';
+import { sendPasswordResetEmail } from './email';
 // If your Prisma file is located elsewhere, you can change the path
 
 export const auth = betterAuth({
@@ -12,7 +13,12 @@ export const auth = betterAuth({
 		minPasswordLength: 8,
 		maxPasswordLength: 128,
 		autoSignIn: false,
-		revokeSessionsOnPasswordReset: true
+		revokeSessionsOnPasswordReset: true,
+		sendResetPassword: async ({ user, url }) => {
+			void sendPasswordResetEmail(user.email, url).catch((error) => {
+				console.error('Failed to send password reset email:', error);
+			});
+		}
 	},
 	database: prismaAdapter(prisma, {
 		provider: 'mysql'

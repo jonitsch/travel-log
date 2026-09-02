@@ -30,7 +30,10 @@
 | `IMGPROXY_SALT` | Your ImgProxy Salt | `crypto.randomBytes(16).toString('hex')` |
 | **Authentication** | | |
 | `BETTER_AUTH_URL` | Your Servers Base URL | `http://localhost:5173` |
-| `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32`
+| `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32` |
+| `MAILTRAP_API_KEY` | Mailtrap API token | `your-mailtrap-api-token` |
+| `MAILTRAP_FROM_EMAIL` | Verified Mailtrap sender email address | `no-reply@example.com` |
+| `MAILTRAP_FROM_NAME` | Display name for authentication emails | `Travel Log` |
 
 Optional:  
 | Variable | Description
@@ -70,6 +73,10 @@ const journey = await requestApi<JourneyWithRelations>(`/api/journeys?journeyId=
 
 This keeps fetch logic out of individual Svelte components and ensures the UI handles responses/errors consistently across journeys, uploads, deletes, and renames.
 
+## Password reset
+
+Password reset uses Better Auth's official email/password flow. Configure the Mailtrap API variables above, then users can request a reset from `/auth/forgot-password`. Better Auth sends a tokenized link to `/auth/reset-password`, where the user chooses a new password. Requests show a generic success message so the UI does not reveal whether an email belongs to an account.
+
 ## Production
 
 <img width="1280" height="720" alt="Travel-Log Production Infrastructure" src="https://github.com/user-attachments/assets/038fedc0-4435-46f7-a159-6eaeb7ec1d79" />
@@ -98,6 +105,9 @@ This keeps fetch logic out of individual Svelte components and ensures the UI ha
 | **Authentication** | | |
 | `BETTER_AUTH_URL` | Application base URL | `https://travel-log.example.com`
 | `BETTER_AUTH_SECRET` | BetterAuth secret | `openssl rand -base64 32`
+| `MAILTRAP_API_KEY` | Mailtrap API token | `your-mailtrap-api-token` |
+| `MAILTRAP_FROM_EMAIL` | Verified Mailtrap sender email address | `no-reply@example.com` |
+| `MAILTRAP_FROM_NAME` | Display name for authentication emails | `Travel Log` |
 
 ### Image Storage & Serving
 
