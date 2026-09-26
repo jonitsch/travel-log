@@ -103,7 +103,7 @@
 			>
 				<SVGIcon type="leftArrow" color="white" hoverScale={false} />
 			</button>
-			<div class="flex h-dvh flex-col items-center justify-between py-5">
+			<div class="flex h-dvh flex-col items-center justify-between py-5 text-sm">
 				{#if img}
 					{@const { width, height, id, fileName, createdOn } = img}
 					{#if imgRendered}
@@ -120,7 +120,7 @@
 								id="fullpic-{id}"
 								src={response}
 								alt={fileName}
-								class="animate-modal-in block max-h-[75dvh] flex-1"
+								class="animate-modal-in block max-h-[85dvh] flex-1"
 								class:opacity-0={!imgRendered}
 								class:opacity-100={imgRendered}
 								loading="eager"
@@ -139,7 +139,7 @@
 						<div
 							bind:this={dateDisplay}
 							id="dateDisplay"
-							class="animate-modal-in min-w-fit text-xl text-white"
+							class="animate-modal-in min-w-fit text-white"
 						>
 							{formattedDate(createdOn, 'dd/mm/yyyy hh:mm:ss')}
 						</div>
