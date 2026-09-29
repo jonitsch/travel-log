@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ locals }) => {
 			userId: user.id
 		}
 	});
-	
+
 	const addImageForm = await superValidate(zod4(addImageSchema));
 	const deleteImageForm = await superValidate(zod4(deleteImageSchema));
 

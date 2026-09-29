@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.css';
 	import favicon from '$lib/assets/favicon.svg';
-	import { browser } from '$app/environment';
 	import { global } from '$lib/state.svelte';
 	import { switchToJourney, switchToOverview } from '$lib/utils/client';
 	import type { PageData } from './$types';
@@ -12,12 +11,7 @@
 	import { SvelteToast } from '@zerodevx/svelte-toast';
 
 	let { children, data }: { children: Snippet; data: PageData } = $props();
-	let displayMode: string | undefined = $state('');
 	let user = $derived<User | null>(data.user);
-
-	if (browser) {
-		displayMode = document.getElementById('html')?.className;
-	}
 </script>
 
 <svelte:head>

@@ -110,7 +110,7 @@ export async function requestApi<T>(
 			throw error;
 		}
 
-		const message = error instanceof Error ? error.message : fallbackError ?? 'Request failed';
+		const message = error instanceof Error ? error.message : (fallbackError ?? 'Request failed');
 		throw new ClientApiError(message, 0, error);
 	}
 }

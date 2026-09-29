@@ -1,12 +1,13 @@
 <script lang="ts">
-    let { color = $bindable() }: { color: string | undefined } = $props();
+	let { color = $bindable() }: { color: string | undefined } = $props();
 
 	const twColors = ['red', 'yellow', 'emerald', 'blue', 'purple', 'pink'];
 </script>
 
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <div class="grid grid-cols-[repeat(5,1fr)] place-items-center gap-2">
-	{#each twColors as twColor}
-		{#each { length: 5 } as _, i}
+	{#each twColors as twColor, i (i)}
+		{#each { length: 5 } as _, i (i)}
 			{@const currentColor = `${twColor}-${900 - i * 100}`}
 			<button
 				id={currentColor}

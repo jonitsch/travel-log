@@ -75,8 +75,10 @@
 						break;
 					case 'ArrowDown':
 						e.preventDefault();
+						break;
 					case 'ArrowUp':
 						e.preventDefault();
+						break;
 					case 'Enter':
 						e.preventDefault();
 				}
@@ -91,7 +93,10 @@
 	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	{#if global.journeyData}
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<div class="flex flex-row gap-1 max-w-full items-center justify-between px-2" onclick={() => closeModal()}>
+		<div
+			class="flex max-w-full flex-row items-center justify-between gap-1 px-2"
+			onclick={() => closeModal()}
+		>
 			<button
 				class="navArrow animate-slide-left"
 				aria-label="View previous Image"

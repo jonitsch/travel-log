@@ -17,7 +17,6 @@
 	let open = $state(false),
 		currentStep = $state<Step>('Name');
 
-	const twColors = ['red', 'yellow', 'emerald', 'blue', 'purple', 'pink'];
 	const buttonStyle =
 		'rounded-md border-b-4 border-b-gray-700 bg-gray-900 p-5 sm:text-4xl text-xl transition hover:-translate-y-1';
 
@@ -36,7 +35,7 @@
 		topBorderColor = $derived(
 			color ? `border-t-${color} opacity-30` : 'border-t-slate-900 opacity-80'
 		);
-		
+
 	function setPreviewColor() {
 		if (selectedColorElement && colorInput) {
 			const currentColor = window.getComputedStyle(selectedColorElement).backgroundColor;

@@ -46,7 +46,8 @@
 	<Card.Root class="-my-4 w-full max-w-sm">
 		<Card.Header>
 			<Card.Title>Forgot your password?</Card.Title>
-			<Card.Description>Enter your email and we’ll send you a password reset link.</Card.Description>
+			<Card.Description>Enter your email and we’ll send you a password reset link.</Card.Description
+			>
 		</Card.Header>
 		<Card.Content>
 			<div class="grid gap-2">

@@ -30,10 +30,14 @@ export async function getImgProxyURL(
 	if (height) params.append('height', Math.round(height).toString());
 	if (format) params.append('format', format);
 
-	return await requestApi<string>(`/api/imgproxy?${params.toString()}`, { method: 'GET' }, {
-		expectEnvelope: false,
-		fallbackError: 'Failed to generate image preview URL.'
-	});
+	return await requestApi<string>(
+		`/api/imgproxy?${params.toString()}`,
+		{ method: 'GET' },
+		{
+			expectEnvelope: false,
+			fallbackError: 'Failed to generate image preview URL.'
+		}
+	);
 }
 
 export function switchToOverview(): void {
@@ -130,11 +134,15 @@ function waitForStyle(map: maplibregl.Map): Promise<void> {
 
 export async function getJourneyData(journeyId: string): Promise<JourneyWithRelations> {
 	try {
-		const journey = await requestApi<JourneyWithRelations>(`/api/journeys?journeyId=${journeyId}`, {
-			method: 'GET'
-		}, {
-			fallbackError: 'Failed to fetch journey data.'
-		});
+		const journey = await requestApi<JourneyWithRelations>(
+			`/api/journeys?journeyId=${journeyId}`,
+			{
+				method: 'GET'
+			},
+			{
+				fallbackError: 'Failed to fetch journey data.'
+			}
+		);
 
 		journey.image.sort((a, b) => {
 			if (a.createdOn < b.createdOn) {
@@ -148,13 +156,15 @@ export async function getJourneyData(journeyId: string): Promise<JourneyWithRela
 
 		return journey;
 	} catch (err) {
+		toastFailure('Failed to load Journey Data');
+		console.error(`Failed to load Journey Data: ${err}`);
 		throw err;
 	}
 }
 export async function buildGeoJSON(
 	journey: JourneyWithRelations
 ): Promise<FeatureCollection | undefined> {
-	let geoJSON: FeatureCollection = {
+	const geoJSON: FeatureCollection = {
 		type: 'FeatureCollection',
 		features: []
 	};
@@ -162,7 +172,7 @@ export async function buildGeoJSON(
 		return img.lat && img.lng;
 	});
 	if (trackedImgs.length > 0) {
-		let lineString: LineString = {
+		const lineString: LineString = {
 			type: 'LineString',
 			coordinates: []
 		};
@@ -181,15 +191,16 @@ export async function buildGeoJSON(
 }
 export function getBBox(journey: JourneyData): LngLatBoundsLike | undefined {
 	if (!journey) throw Error('No Journey defined!');
-	let { image, marker } = journey;
+	const { marker } = journey;
+	let { image } = journey;
 	image = image.filter((img) => {
 		return img.lat && img.lng;
 	});
 
 	if (!image.length && !marker.length) return undefined;
 
-	let lngs: Array<number> = [];
-	let lats: Array<number> = [];
+	const lngs: Array<number> = [];
+	const lats: Array<number> = [];
 
 	for (const img of image) {
 		lngs.push(img.lng!);
@@ -289,18 +300,18 @@ export function awaitImageRender(onRender: () => void) {
 export const timeRange = (journey: JourneyData | undefined) => {
 	if (!journey) return undefined;
 	if (journey.image.length === 0) return undefined;
-	let end = new Date(journey.image[journey.image.length - 1].createdOn);
-	let start = new Date(journey.image[0].createdOn);
+	const end = new Date(journey.image[journey.image.length - 1].createdOn);
+	const start = new Date(journey.image[0].createdOn);
 
 	if (start.getFullYear() === end.getFullYear()) {
 		return `${start.toLocaleDateString('de-DE', {
-		day: '2-digit',
-		month: '2-digit',
-	})} - ${end.toLocaleDateString('de-DE', {
-		day: '2-digit',
-		month: '2-digit',
-		year: 'numeric'
-	})}`
+			day: '2-digit',
+			month: '2-digit'
+		})} - ${end.toLocaleDateString('de-DE', {
+			day: '2-digit',
+			month: '2-digit',
+			year: 'numeric'
+		})}`;
 	}
 
 	return `${start.toLocaleDateString('de-DE', {
@@ -317,7 +328,7 @@ export const formattedDate = (
 	imgDate: Date,
 	format?: 'dd/mm/yyyy' | 'dd/mm/yyyy hh:mm' | 'dd/mm/yyyy hh:mm:ss'
 ) => {
-	let date = new Date(imgDate);
+	const date = new Date(imgDate);
 	switch (format) {
 		default:
 			return date.toLocaleDateString('de-DE', {
@@ -350,5 +361,7 @@ export const formattedDate = (
 
 // TOAST THEMES
 
-export const toastSuccess = (msg: string) => toast.push(msg, { theme: { '--toastBackground': 'oklch(39.3% 0.095 152.535)' } });
-export const toastFailure = (msg: string) => toast.push(msg, { theme: { '--toastBackground': 'oklch(39.6% 0.141 25.723)' } });
+export const toastSuccess = (msg: string) =>
+	toast.push(msg, { theme: { '--toastBackground': 'oklch(39.3% 0.095 152.535)' } });
+export const toastFailure = (msg: string) =>
+	toast.push(msg, { theme: { '--toastBackground': 'oklch(39.6% 0.141 25.723)' } });

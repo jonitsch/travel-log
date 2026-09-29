@@ -16,7 +16,6 @@
 				journeyId: string;
 				imgIds: string[];
 			},
-			any,
 			{
 				journeyId: string;
 				imgIds: string[];
@@ -99,7 +98,13 @@
 				loading={deleting}
 				label="Confirm"
 			/>
-			<FormButton variant="cancel" type="button" onclick={() => (open = false)} disabled={deleting} label="Cancel" />
+			<FormButton
+				variant="cancel"
+				type="button"
+				onclick={() => (open = false)}
+				disabled={deleting}
+				label="Cancel"
+			/>
 		</div>
 	</ModalBody>
 </Modal>

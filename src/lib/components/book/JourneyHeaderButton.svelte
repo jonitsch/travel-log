@@ -6,27 +6,27 @@
 	type Props = {
 		type?: iconType;
 		text?: string;
-        title?: string;
+		title?: string;
 		onclick?: () => void;
 		disabled?: boolean;
 		scale?: number;
 		color?: string;
 		className?: string;
 		collapseOnMobile?: boolean;
-        iconAnchor?: 'left' | 'right';
+		iconAnchor?: 'left' | 'right';
 	};
 
 	let {
 		type,
 		text,
-        title,
+		title,
 		onclick,
 		disabled = false,
 		scale,
 		color,
 		className = '',
 		collapseOnMobile = true,
-        iconAnchor = 'left'
+		iconAnchor = 'left'
 	}: Props = $props();
 </script>
 
@@ -39,7 +39,7 @@
 	]}
 	{onclick}
 	{disabled}
-    {title}
+	{title}
 >
 	{#if type && iconAnchor === 'left'}
 		<SVGIcon {type} hoverScale={false} scale={scale ?? 0.85} {color} />
@@ -47,7 +47,7 @@
 	{#if text && ((innerWidth.current && innerWidth.current > 1150) || !collapseOnMobile)}
 		<div>{text}</div>
 	{/if}
-    {#if type && iconAnchor === 'right'}
+	{#if type && iconAnchor === 'right'}
 		<SVGIcon {type} hoverScale={false} scale={scale ?? 0.85} {color} />
 	{/if}
 </button>

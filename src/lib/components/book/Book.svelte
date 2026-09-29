@@ -34,7 +34,7 @@
 	{:else if images}
 		{(previousDate = null)}
 		{#if images.length > 0}
-			{#each images as img, i}
+			{#each images as img, i (img.id)}
 				{@const date = new Date(img.createdOn)}
 				{#if previousDate != dayOf(date)}
 					<div

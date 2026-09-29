@@ -16,20 +16,20 @@ export async function getImageData(
 	journeyId: string
 ): Promise<imgCreateBody> {
 	if (!buffer) throw Error('No buffer specified!');
-	let type = await fileTypeFromBuffer(buffer).catch((err) => console.error(err));
+	const type = await fileTypeFromBuffer(buffer).catch((err) => console.error(err));
 	if (!type) return Error('File Type could not be determined!');
-	let metaData: sharp.Metadata = await sharp(buffer).metadata(),
-		coords:
-			| {
-					latitude: number;
-					longitude: number;
-			  }
-			| undefined;
+	const metaData: sharp.Metadata = await sharp(buffer).metadata();
+	let coords:
+		| {
+				latitude: number;
+				longitude: number;
+		  }
+		| undefined;
 	if (await exifr.gps(buffer)) {
 		coords = await exifr.gps(buffer);
 	}
 	// exifr.parse(path, ['DateTimeOriginal']) returns an Object: { DateTimeOriginal: string }
-	let exifrDates: {
+	const exifrDates: {
 		DateTimeOriginal: string;
 		CreateDate: string;
 		ModifyDate: string;
@@ -44,7 +44,7 @@ export async function getImageData(
 		console.log(`No valid Date found within buffer, using fallback Date.now()`);
 	}
 
-	let imgData: imgCreateBody = {
+	const imgData: imgCreateBody = {
 		fileName: name,
 		fileType: type.ext,
 		createdOn: createdOn,

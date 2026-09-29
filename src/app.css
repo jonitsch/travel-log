@@ -24,19 +24,19 @@
 }
 
 @utility skeleton {
-	@apply animate-pulse rounded-md bg-slate-600 pointer-events-none text-transparent *:invisible;
+	@apply pointer-events-none animate-pulse rounded-md bg-slate-600 text-transparent *:invisible;
 }
 
 @utility page-header-button {
-	@apply w-fit rounded-md px-3 py-2 whitespace-nowrap leading-tight text-gray-50 border-b-2 border-b-black/90 button-hover;
+	@apply w-fit button-hover rounded-md border-b-2 border-b-black/90 px-3 py-2 leading-tight whitespace-nowrap text-gray-50;
 }
 
 @utility button-hover {
-  @apply hover:translate-y-0.5 transition-all duration-100 ease-in-out;
+	@apply transition-all duration-100 ease-in-out hover:translate-y-0.5;
 }
 
 @theme {
-  --color-highlight: #2DD4BE;
+	--color-highlight: #2dd4be;
 }
 
 /* SCROLLBAR */
@@ -330,9 +330,8 @@ button {
 // Toast
 
 :global(.log.info) {
-    --toastBackground: green;
+	--toastBackground: green;
 }
 :global(.log.warn) {
 	--toastBackground: red;
 }
-

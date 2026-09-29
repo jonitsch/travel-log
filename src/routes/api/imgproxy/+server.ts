@@ -9,10 +9,10 @@ export async function GET({ url, locals }) {
 	if (!user) throw redirect(303, '/auth/login');
 
 	const { searchParams } = new URL(url);
-	let id = searchParams.get('id');
+	const id = searchParams.get('id');
 	if (!id) throw new Error('ImgProxy API called without specifying image id!');
 
-	let img = await prisma.image.findUnique({
+	const img = await prisma.image.findUnique({
 		where: { id, userId: user.id },
 		select: {
 			journeyId: true

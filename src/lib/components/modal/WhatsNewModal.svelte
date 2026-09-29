@@ -33,11 +33,11 @@
 			A quick look at the latest features and improvements.
 		{/snippet}
 		<div class="flex w-[min(42rem,82vw)] flex-col gap-4 whitespace-normal text-white">
-			{#each sections as section}
+			{#each sections as section, i (i)}
 				<div class="w-full rounded-md border border-slate-700 bg-slate-950/60 p-4">
 					<h3 class="mb-3 text-lg font-semibold text-teal-300">{section.title}</h3>
 					<ul class="list-disc space-y-2 pl-5 text-sm text-slate-200">
-						{#each section.items as item}
+						{#each section.items as item, i (i)}
 							<li>{item}</li>
 						{/each}
 					</ul>

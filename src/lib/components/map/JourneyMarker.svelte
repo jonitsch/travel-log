@@ -8,14 +8,8 @@
 		color: string;
 		onclick?: () => void;
 		open?: boolean;
-	}
-	let {
-		lngLat,
-		popupText = null,
-		color,
-		onclick = () => {},
-		open = false,
-	}: Props = $props();
+	};
+	let { lngLat, popupText = null, color, onclick = () => {}, open = false }: Props = $props();
 </script>
 
 <Marker {lngLat} class={`h-3 w-3 place-items-center rounded-full bg-${color}`}>

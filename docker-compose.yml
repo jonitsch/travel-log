@@ -11,9 +11,9 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - '3306:3306'
     healthcheck:
-      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
       interval: 30s
       retries: 5
       start_period: 30s
@@ -34,7 +34,7 @@ services:
       PMA_USER: root
       PMA_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
-      - "8081:80"
+      - '8081:80'
     restart: unless-stopped
 
   # -------------------
@@ -44,7 +44,7 @@ services:
     image: ghcr.io/imgproxy/imgproxy:latest
     container_name: imgproxy
     ports:
-      - "8080:8080"
+      - '8080:8080'
     environment:
       IMGPROXY_LOCAL_FILESYSTEM_ROOT: /pictures
       IMGPROXY_KEY: ${IMGPROXY_KEY}

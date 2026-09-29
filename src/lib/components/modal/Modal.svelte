@@ -34,7 +34,11 @@
 			if (e.key === 'Escape') open = false;
 		}}
 	>
-		<div id="modalContent" class="animate-modal-in {contentClass}" onclick={(e) => e.stopPropagation()}>
+		<div
+			id="modalContent"
+			class="animate-modal-in {contentClass}"
+			onclick={(e) => e.stopPropagation()}
+		>
 			{@render children?.()}
 		</div>
 	</div>

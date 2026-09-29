@@ -8,7 +8,7 @@ const config = {
 	preprocess: vitePreprocess(),
 	adapter: adapter({
 		// Node adapter automatically uses process.env.PORT
-		out: 'build',
+		out: 'build'
 	}),
 	kit: {
 		// adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
@@ -16,7 +16,7 @@ const config = {
 		// See https://svelte.dev/docs/kit/adapters for more information about adapters.
 		adapter: adapter(),
 		alias: {
-			'$gen': './src/generated',
+			$gen: './src/generated'
 		}
 	}
 };

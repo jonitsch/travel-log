@@ -2,13 +2,7 @@
 	import FullImageModal from './modal/FullImageModal.svelte';
 	import SVGIcon from './utility/SVGIcon.svelte';
 	import { global } from '$lib/state.svelte';
-	import {
-		awaitImageRender,
-		handleImageSelection,
-		handleShowOnMapClick,
-		imgHighlightColor
-	} from '$lib/utils/client';
-	import { tick } from 'svelte';
+	import { handleImageSelection, handleShowOnMapClick, imgHighlightColor } from '$lib/utils/client';
 	import ErrorMessage from './utility/ErrorMessage.svelte';
 	import type { Image } from '$gen/prisma/client/client';
 
@@ -19,8 +13,7 @@
 	}
 	let { img, src, fullImageModal }: Props = $props();
 
-	let imgRendered = $state<boolean>(false),
-		imgError = $state<boolean>(false);
+	let imgError = $state<boolean>(false);
 
 	let imgHasCoordinates = $derived.by<boolean>(() => img.lng != null && img.lat != null),
 		imgSelected = $derived<boolean>(
@@ -89,17 +82,10 @@
 			{src}
 			alt={img.fileName}
 			class="size-full min-h-30 min-w-20 object-cover"
-			onload={() =>
-				awaitImageRender(async () => {
-					await tick();
-					imgRendered = true;
-				})}
 			onerror={() => (imgError = true)}
 		/>
 		{#if hovered || imgSelected}
 			{#if !global.imgSelectMode}
-				<!-- svelte-ignore a11y_click_events_have_key_events -->
-				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
 					id="imageControlOverlay"
 					class="absolute inset-0 flex flex-col justify-end bg-transparent hover:bg-slate-900/10"

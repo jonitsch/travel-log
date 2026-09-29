@@ -31,8 +31,7 @@
 
 	let attributionControl = $state<maplibregl.AttributionControl>(
 		new maplibregl.AttributionControl({
-			compact: true,
-			
+			compact: true
 		})
 	);
 
@@ -49,14 +48,14 @@
 	onMount(async () => {
 		if (!map) throw Error('Map failed to load!');
 		global.map = map;
-		
+
 		map.addControl(attributionControl);
 		attributionControl._container.classList.add('sm:text-[16px]', 'text-[12px]');
 		setAttributionControl(global.viewMode);
 
 		map.flyTo({
 			center: defaultMapCenter,
-			zoom: zoom,
+			zoom: zoom
 		});
 
 		// prevent non-critical styleimagemissing warnings in the browser
@@ -72,7 +71,7 @@
 		});
 	});
 
-/* 	$effect(() => {
+	/* 	$effect(() => {
 		// close or open attributionControl whenever global.viewMode changes
 		let currentMode = global.viewMode;
 		setAttributionControl(currentMode);
@@ -121,7 +120,7 @@
 					</HoverButton>
 				</Control>
 
-				{#each journeys as journey}
+				{#each journeys as journey (journey.journeyId)}
 					<JourneyMarker
 						popupText={journey.name}
 						lngLat={[journey.lng, journey.lat]}
@@ -150,7 +149,7 @@
 					return img.lng && img.lat;
 				})}
 				{#if !(trackedImages.length === 0 && journey.marker.length === 0)}
-					{#each journey.marker as marker}
+					{#each journey.marker as marker (marker.id)}
 						<JourneyMarker
 							popupText={marker.name}
 							lngLat={[marker.lng, marker.lat]}
@@ -160,7 +159,7 @@
 						/>
 					{/each}
 					{#if journey.image && !global.loadingJourney}
-						{#each journey.image as img}
+						{#each journey.image as img (img.id)}
 							<ImageMarker {img} color={journey.color} />
 						{/each}
 					{/if}

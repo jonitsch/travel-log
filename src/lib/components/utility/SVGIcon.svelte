@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { HTMLAttributes } from 'svelte/elements';
+	import { SvelteMap } from 'svelte/reactivity';
 
 	export type iconType =
 		| 'fullscreen'
@@ -36,7 +37,7 @@
 
 	let { type, color = 'white', scale = 1, hoverScale = false, disabled, ...rest }: Props = $props();
 
-	const classMap = new Map<string, string>();
+	const classMap = new SvelteMap<string, string>();
 	classMap.set('spinner', 'h-4 w-4 animate-spin');
 
 	// svelte-ignore state_referenced_locally

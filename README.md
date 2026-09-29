@@ -1,9 +1,11 @@
 # travel-log
+
 #### This Web-Project is designed to document all of your Journeys in one place! 🌍
 
 ## Development
 
 ### Recommended Extensions (VSCode)
+
 - [Prisma](https://marketplace.visualstudio.com/items?itemName=Prisma.prisma)
 - [Svelte for VSCode](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode)
 - [Container Tools](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-containers)
@@ -13,27 +15,28 @@
 - [vscode-icons](https://marketplace.visualstudio.com/items?itemName=vscode-icons-team.vscode-icons)
 
 ### Enviroment Variables
-| Variable | Description | Example |
-| ----------- | ----------- | ----------- |
-| `NODE_ENV` | Your Current Enviroment (Dev) | `development` |
-| **Database** | | |
-| `MYSQL_HOST` | Your Database Hostname | `localhost` |
-| `MYSQL_DATABASE` | Your Database Name | `my-database` |
-| `MYSQL_USER` | Your Database User (for Prisma) | `prisma` |
-| `MYSQL_PASSWORD` | Your Database User`s Password |
-| `MYSQL_ROOT_PASSWORD` | Your Database`s Root Password |
-| `MYSQL_URL` | Your Database URL | mysql://`MYSQL_USER`:`MYSQL_PASSWORD`@`MYSQL_HOST`/`MYSQL_DATABASE` |
-| **ImgProxy** | | |
-| `IMAGE_FOLDER_PATH` | The folder that will store your images (absolute path) | `C:/git/travel-log-data/pictures/` |
-| `IMGPROXY_URL` | Your ImgProxy Base URL | `http://localhost:8080` |
-| `IMGPROXY_KEY` | Your ImgProxy Key | `crypto.randomBytes(32).toString('hex')` |
-| `IMGPROXY_SALT` | Your ImgProxy Salt | `crypto.randomBytes(16).toString('hex')` |
-| **Authentication** | | |
-| `BETTER_AUTH_URL` | Your Servers Base URL | `http://localhost:5173` |
-| `BETTER_AUTH_SECRET` | Your BetterAuth Secret | `openssl rand -base64 32` |
-| `MAILTRAP_API_KEY` | Mailtrap API token | `your-mailtrap-api-token` |
-| `MAILTRAP_FROM_EMAIL` | Verified Mailtrap sender email address | `no-reply@example.com` |
-| `MAILTRAP_FROM_NAME` | Display name for authentication emails | `Travel Log` |
+
+| Variable              | Description                                            | Example                                                             |
+| --------------------- | ------------------------------------------------------ | ------------------------------------------------------------------- |
+| `NODE_ENV`            | Your Current Enviroment (Dev)                          | `development`                                                       |
+| **Database**          |                                                        |                                                                     |
+| `MYSQL_HOST`          | Your Database Hostname                                 | `localhost`                                                         |
+| `MYSQL_DATABASE`      | Your Database Name                                     | `my-database`                                                       |
+| `MYSQL_USER`          | Your Database User (for Prisma)                        | `prisma`                                                            |
+| `MYSQL_PASSWORD`      | Your Database User`s Password                          |
+| `MYSQL_ROOT_PASSWORD` | Your Database`s Root Password                          |
+| `MYSQL_URL`           | Your Database URL                                      | mysql://`MYSQL_USER`:`MYSQL_PASSWORD`@`MYSQL_HOST`/`MYSQL_DATABASE` |
+| **ImgProxy**          |                                                        |                                                                     |
+| `IMAGE_FOLDER_PATH`   | The folder that will store your images (absolute path) | `C:/git/travel-log-data/pictures/`                                  |
+| `IMGPROXY_URL`        | Your ImgProxy Base URL                                 | `http://localhost:8080`                                             |
+| `IMGPROXY_KEY`        | Your ImgProxy Key                                      | `crypto.randomBytes(32).toString('hex')`                            |
+| `IMGPROXY_SALT`       | Your ImgProxy Salt                                     | `crypto.randomBytes(16).toString('hex')`                            |
+| **Authentication**    |                                                        |                                                                     |
+| `BETTER_AUTH_URL`     | Your Servers Base URL                                  | `http://localhost:5173`                                             |
+| `BETTER_AUTH_SECRET`  | Your BetterAuth Secret                                 | `openssl rand -base64 32`                                           |
+| `MAILTRAP_API_KEY`    | Mailtrap API token                                     | `your-mailtrap-api-token`                                           |
+| `MAILTRAP_FROM_EMAIL` | Verified Mailtrap sender email address                 | `no-reply@example.com`                                              |
+| `MAILTRAP_FROM_NAME`  | Display name for authentication emails                 | `Travel Log`                                                        |
 
 Optional:  
 | Variable | Description
@@ -42,7 +45,7 @@ Optional:
 
 ### Run ImgProxy-, MySQL- and PHPMyAdmin-Container locally
 
-Use the provided `docker-compose.yml` file or to setup both the ImgProxy and MySQL Server + phpmyadmin as an Admin Panel  
+Use the provided `docker-compose.yml` file or to setup both the ImgProxy and MySQL Server + phpmyadmin as an Admin Panel
 
 ```cmd
 docker compose up -d
@@ -64,11 +67,15 @@ The frontend uses a centralized client API wrapper at `src/lib/api/client.ts` to
 ```ts
 import { requestApi } from '$lib/api/client';
 
-const journey = await requestApi<JourneyWithRelations>(`/api/journeys?journeyId=${journeyId}`, {
-  method: 'GET'
-}, {
-  fallbackError: 'Failed to fetch journey data.'
-});
+const journey = await requestApi<JourneyWithRelations>(
+	`/api/journeys?journeyId=${journeyId}`,
+	{
+		method: 'GET'
+	},
+	{
+		fallbackError: 'Failed to fetch journey data.'
+	}
+);
 ```
 
 This keeps fetch logic out of individual Svelte components and ensures the UI handles responses/errors consistently across journeys, uploads, deletes, and renames.
@@ -83,31 +90,31 @@ Password reset uses Better Auth's official email/password flow. Configure the Ma
 
 ### Environment Variables
 
-| Variable | Description | Example |
-| ----------- | ----------- | ----------- |
-| `NODE_ENV` | Your Current Enviroment (Prod) | `production` **(!)** |
-| **Database** | | |
-| `MYSQL_URL` | MySQL connection string | `mysql://user:password@host:3306/dbname`
-| `MYSQL_HOST` | Database host | `db.example.com`
-| `MYSQL_DATABASE` | Database name | `travel-log`
-| `MYSQL_USER` | Database user for application | `app-user`
-| `MYSQL_PASSWORD` | Database user password |
-| **AWS S3** | | |
-| `AWS_ACCESS_KEY_ID` | AWS access key |
-| `AWS_SECRET_ACCESS_KEY` | AWS secret key |
-| `AWS_BUCKET_NAME` | S3 bucket for image storage | `my-travel-log-bucket`
-| `AWS_REGION` | AWS region for S3 | `eu-north-1`
-| **ImgProxy** | | |
-| `IMGPROXY_URL` | ImgProxy service URL | `https://imgproxy.example.com`
-| `IMGPROXY_KEY` | ImgProxy signing key (hex string) | `crypto.randomBytes(32).toString('hex')`
-| `IMGPROXY_SALT` | ImgProxy salt (hex string) | `crypto.randomBytes(16).toString('hex')`
-| `IMGPROXY_USE_S3` | Allows ImgProxy to accept S3 images | `true` **(!)**
-| **Authentication** | | |
-| `BETTER_AUTH_URL` | Application base URL | `https://travel-log.example.com`
-| `BETTER_AUTH_SECRET` | BetterAuth secret | `openssl rand -base64 32`
-| `MAILTRAP_API_KEY` | Mailtrap API token | `your-mailtrap-api-token` |
-| `MAILTRAP_FROM_EMAIL` | Verified Mailtrap sender email address | `no-reply@example.com` |
-| `MAILTRAP_FROM_NAME` | Display name for authentication emails | `Travel Log` |
+| Variable                | Description                            | Example                                  |
+| ----------------------- | -------------------------------------- | ---------------------------------------- |
+| `NODE_ENV`              | Your Current Enviroment (Prod)         | `production` **(!)**                     |
+| **Database**            |                                        |                                          |
+| `MYSQL_URL`             | MySQL connection string                | `mysql://user:password@host:3306/dbname` |
+| `MYSQL_HOST`            | Database host                          | `db.example.com`                         |
+| `MYSQL_DATABASE`        | Database name                          | `travel-log`                             |
+| `MYSQL_USER`            | Database user for application          | `app-user`                               |
+| `MYSQL_PASSWORD`        | Database user password                 |
+| **AWS S3**              |                                        |                                          |
+| `AWS_ACCESS_KEY_ID`     | AWS access key                         |
+| `AWS_SECRET_ACCESS_KEY` | AWS secret key                         |
+| `AWS_BUCKET_NAME`       | S3 bucket for image storage            | `my-travel-log-bucket`                   |
+| `AWS_REGION`            | AWS region for S3                      | `eu-north-1`                             |
+| **ImgProxy**            |                                        |                                          |
+| `IMGPROXY_URL`          | ImgProxy service URL                   | `https://imgproxy.example.com`           |
+| `IMGPROXY_KEY`          | ImgProxy signing key (hex string)      | `crypto.randomBytes(32).toString('hex')` |
+| `IMGPROXY_SALT`         | ImgProxy salt (hex string)             | `crypto.randomBytes(16).toString('hex')` |
+| `IMGPROXY_USE_S3`       | Allows ImgProxy to accept S3 images    | `true` **(!)**                           |
+| **Authentication**      |                                        |                                          |
+| `BETTER_AUTH_URL`       | Application base URL                   | `https://travel-log.example.com`         |
+| `BETTER_AUTH_SECRET`    | BetterAuth secret                      | `openssl rand -base64 32`                |
+| `MAILTRAP_API_KEY`      | Mailtrap API token                     | `your-mailtrap-api-token`                |
+| `MAILTRAP_FROM_EMAIL`   | Verified Mailtrap sender email address | `no-reply@example.com`                   |
+| `MAILTRAP_FROM_NAME`    | Display name for authentication emails | `Travel Log`                             |
 
 ### Image Storage & Serving
 

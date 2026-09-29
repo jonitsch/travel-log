@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { global } from '$lib/state.svelte';
 	import Modal from './Modal.svelte';
-	import { Button } from '../shadcn/button';
 	import { Input } from '../shadcn/input';
 	import { filesProxy, superForm, type SuperValidated } from 'sveltekit-superforms';
 	import z from 'zod';
@@ -20,7 +19,6 @@
 				journeyId: string;
 				files: z.core.File[];
 			},
-			any,
 			{
 				journeyId: string;
 				files: z.core.File[];
@@ -150,7 +148,7 @@
 		</div>
 
 		<div class="flex min-h-full min-w-full flex-row items-center justify-center gap-2 *:flex-1">
-			{#each images as src, i}
+			{#each images as src, i (src)}
 				{#if i < 3}
 					<img
 						class="preview max-w-[15dvw] rounded-md object-cover"

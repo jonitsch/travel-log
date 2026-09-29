@@ -1,5 +1,5 @@
 import type { Journey, Marker, Image } from '$gen/prisma/client/client';
-import type { FeatureCollection, GeoJsonProperties, Geometry, LineString } from 'geojson';
+import type { FeatureCollection, GeoJsonProperties, Geometry } from 'geojson';
 
 export type ViewMode = 'overview' | 'journey';
 

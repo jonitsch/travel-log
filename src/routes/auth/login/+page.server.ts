@@ -8,7 +8,7 @@ import { prisma } from '$lib/server/prisma';
 
 const schema = z.object({
 	email: z.email(),
-	password: z.string(),
+	password: z.string()
 });
 
 export const load: PageServerLoad = async () => {
@@ -26,7 +26,7 @@ export const actions = {
 		}
 		const user = await prisma.user.findUnique({
 			where: { email }
-		})
+		});
 		if (!user) {
 			form.valid = false;
 			return message(form, 'User not found!');
@@ -35,11 +35,11 @@ export const actions = {
 			await auth.api.signInEmail({
 				body: {
 					email,
-					password,
+					password
 				},
-				headers: request.headers,
+				headers: request.headers
 			});
-		} catch (err: any) {
+		} catch (err: unknown) {
 			console.log(`Login for user ${email} failed!`);
 			console.error(err);
 			return fail(500, { message: 'Login failed' });

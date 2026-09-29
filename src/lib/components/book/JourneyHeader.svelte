@@ -53,7 +53,7 @@
 
 {#if journey}
 	<!------------------- MAP HEADER --------------------->
-	<Header slideDir={'left'}>
+	<Header slideDir="left">
 		{#snippet headerText()}
 			{journey.name}
 		{/snippet}
@@ -74,7 +74,7 @@
 		{/snippet}
 	</Header>
 	<!------------------- BOOK HEADER --------------------->
-	<Header slideDir={'right'}>
+	<Header slideDir="right">
 		{#snippet headerText()}
 			Images <div class="text-3xl font-light">{`(${journey.image.length})`}</div>
 		{/snippet}

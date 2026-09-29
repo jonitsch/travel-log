@@ -6,6 +6,7 @@
 	import WhatsNewModal from '$lib/components/modal/WhatsNewModal.svelte';
 
 	import * as DropdownMenu from '$lib/components/shadcn/dropdown-menu/index';
+	import { toastFailure } from '$lib/utils/client';
 
 	let { name }: { name: string } = $props();
 
@@ -24,6 +25,8 @@
 				}
 			});
 		} catch (err) {
+			toastFailure('Something went wrong!');
+			console.error(`Failed to sign out: ${err}`);
 			throw err;
 		}
 	}
@@ -33,14 +36,16 @@
 	<DropdownMenu.Trigger>
 		<div
 			id="viewProfileButton"
-			class={["page-header-button flex flex-row gap-2 w-fit items-center bg-gray-900 py-1 px-3",
-				{ 'ring-[#ffffff1a] ring-2': open }
+			class={[
+				'flex page-header-button w-fit flex-row items-center gap-2 bg-gray-900 px-3 py-1',
+				{ 'ring-2 ring-[#ffffff1a]': open }
 			]}
 		>
-			{name} <SVGIcon type="profile" scale={1.1} />
+			{name}
+			<SVGIcon type="profile" scale={1.1} />
 		</div>
 	</DropdownMenu.Trigger>
-	<DropdownMenu.Content class="bg-gray-900 w-fit mt-0.5" align="end">
+	<DropdownMenu.Content class="mt-0.5 w-fit bg-gray-900" align="end">
 		<DropdownMenu.Group class="*:text-[16px]">
 			<DropdownMenu.Item onclick={() => whatsNewModal?.openModal()}>
 				<SVGIcon type="lightBulb" color="white" hoverScale={false} />
